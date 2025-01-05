@@ -29,14 +29,14 @@ const CustomerSchema = new Schema<CustomerDocument>(
         },
         lat: {
             type: Number,
-            required: true
+            required: true,
         },
         lng: {
             type: Number,
-            required: true
+            required: true,
         },
     },
-    { versionKey: false }
+    { versionKey: false, timestamps: true }
 );
 
 const Customer =

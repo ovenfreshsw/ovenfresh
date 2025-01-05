@@ -1,4 +1,11 @@
-import { error400, error403, error500, success200, success201 } from "@/lib/response";
+import { extractPublicId } from "@/lib/cloudinary";
+import {
+    error400,
+    error403,
+    error500,
+    success200,
+    success201,
+} from "@/lib/response";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
@@ -7,7 +14,7 @@ import { NextRequest } from "next/server";
 
 async function postHandler(req: NextRequest) {
     try {
-        if(isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
+        if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
         const data = await req.json();
         if (!data) {
@@ -17,7 +24,11 @@ async function postHandler(req: NextRequest) {
         const result = ZodCateringMenuSchema.safeParse(data);
 
         if (result.success) {
-            const menu = await CateringMenu.create(result.data);
+            const publicId = extractPublicId(result.data.image || "");
+            const menu = await CateringMenu.create({
+                ...result.data,
+                publicId,
+            });
             return success201({ menu });
         }
 

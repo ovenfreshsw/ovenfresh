@@ -28,25 +28,35 @@ export const ZodCustomerSchema = z.object({
     city: z.string().min(3).max(20),
     province: z.string().min(3).max(20),
     zip: z.string().min(3).max(20),
+    lat: z.string(),
+    lng: z.string(),
 });
 
 export const ZodCateringSchema = z.object({
     store: z.string().length(24),
-    deliveryDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid ISO date format" }).transform((val) => new Date(val)),
+    deliveryDate: z
+        .string()
+        .refine((val) => !isNaN(Date.parse(val)), {
+            message: "Invalid ISO date format",
+        })
+        .transform((val) => new Date(val)),
     customerDetails: ZodCustomerSchema,
     items: z.array(
         z.object({
             itemId: z.string().length(24),
             quantity: z.number().min(1),
-            priceAtOrder: z.number()
+            priceAtOrder: z.number(),
         })
     ),
-    totalPrice: z.number()
+    advancePaid: z.number(),
+    pendingBalance: z.number(),
+    fullyPaid: z.boolean(),
+    totalPrice: z.number(),
 });
 
 export const ZodCateringMenuSchema = z.object({
     name: z.string().min(3).max(20),
     price: z.number(),
     description: z.string().optional(),
-    image: z.string().optional()
+    image: z.string().optional(),
 });

@@ -14,11 +14,7 @@ const Home = () => {
         <div>
             Home
             <SignOutButton />
-            <Upload
-                setResource={setResource}
-                folder="catering_menu"
-                filename="fried_rice"
-            />
+            <Upload setResource={setResource} folder="catering_menu" />
             {resource?.url && (
                 <Image src={resource.url} alt="Test" width={100} height={100} />
             )}

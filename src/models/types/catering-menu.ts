@@ -3,5 +3,7 @@ export interface CateringMenuDocument {
     name: string;
     price: number;
     description: string;
-    image: string;
+    image: string | null;
+    publicId: string | null;
+    disabled: boolean;
 }
