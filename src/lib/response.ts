@@ -45,10 +45,12 @@ function error400(message: string, data?: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 400 });
 }
 
-function error403() {
+function error403(message?: string) {
     const json = {
         success: false,
-        message: "Forbidden: You are not authorized to perform this action!",
+        message:
+            message ||
+            "Forbidden: You are not authorized to perform this action!",
     };
     return NextResponse.json(json, { status: 403 });
 }
@@ -78,5 +80,5 @@ export {
     error403,
     error400,
     error401,
-    error409
+    error409,
 };
