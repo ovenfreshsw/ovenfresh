@@ -43,8 +43,8 @@ const Home = async () => {
             <div className="flex justify-between items-center">
                 <span className="font-medium">Overview</span>
                 <div className="space-y-2">
-                    <Select defaultValue="1">
-                        {/* Adjust the min-width to fit the longest option */}
+                    {/* <Select defaultValue="1">
+                        Adjust the min-width to fit the longest option
                         <SelectTrigger className="w-auto min-w-48 max-w-full">
                             <SelectValue placeholder="Select framework" />
                         </SelectTrigger>
@@ -53,7 +53,7 @@ const Home = async () => {
                             <SelectItem value="2">Last two week</SelectItem>
                             <SelectItem value="3">Last Month</SelectItem>
                         </SelectContent>
-                    </Select>
+                    </Select> */}
                 </div>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-7">
@@ -123,9 +123,9 @@ const Home = async () => {
                     <span className="font-medium">Recent orders</span>
                     <DataTable data={data} columns={columns} />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                {/* <div className="grid grid-cols-2 gap-4">
                     <RevenueGraph />
-                </div>
+                </div> */}
             </div>
         </div>
     );

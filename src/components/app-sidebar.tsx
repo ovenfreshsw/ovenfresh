@@ -11,6 +11,7 @@ import {
     GalleryVerticalEnd,
     Home,
     Map,
+    NotebookPen,
     Package,
     PieChart,
     Settings,
@@ -190,6 +191,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent className="scrollbar-thin py-4">
                 <SidebarGroup>
                     <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton
+                                tooltip={"Booking"}
+                                className="hover:bg-gray-200"
+                                asChild
+                            >
+                                <Link
+                                    href={"/b"}
+                                    className="flex items-center gap-2 w-full"
+                                >
+                                    <NotebookPen size={17} />
+                                    <span className="text-sm font-medium">
+                                        Booking
+                                    </span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
                         <SidebarMenuItem>
                             <SidebarMenuButton
                                 tooltip={"Home"}
