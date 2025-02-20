@@ -1,0 +1,94 @@
+import { CateringOrderState } from "@/lib/types/catering/catering-order-state";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+const initialState: CateringOrderState = {
+    store: "",
+    deliveryDate: new Date().toISOString(),
+    customerDetails: {
+        firstName: "",
+        lastName: "",
+        phone: "",
+        address: "",
+        lat: "",
+        lng: "",
+    },
+    payment_method: "cash",
+    note: "",
+    totalPrice: 0,
+    tax: 0,
+    advancePaid: 0,
+    pendingBalance: 0,
+    fullyPaid: false,
+};
+
+export const cateringOrderSlice = createSlice({
+    name: "cateringOrder",
+    initialState,
+    reducers: {
+        clearState: () => initialState,
+
+        setStore: (state, action: PayloadAction<string>) => {
+            state.store = action.payload;
+        },
+
+        setDeliveryDate: (state, action: PayloadAction<string>) => {
+            state.deliveryDate = action.payload;
+        },
+
+        setCustomerDetails: (
+            state,
+            action: PayloadAction<
+                Partial<CateringOrderState["customerDetails"]>
+            >
+        ) => {
+            state.customerDetails = {
+                ...state.customerDetails,
+                ...action.payload,
+            };
+        },
+
+        setPaymentMethod: (state, action: PayloadAction<"card" | "cash">) => {
+            state.payment_method = action.payload;
+        },
+
+        setNote: (state, action: PayloadAction<string>) => {
+            state.note = action.payload;
+        },
+
+        setAdvancePaid: (state, action: PayloadAction<number>) => {
+            state.advancePaid = action.payload;
+        },
+
+        setPendingBalance: (state, action: PayloadAction<number>) => {
+            state.pendingBalance = action.payload;
+        },
+
+        setFullyPaid: (state, action: PayloadAction<boolean>) => {
+            state.fullyPaid = action.payload;
+        },
+
+        setTotalPrice: (state, action: PayloadAction<number>) => {
+            state.totalPrice = action.payload;
+        },
+
+        setTaxAmount: (state, action: PayloadAction<number>) => {
+            state.tax = action.payload;
+        },
+    },
+});
+
+export const {
+    clearState,
+    setStore,
+    setDeliveryDate,
+    setCustomerDetails,
+    setPaymentMethod,
+    setNote,
+    setAdvancePaid,
+    setPendingBalance,
+    setFullyPaid,
+    setTotalPrice,
+    setTaxAmount,
+} = cateringOrderSlice.actions;
+
+export default cateringOrderSlice.reducer;

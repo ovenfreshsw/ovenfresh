@@ -2,13 +2,9 @@
 
 import * as React from "react";
 import {
-    AudioWaveform,
     BookOpen,
     Bot,
-    Circle,
-    Command,
     Frame,
-    GalleryVerticalEnd,
     Home,
     Map,
     NotebookPen,
@@ -35,6 +31,7 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import Image from "next/image";
 
 // This is sample data.
 const data = {
@@ -43,23 +40,6 @@ const data = {
         email: "prajil@rentit.com",
         avatar: "https://avatar.iran.liara.run/public/17",
     },
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
     navMain: [
         {
             title: "Playground",
@@ -178,12 +158,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                    <div className="flex items-center justify-center rounded-lg aspect-square size-8 bg-sidebar-primary text-sidebar-primary-foreground">
-                        <Circle className="size-4" />
+                    <div className="flex items-center justify-center rounded-lg aspect-square size-8 text-sidebar-primary-foreground">
+                        <Image
+                            src={"/logo.webp"}
+                            alt="logo"
+                            width={60}
+                            height={60}
+                        />
                     </div>
                     <div className="grid flex-1 text-sm leading-tight text-left">
-                        <span className="font-semibold truncate">RentIt</span>
-                        <span className="text-xs truncate">Enterpsie</span>
+                        <span className="font-semibold truncate">
+                            Oven Fresh
+                        </span>
+                        <span className="text-xs truncate">Restaurant</span>
                     </div>
                 </SidebarMenuButton>
             </SidebarHeader>
@@ -198,7 +185,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 asChild
                             >
                                 <Link
-                                    href={"/b"}
+                                    href={"/dashboard"}
                                     className="flex items-center gap-2 w-full"
                                 >
                                     <NotebookPen size={17} />
@@ -215,7 +202,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 asChild
                             >
                                 <Link
-                                    href={"/b"}
+                                    href={"/dashboard/home"}
                                     className="flex items-center gap-2 w-full"
                                 >
                                     <Home size={17} />

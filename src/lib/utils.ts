@@ -1,11 +1,21 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { AuthenticatedRequest } from "./types/auth-request";
+import { UseFormReturn } from "react-hook-form";
+import { ZodTiffinSchema } from "./zod-schema/schema";
+import { z } from "zod";
+import { customAlphabet } from "nanoid";
+import { TiffinMenuDocument } from "@/models/types/tiffin-menu";
+import { RolesSet } from "./type";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-function isRestricted(user: Request["user"], allow: RolesSet[] = ["ADMIN"]) {
+function isRestricted(
+    user: AuthenticatedRequest["user"],
+    allow: RolesSet[] = ["ADMIN"]
+) {
     // If the user's role is "SUPERADMIN", always return false (no restriction)
     if (user?.role === "SUPERADMIN") {
         return false;
@@ -15,4 +25,106 @@ function isRestricted(user: Request["user"], allow: RolesSet[] = ["ADMIN"]) {
     return !allow.includes(user?.role as RolesSet);
 }
 
-export { cn, isRestricted };
+function formatDate(date: Date) {
+    // Format the date in "Month Day, Year" with proper suffix for the day
+    const formattedDate = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+
+    // Function to add ordinal suffix (st, nd, rd, th)
+    function addOrdinalSuffix(day: number) {
+        if (day >= 11 && day <= 13) return `${day}th`; // Special case for 11th, 12th, 13th
+        switch (day % 10) {
+            case 1:
+                return `${day}st`;
+            case 2:
+                return `${day}nd`;
+            case 3:
+                return `${day}rd`;
+            default:
+                return `${day}th`;
+        }
+    }
+
+    // Extract the day and replace it with the ordinal format
+    const day = date.getDate();
+    return formattedDate.replace(/\d+/, addOrdinalSuffix(day));
+}
+
+function calculateEndDate(
+    weeks: string,
+    form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>,
+    setEndDateText: React.Dispatch<React.SetStateAction<string>>
+) {
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    const start = new Date(form.getValues("start_date"));
+    const weeksNumber = parseFloat(weeks);
+
+    if (isNaN(weeksNumber)) {
+        return;
+    }
+
+    const endDate = new Date(start.getTime() + weeksNumber * oneWeek);
+    const formattedDate = formatDate(endDate);
+    form.setValue("end_date", endDate.toDateString());
+
+    setEndDateText(`End date: ${formattedDate}`);
+}
+
+function calculateTotalAmount(
+    form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>,
+    tiffinMenu?: TiffinMenuDocument | null
+) {
+    const numberOfWeeks = Number(form.getValues("number_of_weeks"));
+    const deliveryType = form.getValues("order_type");
+
+    let subtotal = 0;
+
+    switch (numberOfWeeks) {
+        case 2:
+            if (deliveryType === "pickup")
+                subtotal = tiffinMenu?.pickup["2_weeks"] || 0;
+            else subtotal = tiffinMenu?.delivery["2_weeks"] || 0;
+            break;
+        case 3:
+            if (deliveryType === "pickup")
+                subtotal = tiffinMenu?.pickup["3_weeks"] || 0;
+            else subtotal = tiffinMenu?.delivery["3_weeks"] || 0;
+            break;
+        case 4:
+            if (deliveryType === "pickup")
+                subtotal = tiffinMenu?.pickup["4_weeks"] || 0;
+            else subtotal = tiffinMenu?.delivery["4_weeks"] || 0;
+            break;
+
+        default:
+            break;
+    }
+
+    const tax =
+        (subtotal * Number(process.env.NEXT_PUBLIC_TAX_AMOUNT || 0)) / 100;
+    const total = subtotal + tax;
+
+    return { tax, subtotal, total };
+}
+
+// Define an uppercase alphanumeric nanoid generator (A-Z, 0-9)
+const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6);
+
+// Function to generate an order ID
+function generateOrderId() {
+    const year = new Date().getFullYear(); // Get current year
+    const uniquePart = nanoid(); // Generate a 6-character unique ID
+    return `${year}-${uniquePart}`; // Example: "2025-9GHT3X"
+}
+
+export {
+    cn,
+    isRestricted,
+    formatDate,
+    calculateEndDate,
+    calculateTotalAmount,
+    generateOrderId,
+};

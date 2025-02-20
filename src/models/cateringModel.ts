@@ -3,6 +3,10 @@ import { CateringDocument } from "./types/catering";
 
 const CateringSchema = new Schema<CateringDocument>(
     {
+        orderId: {
+            type: String,
+            require: true,
+        },
         store: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Store",
@@ -11,6 +15,19 @@ const CateringSchema = new Schema<CateringDocument>(
         customer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Customer",
+            required: true,
+        },
+        address: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Address",
+            required: true,
+        },
+        customerName: {
+            type: String,
+            required: true,
+        },
+        customerPhone: {
+            type: String,
             required: true,
         },
         deliveryDate: {
@@ -55,14 +72,25 @@ const CateringSchema = new Schema<CateringDocument>(
             type: Number,
             required: true,
         },
+        paymentMethod: {
+            type: String,
+            required: true,
+        },
+        tax: {
+            type: Number,
+        },
+        note: String,
         status: {
             type: String,
             enum: ["PENDING", "IN_PROGRESS", "DELIVERED", "CANCELLED"],
-            default: "PENDING"
-        }
+            default: "PENDING",
+        },
     },
     { versionKey: false, timestamps: true }
 );
+
+// Create a unique index for orderId
+CateringSchema.index({ orderId: 1 }, { unique: true });
 
 const Catering =
     models?.Catering || model<CateringDocument>("Catering", CateringSchema);

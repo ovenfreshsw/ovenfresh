@@ -1,13 +1,19 @@
-import { error400, error403, error409, error500, success200 } from "@/lib/response";
+import {
+    error400,
+    error403,
+    error409,
+    error500,
+    success200,
+} from "@/lib/response";
+import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import Store from "@/models/storeModel";
 import User from "@/models/userModel";
-import { NextRequest } from "next/server";
 
 async function updateHandler(
-    req: NextRequest,
+    req: AuthenticatedRequest,
     { params }: { params: Promise<{ storeId: string }> }
 ) {
     try {
@@ -44,13 +50,17 @@ async function updateHandler(
         if (result.error) {
             return error400("Invalid data format.", {});
         }
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 
 async function deleteHandler(
-    req: NextRequest,
+    req: AuthenticatedRequest,
     { params }: { params: Promise<{ storeId: string }> }
 ) {
     try {
@@ -64,7 +74,9 @@ async function deleteHandler(
 
         if (userWithStore) {
             // If users are associated, block deletion
-            return error409("Cannot delete this store. There are users associated with this store.")
+            return error409(
+                "Cannot delete this store. There are users associated with this store."
+            );
         }
 
         const deletedStore = await Store.deleteOne({ _id: storeId });
@@ -74,8 +86,12 @@ async function deleteHandler(
         }
 
         return success200({});
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 

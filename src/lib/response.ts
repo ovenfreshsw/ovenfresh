@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-function success200(data: { [key: string]: any }) {
+function success200(data: { [key: string]: unknown }) {
     const json = {
         success: true,
         message: "Success",
@@ -9,7 +9,7 @@ function success200(data: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 200 });
 }
 
-function success201(data: { [key: string]: any }) {
+function success201(data: { [key: string]: unknown }) {
     const json = {
         success: true,
         message: "Created successfully",
@@ -18,7 +18,7 @@ function success201(data: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 201 });
 }
 
-function error500(data: { [key: string]: any }) {
+function error500(data: { [key: string]: unknown }) {
     const json = {
         success: false,
         message: "Something went wrong. SVR",
@@ -27,7 +27,7 @@ function error500(data: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 500 });
 }
 
-function error404(message: string, data?: { [key: string]: any }) {
+function error404(message: string, data?: { [key: string]: unknown }) {
     const json = {
         success: false,
         message,
@@ -36,7 +36,7 @@ function error404(message: string, data?: { [key: string]: any }) {
     return NextResponse.json(resJson, { status: 404 });
 }
 
-function error400(message: string, data?: { [key: string]: any }) {
+function error400(message: string, data?: { [key: string]: unknown }) {
     const json = {
         success: false,
         message,
@@ -55,7 +55,7 @@ function error403(message?: string) {
     return NextResponse.json(json, { status: 403 });
 }
 
-function error401(message: string, data?: { [key: string]: any }) {
+function error401(message: string, data?: { [key: string]: unknown }) {
     const json = {
         success: false,
         message,

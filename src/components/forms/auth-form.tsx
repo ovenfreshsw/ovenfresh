@@ -52,8 +52,12 @@ const AuthForm = () => {
             toast.success("Signed in successfully. redirecting...");
             router.refresh();
             router.replace(signInResponse?.url || "/");
-        } catch (error: any) {
-            setError(error.message);
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError("An unknown error occurred");
+            }
         } finally {
             setSignInIsLoading(false);
         }

@@ -5,13 +5,13 @@ import {
     success200,
     success201,
 } from "@/lib/response";
+import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import Store from "@/models/storeModel";
-import { NextRequest } from "next/server";
 
-async function postHandler(req: NextRequest) {
+async function postHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user)) return error403();
 
@@ -29,15 +29,19 @@ async function postHandler(req: NextRequest) {
         if (result.error) {
             return error400("Invalid data format.", {});
         }
-    } catch (error: any) {
-        if (error.message.startsWith("E11000 duplicate key error")) {
-            return error400("Store name already exists.", {});
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error.message.startsWith("E11000 duplicate key error")) {
+                return error400("Store name already exists.", {});
+            }
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
         }
-        return error500({ error: error.message });
     }
 }
 
-async function getHandler(req: NextRequest) {
+async function getHandler(req: AuthenticatedRequest) {
     try {
         if (req.user?.role !== "ADMIN") {
             return error403();
@@ -46,8 +50,12 @@ async function getHandler(req: NextRequest) {
         const stores = await Store.find({});
 
         return success200({ stores });
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 

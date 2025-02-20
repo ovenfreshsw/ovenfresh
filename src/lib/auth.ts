@@ -44,6 +44,7 @@ export const authOptions: NextAuthOptions = {
                     role: user.role,
                     isAuthenticated: true,
                     id: user._id,
+                    storeId: user.storeId,
                 };
             },
         }),
@@ -58,6 +59,7 @@ export const authOptions: NextAuthOptions = {
                     ...token,
                     id: user.id,
                     role: user.role,
+                    storeId: user.storeId,
                 };
             }
             return token;
@@ -76,11 +78,12 @@ export const authOptions: NextAuthOptions = {
                                 role: user?.role,
                                 username: user?.username,
                                 isAuthenticated: false,
+                                storeId: user?.storeId,
                             },
                         };
                     }
                 }
-            } catch (error) {
+            } catch {
                 return {
                     ...session,
                     user: {

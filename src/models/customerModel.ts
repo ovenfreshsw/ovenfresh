@@ -3,37 +3,19 @@ import { CustomerDocument } from "./types/customer";
 
 const CustomerSchema = new Schema<CustomerDocument>(
     {
-        name: {
+        firstName: {
+            type: String,
+            required: true,
+        },
+        lastName: {
             type: String,
             required: true,
         },
         phone: {
             type: String,
             required: true,
-        },
-        address: {
-            type: String,
-            required: true,
-        },
-        city: {
-            type: String,
-            required: true,
-        },
-        province: {
-            type: String,
-            required: true,
-        },
-        zip: {
-            type: String,
-            required: true,
-        },
-        lat: {
-            type: Number,
-            required: true,
-        },
-        lng: {
-            type: Number,
-            required: true,
+            unique: true,
+            index: true,
         },
     },
     { versionKey: false, timestamps: true }

@@ -1,12 +1,14 @@
 "use client";
 
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 
 const Upload = ({
     setResource,
     folder,
 }: {
-    setResource: React.Dispatch<any>;
+    setResource: React.Dispatch<
+        React.SetStateAction<string | CloudinaryUploadWidgetInfo | undefined>
+    >;
     folder: string;
 }) => {
     return (
@@ -15,7 +17,7 @@ const Upload = ({
             options={{
                 folder,
             }}
-            onSuccess={(result, { widget }) => {
+            onSuccess={(result) => {
                 setResource(result?.info); // { public_id, secure_url, etc }
             }}
         >

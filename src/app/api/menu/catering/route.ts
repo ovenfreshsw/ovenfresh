@@ -1,4 +1,4 @@
-import { extractPublicId } from "@/lib/cloudinary";
+import { extractPublicId } from "@/config/cloudinary.config";
 import {
     error400,
     error403,
@@ -6,13 +6,13 @@ import {
     success200,
     success201,
 } from "@/lib/response";
+import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import CateringMenu from "@/models/cateringMenuModel";
-import { NextRequest } from "next/server";
 
-async function postHandler(req: NextRequest) {
+async function postHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
@@ -35,20 +35,28 @@ async function postHandler(req: NextRequest) {
         if (result.error) {
             return error400("Invalid data format.", {});
         }
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 
-async function getHandler(req: NextRequest) {
+async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
-        const menus = await CateringMenu.find();
+        const menus = await CateringMenu.find({ disabled: false });
 
-        return success200({ menus });
-    } catch (error: any) {
-        return error500({ error: error.message });
+        return success200({ result: menus });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 

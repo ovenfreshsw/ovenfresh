@@ -1,0 +1,318 @@
+"use client";
+
+import { UseFormReturn } from "react-hook-form";
+import * as z from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { format } from "date-fns";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { ZodCateringSchema } from "@/lib/zod-schema/schema";
+import { useClickOutside } from "@/hooks/use-click-outside";
+import { useSearchCustomer } from "@/api-hooks/use-search-customer";
+import { CustomerSearchResult } from "@/lib/types/customer";
+import { useDebounce } from "@/hooks/use-debounce";
+import PaymentSelect from "../select/payment-select";
+import AddressCommand from "../commands/address-command";
+import { useDispatch } from "react-redux";
+import { clearState } from "@/store/slices/cateringItemSlice";
+import {
+    setCustomerDetails,
+    setDeliveryDate,
+} from "@/store/slices/cateringOrderSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+
+export default function CateringForm({
+    form,
+}: {
+    form: UseFormReturn<z.infer<typeof ZodCateringSchema>>;
+}) {
+    const clickOutsideRef = useRef(null);
+    const [phone, setPhone] = useState("");
+    const [showAutocomplete, setShowAutocomplete] = useState(false);
+
+    const dispatch = useDispatch();
+    const orderDetail = useSelector((state: RootState) => state.cateringOrder);
+
+    const debouncedPhone = useDebounce(phone, 300);
+
+    // React queries
+    const { data: customers } = useSearchCustomer(debouncedPhone);
+
+    // Automatically toggle showAutocomplete when customers update
+    useEffect(() => {
+        setShowAutocomplete((customers?.length ?? 0) > 0);
+    }, [customers]);
+
+    useClickOutside(clickOutsideRef, () => setShowAutocomplete(false));
+
+    function setSelectedCustomer(customer: CustomerSearchResult) {
+        dispatch(
+            setCustomerDetails({
+                phone: customer.phone || "",
+                firstName: customer.firstName || "",
+                lastName: customer.lastName || "",
+                address: customer.address.address || "",
+            })
+        );
+
+        form.setValue("customerDetails.phone", customer.phone || "");
+        form.setValue("customerDetails.firstName", customer.firstName || "");
+        form.setValue("customerDetails.lastName", customer.lastName || "");
+        form.setValue(
+            "customerDetails.address",
+            customer.address.address || ""
+        );
+    }
+
+    function resetForm() {
+        form.reset();
+        dispatch(clearState());
+    }
+
+    return (
+        <div className="rounded-md border shadow w-full md:w-fit p-5 md:p-10 mx-auto">
+            <Form {...form}>
+                <div className="flex justify-between items-center">
+                    <Typography variant="h6">Enter Address</Typography>
+                    <Button
+                        onClick={resetForm}
+                        type="button"
+                        size="sm"
+                        variant={"ghost"}
+                    >
+                        Reset
+                    </Button>
+                </div>
+                <form className="space-y-4 max-w-3xl mx-auto py-7 lg:py-10">
+                    <div>
+                        <FormField
+                            control={form.control}
+                            name="customerDetails.phone"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col items-start justify-between h-full">
+                                    <FormLabel>Phone number</FormLabel>
+                                    <FormControl className="w-full">
+                                        <div
+                                            className="relative"
+                                            ref={clickOutsideRef}
+                                        >
+                                            <PhoneInput
+                                                placeholder="phone"
+                                                {...field}
+                                                onChange={(e) => {
+                                                    field.onChange(e);
+                                                    setPhone(e);
+                                                    dispatch(
+                                                        setCustomerDetails({
+                                                            phone: e,
+                                                        })
+                                                    );
+                                                }}
+                                                defaultCountry="CA"
+                                            />
+                                            {showAutocomplete && (
+                                                <AddressCommand
+                                                    customers={customers}
+                                                    setShowAutocomplete={
+                                                        setShowAutocomplete
+                                                    }
+                                                    setSelectedCustomer={
+                                                        setSelectedCustomer
+                                                    }
+                                                />
+                                            )}
+                                        </div>
+                                    </FormControl>
+
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <FormField
+                                control={form.control}
+                                name="customerDetails.firstName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>First name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="first name"
+                                                type="text"
+                                                {...field}
+                                                value={
+                                                    orderDetail.customerDetails
+                                                        .firstName
+                                                }
+                                                onChange={(e) =>
+                                                    dispatch(
+                                                        setCustomerDetails({
+                                                            firstName:
+                                                                e.target.value,
+                                                        })
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div>
+                            <FormField
+                                control={form.control}
+                                name="customerDetails.lastName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Last name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="last name"
+                                                type="text"
+                                                {...field}
+                                                value={
+                                                    orderDetail.customerDetails
+                                                        .lastName
+                                                }
+                                                onChange={(e) =>
+                                                    dispatch(
+                                                        setCustomerDetails({
+                                                            lastName:
+                                                                e.target.value,
+                                                        })
+                                                    )
+                                                }
+                                            />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+
+                    <FormField
+                        control={form.control}
+                        name="customerDetails.address"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Address</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="address"
+                                        type="text"
+                                        {...field}
+                                        value={
+                                            orderDetail.customerDetails.address
+                                        }
+                                        onChange={(e) =>
+                                            dispatch(
+                                                setCustomerDetails({
+                                                    address: e.target.value,
+                                                })
+                                            )
+                                        }
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="deliveryDate"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col h-full justify-between">
+                                <FormLabel>Delivery date</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "pl-3 text-left font-normal",
+                                                    !field.value &&
+                                                        "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, "PPP")
+                                                ) : (
+                                                    <span>Pick a date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                        className="w-auto p-0"
+                                        align="start"
+                                    >
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            disabled={{ before: new Date() }}
+                                            onSelect={(e) => {
+                                                field.onChange(e);
+                                                dispatch(
+                                                    setDeliveryDate(
+                                                        (
+                                                            e as Date
+                                                        ).toISOString()
+                                                    )
+                                                );
+                                            }}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="payment_method"
+                        render={() => (
+                            <FormItem>
+                                <FormLabel>Payment Method</FormLabel>
+                                <PaymentSelect form={form} />
+                                <FormDescription>
+                                    Select a payment method
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </form>
+            </Form>
+        </div>
+    );
+}

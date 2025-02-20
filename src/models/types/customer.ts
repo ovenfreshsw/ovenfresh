@@ -1,11 +1,8 @@
 export interface CustomerDocument {
     _id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     phone: string;
-    address: string;
-    city: string;
-    province: string;
-    zip: string;
-    lat: number;
-    lng: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
