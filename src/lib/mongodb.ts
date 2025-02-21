@@ -7,7 +7,7 @@ if (!MONGODB_URI) {
 }
 
 // Global cache for MongoDB connection (prevents multiple connections in Vercel)
-let cached = (global as any).mongoose || { conn: null, promise: null };
+const cached = (global as any).mongoose || { conn: null, promise: null };
 
 const connectDB = async () => {
     if (cached.conn) {
