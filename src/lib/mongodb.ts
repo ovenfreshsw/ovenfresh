@@ -7,7 +7,8 @@ if (!MONGODB_URI) {
 }
 
 // Global cache for MongoDB connection (prevents multiple connections in Vercel)
-const cached = (global as any).mongoose || { conn: null, promise: null };
+// @ts-expect-error: Mongoose is not defined
+const cached = global.mongoose || { conn: null, promise: null };
 
 const connectDB = async () => {
     if (cached.conn) {
@@ -27,6 +28,7 @@ const connectDB = async () => {
 };
 
 // Store cache globally (Vercel-specific optimization)
-(global as any).mongoose = cached;
+// @ts-expect-error: Mongoose is not defined
+global.mongoose = cached;
 
 export default connectDB;
