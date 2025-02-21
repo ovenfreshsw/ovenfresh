@@ -8,14 +8,13 @@ import {
 } from "@/components/ui/card";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
-// import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 
 export default async function Home() {
     const session = await getServerSession(authOptions);
-    console.log(session?.user, "Session.User");
 
-    // if (session?.user?.id) redirect("/dashboard");
+    if (session?.user.id) redirect("/dashboard");
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-white sm:bg-gray-100 lg:py-10">

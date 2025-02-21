@@ -66,14 +66,9 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             try {
-                console.log(token, "Token");
-                console.log(session, "Session");
-
                 if (token.sub) {
                     await connectDB();
                     const user = await User.findById(token.sub);
-
-                    console.log(user, "User in session");
 
                     if (!user) {
                         return {
