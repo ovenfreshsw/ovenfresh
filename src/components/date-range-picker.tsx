@@ -14,7 +14,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Printer } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -25,14 +24,6 @@ export function DatePickerWithRange({
         from: new Date(),
         to: new Date(),
     });
-
-    // const router = useRouter();
-
-    // function handlePrint() {
-    //     router.push("/test");
-    //     console.log("from:", date?.from);
-    //     console.log("to:", date?.to);
-    // }
 
     return (
         <div className={cn("grid gap-2", className)}>
