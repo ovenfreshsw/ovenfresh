@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import dynamic from "next/dynamic";
-const PDFViewer = dynamic(
-    () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
-    {
-        ssr: false,
-        loading: () => <p>Loading...</p>,
-    }
-);
+// const PDFViewer = dynamic(
+//     () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
+//     {
+//         ssr: false,
+//         loading: () => <p>Loading...</p>,
+//     }
+// );
 
 // Updated Order type to include all required fields
 type Order = {
@@ -230,7 +230,18 @@ const OrdersPDF = ({ orders }: { orders: Order[] }) => (
 
 // Component to display the PDF
 export default function OrdersPDFViewer({ orders }: { orders: Order[] }) {
+    const [PDFViewer, setPDFViewer] = useState<React.ComponentType | null>(
+        null
+    );
+
+    useEffect(() => {
+        import("@react-pdf/renderer").then((mod) => {
+            setPDFViewer(() => mod.PDFViewer);
+        });
+    }, []);
+
     return (
+        // @ts-expect-error: PDFViewer is not defined
         <PDFViewer width="100%" height={600}>
             <OrdersPDF orders={orders} />
         </PDFViewer>
