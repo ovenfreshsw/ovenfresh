@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { format } from "date-fns";
-import dynamic from "next/dynamic";
 // const PDFViewer = dynamic(
 //     () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
 //     {
