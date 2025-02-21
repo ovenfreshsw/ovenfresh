@@ -5,7 +5,16 @@ import OrdersPDFViewer from "./order-pdf-generator";
 // import CateringMenu from "@/models/cateringMenuModel";
 // import connectDB from "@/lib/mongodb";
 
-const TestPage = async () => {
+const TestPage = async ({
+    searchParams,
+}: {
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+    const from = (await searchParams)?.from as string;
+    const to = (await searchParams)?.to as string;
+
+    console.log(from, to);
+
     // await connectDB();
     // const orders = await Catering.find()
     //     .populate({ path: "store", model: Store })

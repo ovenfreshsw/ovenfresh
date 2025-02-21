@@ -14,6 +14,9 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Printer } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { format } from "date-fns";
 
 export function DatePickerWithRange({
     className,
@@ -22,6 +25,14 @@ export function DatePickerWithRange({
         from: new Date(),
         to: new Date(),
     });
+
+    const router = useRouter();
+
+    // function handlePrint() {
+    //     router.push("/test");
+    //     console.log("from:", date?.from);
+    //     console.log("to:", date?.to);
+    // }
 
     return (
         <div className={cn("grid gap-2", className)}>
@@ -72,7 +83,18 @@ export function DatePickerWithRange({
                         <ShadButton size="sm" variant={"ghost"}>
                             Cancel
                         </ShadButton>
-                        <ShadButton size="sm">Print</ShadButton>
+                        <Link
+                            href={`/test?from=${format(
+                                date?.from || new Date(),
+                                "yyyy-MM-dd"
+                            )}&to=${format(
+                                date?.to || new Date(),
+                                "yyyy-MM-dd"
+                            )}`}
+                            target="_blank"
+                        >
+                            <ShadButton size="sm">Print</ShadButton>
+                        </Link>
                     </div>
                 </PopoverContent>
             </Popover>

@@ -1,5 +1,6 @@
 "use server";
 
+import connectDB from "@/lib/mongodb";
 import { ZodTiffinSchema } from "@/lib/zod-schema/schema";
 import TiffinMenu from "@/models/tiffinMenuModel";
 import Tiffin from "@/models/tiffinModel";
@@ -11,6 +12,8 @@ const getFormDataValue = (formData: FormData, key: string) =>
 
 export async function editTiffinOrderAction(formData: FormData) {
     try {
+        await connectDB();
+
         // Get form data
         const orderId = getFormDataValue(formData, "orderId");
         const startDate = getFormDataValue(formData, "startDate");

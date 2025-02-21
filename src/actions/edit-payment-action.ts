@@ -1,5 +1,6 @@
 "use server";
 
+import connectDB from "@/lib/mongodb";
 import { ZodCateringSchema } from "@/lib/zod-schema/schema";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
@@ -7,6 +8,8 @@ import { revalidatePath } from "next/cache";
 
 export async function editPaymentAction(formData: FormData) {
     try {
+        await connectDB();
+
         const {
             orderId,
             orderType,

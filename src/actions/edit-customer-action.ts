@@ -1,5 +1,6 @@
 "use server";
 
+import connectDB from "@/lib/mongodb";
 import { ZodCustomerSchema } from "@/lib/zod-schema/schema";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
@@ -7,6 +8,8 @@ import { revalidatePath } from "next/cache";
 
 export async function editCustomerAction(formData: FormData) {
     try {
+        await connectDB();
+
         const orderId = formData.get("orderId");
         const orderType = formData.get("orderType");
         const firstName = formData.get("firstName");

@@ -1,5 +1,6 @@
 "use server";
 
+import connectDB from "@/lib/mongodb";
 import {
     ZodCateringSchema,
     ZodCustomerSchema,
@@ -22,6 +23,7 @@ type ValidatedDataType = {
 
 export async function editAddressAction(formData: FormData) {
     try {
+        await connectDB();
         const {
             orderId,
             orderType,

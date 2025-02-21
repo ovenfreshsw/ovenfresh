@@ -1,5 +1,6 @@
 "use server";
 
+import connectDB from "@/lib/mongodb";
 import Catering from "@/models/cateringModel";
 import { CateringDocument } from "@/models/types/catering";
 import { revalidatePath } from "next/cache";
@@ -11,6 +12,8 @@ export async function updateOrderItemsAction(
     prevTax: number
 ) {
     try {
+        await connectDB();
+
         if (!orderId) return { error: "Invalid order ID." };
         if (!items) return { error: "Invalid items." };
 

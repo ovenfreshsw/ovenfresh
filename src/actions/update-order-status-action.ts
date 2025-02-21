@@ -1,5 +1,6 @@
 "use server";
 
+import connectDB from "@/lib/mongodb";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
 import { revalidatePath } from "next/cache";
@@ -19,6 +20,8 @@ export async function updateOrderStatusAction(
     settlement: boolean
 ) {
     try {
+        await connectDB();
+
         if (!orderId) return { error: "Invalid order ID." };
         if (!status) return { error: "Invalid status." };
         if (!orderType) return { error: "Invalid order type." };
