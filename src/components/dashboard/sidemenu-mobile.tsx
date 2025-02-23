@@ -3,12 +3,11 @@ import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
-import MenuButton from "./menu-button";
 import MenuContent from "./menu-content";
 import SignOutButton from "../sign-out-button";
-import { Badge } from "../ui/badge";
+import { Badge as ShadBadge } from "../ui/badge";
+import { Badge } from "@heroui/badge";
 import { MapPin } from "lucide-react";
 
 interface SideMenuMobileProps {
@@ -35,7 +34,7 @@ export default function SideMenuMobile({
                 zIndex: (theme) => theme.zIndex.drawer + 1,
                 [`& .${drawerClasses.paper}`]: {
                     backgroundImage: "none",
-                    backgroundColor: "background.paper",
+                    backgroundColor: "#f8f1e9",
                 },
             }}
         >
@@ -60,26 +59,34 @@ export default function SideMenuMobile({
                             sx={{ width: 24, height: 24 }}
                             className="capitalize"
                         />
-                        <Typography
-                            component="p"
-                            variant="h6"
-                            className="text-primary capitalize"
-                        >
-                            {username} - {role}
-                        </Typography>
+                        <div className="flex items-center gap-1">
+                            <h6 className="text-primary capitalize text-lg">
+                                {username}
+                            </h6>
+                            <p className="text-primary/70">
+                                &#040;
+                                <span className="text-xs mx-1">{role}</span>
+                                &#041;
+                            </p>
+                        </div>
                     </Stack>
-                    <MenuButton showBadge>
-                        <NotificationsRoundedIcon />
-                    </MenuButton>
+                    <Badge
+                        color="danger"
+                        content=""
+                        placement="top-right"
+                        shape="circle"
+                    >
+                        <NotificationsRoundedIcon color="primary" />
+                    </Badge>
                 </Stack>
                 <div className="flex items-center gap-2 px-6 mb-2">
-                    <Badge
+                    <ShadBadge
                         variant="outline"
                         className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-primary"
                     >
                         <MapPin className="h-4 w-4 text-primary" />
                         <span className="capitalize">{location}</span>
-                    </Badge>
+                    </ShadBadge>
                 </div>
                 <Divider />
                 <Stack sx={{ flexGrow: 1 }}>

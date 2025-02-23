@@ -11,7 +11,8 @@ import Typography from "@mui/material/Typography";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import SideMenuMobile from "./sidemenu-mobile";
-import MenuButton from "./menu-button";
+import { Button } from "../ui/button";
+import Image from "next/image";
 
 const Toolbar = styled(MuiToolbar)({
     width: "100%",
@@ -50,12 +51,12 @@ export default function AppNavbar({
             sx={{
                 display: { xs: "auto", md: "none" },
                 boxShadow: 0,
-                bgcolor: "background.paper",
                 backgroundImage: "none",
                 borderBottom: "1px solid",
                 borderColor: "divider",
                 top: "var(--template-frame-height, 0px)",
             }}
+            className="bg-primary"
         >
             <Toolbar variant="regular">
                 <Stack
@@ -70,21 +71,36 @@ export default function AppNavbar({
                     <Stack
                         direction="row"
                         spacing={1}
-                        sx={{ justifyContent: "center", mr: "auto" }}
+                        sx={{
+                            justifyContent: "center",
+                            mr: "auto",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
                     >
-                        <CustomIcon />
+                        <Image
+                            src={"/logo.webp"}
+                            alt="logo"
+                            width={35}
+                            height={30}
+                        />
                         <Typography
                             variant="h4"
                             component="h1"
-                            sx={{ color: "text.primary" }}
+                            className="text-primary-foreground"
                         >
                             Dashboard
                         </Typography>
                     </Stack>
-                    {/* <ColorModeIconDropdown /> */}
-                    <MenuButton aria-label="menu" onClick={toggleDrawer(true)}>
+                    <Button
+                        variant={"outline"}
+                        size={"icon"}
+                        aria-label="menu"
+                        onClick={toggleDrawer(true)}
+                        className="bg-primary-foreground text-primary"
+                    >
                         <MenuRoundedIcon />
-                    </MenuButton>
+                    </Button>
                     <SideMenuMobile
                         open={open}
                         toggleDrawer={toggleDrawer}

@@ -41,7 +41,7 @@ export default function SideMenu() {
                 <SelectContent />
             </Box> */}
             {/* <Divider /> */}
-            <div className="flex justify-center py-3">
+            <div className="flex justify-center py-3 bg-primary-foreground">
                 <Image src={"/logo.webp"} alt="logo" width={100} height={100} />
             </div>
             <Box
@@ -51,6 +51,7 @@ export default function SideMenu() {
                     display: "flex",
                     flexDirection: "column",
                 }}
+                className="bg-primary-foreground"
             >
                 <MenuContent />
             </Box>

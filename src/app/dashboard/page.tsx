@@ -1,131 +1,135 @@
-// import {
-//     Select,
-//     SelectContent,
-//     SelectItem,
-//     SelectTrigger,
-//     SelectValue,
-// } from "@/components/ui/select";
-// import { NumberTicker } from "@/components/ui/number-ticker";
-// import Upload from "@/components/upload/upload";
-// import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
-// import path from "path";
-// import fs from "fs";
-// import { RevenueGraph } from "@/components/graphs/revenue-graph";
-// import Table from "@/components/data-table/test-table";
-
-// const Home = async () => {
-// const [resource, setResource] = React.useState<
-//     string | CloudinaryUploadWidgetInfo | undefined
-// >();
-
-//     return (
-//         // <div>
-//         //     Home
-//         //     <Upload setResource={setResource} folder="catering_menu" />
-//         //     {resource?.url && (
-//         //         <Image src={resource.url} alt="Test" width={100} height={100} />
-//         //     )}
-//         // </div>
-//         <div className="md:px-3 py-5">
-//             <div className="flex justify-between items-center">
-//                 <span className="font-medium">Overview</span>
-//                 <div className="space-y-2">
-//                     {/* <Select defaultValue="1">
-//                         Adjust the min-width to fit the longest option
-//                         <SelectTrigger className="w-auto min-w-48 max-w-full">
-//                             <SelectValue placeholder="Select framework" />
-//                         </SelectTrigger>
-//                         <SelectContent>
-//                             <SelectItem value="1">Last week</SelectItem>
-//                             <SelectItem value="2">Last two week</SelectItem>
-//                             <SelectItem value="3">Last Month</SelectItem>
-//                         </SelectContent>
-//                     </Select> */}
-//                 </div>
-//             </div>
-//             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-7">
-//                 <div className="border rounded-lg p-6 space-y-4 shadow">
-//                     <span className="font-medium block">Total revenue</span>
-//                     <span className="text-2xl font-semibold block">
-//                         $
-//                         <NumberTicker
-//                             value={2.6}
-//                             decimalPlaces={1}
-//                             direction="up"
-//                         />
-//                         M
-//                     </span>
-//                     <div className="text-xs">
-//                         <span className="bg-green-500/20 rounded-md px-1.5 py-1">
-//                             +4.5%
-//                         </span>
-//                         &nbsp;
-//                         <span>from last week</span>
-//                     </div>
-//                 </div>
-//                 <div className="border rounded-lg p-6 space-y-4 shadow">
-//                     <span className="font-medium block">
-//                         Average order value
-//                     </span>
-//                     <span className="text-2xl font-semibold block">
-//                         $<NumberTicker value={455} direction="up" />
-//                     </span>
-//                     <div className="text-xs">
-//                         <span className="bg-red-500/20 rounded-md px-1.5 py-1">
-//                             -0.5%
-//                         </span>
-//                         &nbsp;
-//                         <span>from last week</span>
-//                     </div>
-//                 </div>
-//                 <div className="border rounded-lg p-6 space-y-4 shadow">
-//                     <span className="font-medium block">Total rentals</span>
-//                     <span className="text-2xl font-semibold block">
-//                         <NumberTicker value={257} direction="up" />
-//                     </span>
-//                     <div className="text-xs">
-//                         <span className="bg-green-500/20 rounded-md px-1.5 py-1">
-//                             +0.5%
-//                         </span>
-//                         &nbsp;
-//                         <span>from last week</span>
-//                     </div>
-//                 </div>
-//                 <div className="border rounded-lg p-6 space-y-4 shadow">
-//                     <span className="font-medium block">Total customers</span>
-//                     <span className="text-2xl font-semibold block">
-//                         <NumberTicker value={1256} direction="up" />
-//                     </span>
-//                     <div className="text-xs">
-//                         <span className="bg-green-500/20 rounded-md px-1.5 py-1">
-//                             +0.1%
-//                         </span>
-//                         &nbsp;
-//                         <span>from last week</span>
-//                     </div>
-//                 </div>
-//             </div>
-//             <div className="py-10 space-y-7">
-//                 <div className="border rounded-lg space-y-7 p-6 shadow">
-//                     <span className="font-medium">Recent orders</span>
-//                     <Table />
-//                 </div>
-//                 <div className="grid grid-cols-2 gap-4">
-//                     <RevenueGraph />
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Home;
-
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Header from "@/components/dashboard/header";
 import MainGrid from "@/components/dashboard/main-grid";
+import connectDB from "@/lib/mongodb";
+import Tiffin from "@/models/tiffinModel";
+import Catering from "@/models/cateringModel";
+import { Model } from "mongoose";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+    await connectDB();
+
+    // Define OrderDocument type for Mongoose documents
+    interface OrderDocument extends Document {
+        createdAt: Date;
+    }
+
+    // Function to generate the last 30 days as strings
+    const generateLastNDays = (days: number): string[] => {
+        return Array.from({ length: days }, (_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            return date.toISOString().split("T")[0]; // Format: "YYYY-MM-DD"
+        }).reverse();
+    };
+
+    // Get last 30 and previous 30 days
+    const last30Days: string[] = generateLastNDays(30);
+    const prev30Days: string[] = generateLastNDays(30).map((date) => {
+        const d = new Date(date);
+        d.setDate(d.getDate() - 30);
+        return d.toISOString().split("T")[0];
+    });
+
+    const sixtyDaysAgo: Date = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+    // Define return type
+    interface OrderStats {
+        totalLast30Days: number;
+        totalPrev30Days: number;
+        percentageChange: string;
+        trend: "up" | "down" | "same";
+        last30DaysCounts: number[];
+    }
+
+    // Function to fetch order statistics
+    const fetchOrderStats = async (
+        Model: Model<OrderDocument>
+    ): Promise<OrderStats> => {
+        const orderSummary = await Model.aggregate([
+            { $match: { createdAt: { $gte: sixtyDaysAgo } } },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$createdAt",
+                        },
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { _id: 1 } },
+        ]);
+
+        const orderCountsMap: Record<string, number> = {};
+
+        // Populate counts from MongoDB
+        orderSummary.forEach(
+            ({ _id, count }: { _id: string; count: number }) => {
+                orderCountsMap[_id] = count;
+            }
+        );
+
+        // Ensure all 30 days have values, defaulting to 0 if missing
+        const last30DaysCounts: number[] = last30Days.map(
+            (date) => orderCountsMap[date] || 0
+        );
+        const prev30DaysCounts: number[] = prev30Days.map(
+            (date) => orderCountsMap[date] || 0
+        );
+
+        // Calculate total orders for last 30 days and previous 30 days
+        const totalLast30Days: number = last30DaysCounts.reduce(
+            (sum, count) => sum + count,
+            0
+        );
+        const totalPrev30Days: number = prev30DaysCounts.reduce(
+            (sum, count) => sum + count,
+            0
+        );
+
+        // Calculate percentage change
+        const percentageChange: number =
+            totalPrev30Days === 0
+                ? totalLast30Days > 0
+                    ? 100
+                    : 0
+                : ((totalLast30Days - totalPrev30Days) / totalPrev30Days) * 100;
+
+        const formattedPercentageChange = percentageChange.toFixed(0);
+
+        // Determine trend
+        let trend: "up" | "down" | "same" = "same";
+        if (totalLast30Days > totalPrev30Days) {
+            trend = "up";
+        } else if (totalLast30Days < totalPrev30Days) {
+            trend = "down";
+        }
+
+        return {
+            totalLast30Days,
+            totalPrev30Days,
+            percentageChange: formattedPercentageChange,
+            trend,
+            last30DaysCounts,
+        };
+    };
+
+    // Fetch stats for both Tiffin and Catering
+    const getStats = async () => {
+        const [tiffinStats, cateringStats] = await Promise.all([
+            fetchOrderStats(Tiffin),
+            fetchOrderStats(Catering),
+        ]);
+
+        return { tiffinStats, cateringStats };
+    };
+
+    const { tiffinStats, cateringStats } = await getStats();
+
     return (
         <Box
             component="main"
@@ -145,7 +149,26 @@ export default function Dashboard() {
                     mt: { xs: 8, md: 2 },
                 }}
             >
-                <MainGrid />
+                <MainGrid
+                    tiffinStat={{
+                        percentageChange:
+                            tiffinStats.trend === "up"
+                                ? `+${tiffinStats.percentageChange}%`
+                                : `-${tiffinStats.percentageChange}%`,
+                        trend: tiffinStats.trend,
+                        data: tiffinStats.last30DaysCounts,
+                        totalLast30Days: tiffinStats.totalLast30Days,
+                    }}
+                    cateringStat={{
+                        percentageChange:
+                            cateringStats.trend === "up"
+                                ? `+${cateringStats.percentageChange}%`
+                                : `-${cateringStats.percentageChange}%`,
+                        trend: cateringStats.trend,
+                        data: cateringStats.last30DaysCounts,
+                        totalLast30Days: cateringStats.totalLast30Days,
+                    }}
+                />
             </Stack>
         </Box>
     );

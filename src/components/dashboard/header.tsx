@@ -2,14 +2,14 @@ import * as React from "react";
 import Stack from "@mui/material/Stack";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import NavbarBreadcrumbs from "./navbar-breadcrumbs";
-import MenuButton from "./menu-button";
 import { NavUser } from "../nav/user";
 import { MapPin } from "lucide-react";
-import { Badge } from "../ui/badge";
+import { Badge as ShadBadge } from "../ui/badge";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
+import { Badge } from "@heroui/badge";
 
 export default async function Header() {
     const session = await getServerSession(authOptions);
@@ -40,17 +40,27 @@ export default async function Header() {
         >
             <NavbarBreadcrumbs />
             <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
-                <MenuButton showBadge aria-label="Open notifications">
-                    <NotificationsRoundedIcon className="text-white" />
-                </MenuButton>
-                <div className="flex items-center gap-2">
+                <button className="px-1 flex items-center">
                     <Badge
+                        color="danger"
+                        content=""
+                        placement="top-right"
+                        shape="circle"
+                        classNames={{
+                            badge: "border-none min-h-2 min-w-2 w-2.5 h-2.5",
+                        }}
+                    >
+                        <NotificationsRoundedIcon className="text-primary-foreground" />
+                    </Badge>
+                </button>
+                <div className="flex items-center gap-2">
+                    <ShadBadge
                         variant="outline"
-                        className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-white"
+                        className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-primary-foreground"
                     >
                         <MapPin className="h-4 w-4" />
                         <span className="capitalize">{store.location}</span>
-                    </Badge>
+                    </ShadBadge>
                 </div>
                 <NavUser
                     user={{

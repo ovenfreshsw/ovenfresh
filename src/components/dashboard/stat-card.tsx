@@ -15,21 +15,26 @@ export type StatCardProps = {
     interval: string;
     trend: "up" | "down" | "neutral";
     data: number[];
+    percentage?: string;
 };
 
-function getDaysInMonth(month: number, year: number) {
-    const date = new Date(year, month, 0);
-    const monthName = date.toLocaleDateString("en-US", {
-        month: "short",
-    });
-    const daysInMonth = date.getDate();
+function getLast30Days() {
     const days = [];
-    let i = 1;
-    while (days.length < daysInMonth) {
-        days.push(`${monthName} ${i}`);
-        i += 1;
+    const today = new Date();
+
+    for (let i = 0; i < 30; i++) {
+        const pastDate = new Date();
+        pastDate.setDate(today.getDate() - i);
+
+        const formattedDate = pastDate.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+        });
+
+        days.push(formattedDate);
     }
-    return days;
+
+    return days.reverse(); // Reverse to show oldest first
 }
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
@@ -49,9 +54,11 @@ export default function StatCard({
     interval,
     trend,
     data,
+    percentage,
 }: StatCardProps) {
     const theme = useTheme();
-    const daysInWeek = getDaysInMonth(4, 2024);
+    // const daysInWeek = getDaysInMonth(4, 2024);
+    const daysInWeek = getLast30Days();
 
     const trendColors = {
         up:
@@ -79,8 +86,12 @@ export default function StatCard({
     const trendValues = { up: "+25%", down: "-25%", neutral: "+5%" };
 
     return (
-        <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-            <CardContent>
+        <Card
+            variant="outlined"
+            sx={{ height: "100%", flexGrow: 1 }}
+            className="!bg-primary-foreground"
+        >
+            <CardContent className="bg-transparent">
                 <Typography component="h2" variant="subtitle2" gutterBottom>
                     {title}
                 </Typography>
@@ -106,7 +117,9 @@ export default function StatCard({
                             <Chip
                                 size="small"
                                 color={color}
-                                label={trendValues[trend]}
+                                label={
+                                    percentage ? percentage : trendValues[trend]
+                                }
                             />
                         </Stack>
                         <Typography

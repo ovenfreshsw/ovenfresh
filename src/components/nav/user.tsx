@@ -36,10 +36,10 @@ export function NavUser({
     }
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex flex-row text-white gap-2 bg-[#f8f1e9]/30 rounded-xl p-1 pe-3">
+            <DropdownMenuTrigger className="flex flex-row text-primary gap-2 bg-primary-foreground rounded-xl p-1 pe-3">
                 <Avatar className="h-8 w-8 rounded-xl text-primary">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-xl uppercase">
+                    <AvatarFallback className="rounded-xl uppercase bg-primary text-primary-foreground">
                         {user.name[0]}
                     </AvatarFallback>
                 </Avatar>

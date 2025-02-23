@@ -10,6 +10,20 @@ const nextConfig: NextConfig = {
             },
         ],
     },
+    redirects: async () => {
+        return [
+            {
+                source: "/sticker",
+                destination: "/dashboard/order",
+                permanent: true,
+            },
+            {
+                source: "/summary",
+                destination: "/dashboard/order",
+                permanent: true,
+            },
+        ];
+    },
     async headers() {
         return [
             {
