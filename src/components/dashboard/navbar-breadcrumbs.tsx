@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Breadcrumbs, { breadcrumbsClasses } from "@mui/material/Breadcrumbs";
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
     margin: theme.spacing(1, 0),
@@ -20,12 +21,20 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
 
 export default function NavbarBreadcrumbs() {
     const pathname = usePathname();
+    const session = useSession();
+    const role = session.data?.user.role || "";
+
     // const currentPath = pathname.split("/").at(-1);
 
     return (
         <StyledBreadcrumbs
             aria-label="breadcrumb"
-            separator={<NavigateNextRoundedIcon fontSize="small" />}
+            separator={
+                <NavigateNextRoundedIcon
+                    className="text-white"
+                    fontSize="small"
+                />
+            }
         >
             {pathname
                 .split("/")
@@ -34,9 +43,11 @@ export default function NavbarBreadcrumbs() {
                     <Typography
                         variant="body1"
                         key={i}
-                        className="capitalize last:!font-medium"
+                        className="capitalize last:!font-medium text-white"
                     >
-                        {path}
+                        {role === "MANAGER" && path === "dashboard"
+                            ? `Manager ${path}`
+                            : path}
                     </Typography>
                 ))}
         </StyledBreadcrumbs>

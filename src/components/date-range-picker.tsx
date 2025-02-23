@@ -19,7 +19,10 @@ import { format } from "date-fns";
 
 export function DatePickerWithRange({
     className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+    orderType,
+}: React.HTMLAttributes<HTMLDivElement> & {
+    orderType: "tiffin" | "catering";
+}) {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: new Date(),
         to: new Date(),
@@ -29,28 +32,6 @@ export function DatePickerWithRange({
         <div className={cn("grid gap-2", className)}>
             <Popover>
                 <PopoverTrigger asChild>
-                    {/* <Button
-                        id="date"
-                        variant={"outline"}
-                        className={cn(
-                            "w-[300px] justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
-                        )}
-                    >
-                        <CalendarIcon />
-                        {date?.from ? (
-                            date.to ? (
-                                <>
-                                    {format(date.from, "LLL dd, y")} -{" "}
-                                    {format(date.to, "LLL dd, y")}
-                                </>
-                            ) : (
-                                format(date.from, "LLL dd, y")
-                            )
-                        ) : (
-                            <span>Pick a date</span>
-                        )}
-                    </Button> */}
                     <Button
                         size="sm"
                         radius="sm"
@@ -75,7 +56,7 @@ export function DatePickerWithRange({
                             Cancel
                         </ShadButton>
                         <Link
-                            href={`/test?from=${format(
+                            href={`/summary/${orderType}?from=${format(
                                 date?.from || new Date(),
                                 "yyyy-MM-dd"
                             )}&to=${format(

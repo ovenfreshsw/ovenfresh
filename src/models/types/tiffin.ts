@@ -31,4 +31,6 @@ export interface TiffinDocumentPopulate
     store: StoreDocument;
     customer: CustomerDocument;
     address: AddressDocument;
+    createdAt: Date;
+    updatedAt: Date;
 }

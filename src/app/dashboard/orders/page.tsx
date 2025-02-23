@@ -27,16 +27,16 @@ const Orders = async () => {
 
     return (
         <Box component="main" className="flex-grow overflow-auto">
+            <Header />
             <Stack
                 spacing={2}
                 sx={{
                     alignItems: "center",
                     mx: 3,
                     pb: 5,
-                    mt: { xs: 8, md: 0 },
+                    mt: { xs: 8, md: 2 },
                 }}
             >
-                <Header />
                 <Box
                     sx={{
                         width: "100%",

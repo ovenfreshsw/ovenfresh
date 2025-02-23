@@ -1,12 +1,9 @@
+"use client";
+
 import * as React from "react";
 import Grid from "@mui/material/Grid2";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Copyright from "./copyright";
-import ChartUserByCountry from "./chart-user-by-country";
-import CustomizedTreeView from "./customized-data-tree-view";
-import CustomizedDataGrid from "./customized-data-grid";
 import HighlightedCard from "./highlighted-card";
 import PageViewsBarChart from "./page-views-bar-chart";
 import SessionsChart from "./sessions-chart";
@@ -76,24 +73,6 @@ export default function MainGrid() {
                     <PageViewsBarChart />
                 </Grid>
             </Grid>
-            <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-                Details
-            </Typography>
-            <Grid container spacing={2} columns={12}>
-                <Grid size={{ xs: 12, lg: 9 }}>
-                    <CustomizedDataGrid />
-                </Grid>
-                <Grid size={{ xs: 12, lg: 3 }}>
-                    <Stack
-                        gap={2}
-                        direction={{ xs: "column", sm: "row", lg: "column" }}
-                    >
-                        <CustomizedTreeView />
-                        <ChartUserByCountry />
-                    </Stack>
-                </Grid>
-            </Grid>
-            <Copyright sx={{ my: 4 }} />
         </Box>
     );
 }

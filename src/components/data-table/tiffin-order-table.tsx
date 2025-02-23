@@ -27,11 +27,13 @@ import {
     ListFilter,
     Loader2,
     PlusCircle,
+    Printer,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { TiffinDocument, TiffinDocumentPopulate } from "@/models/types/tiffin";
 import Link from "next/link";
 import { DeleteOrderDrawer } from "../drawer/delete-order-drawer";
+import { DatePickerWithRange } from "../date-range-picker";
 
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -345,6 +347,18 @@ export default function TiffinOrderTable({
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
+                    </div>
+                    <div className="flex-1 flex justify-end gap-2">
+                        <DatePickerWithRange orderType="tiffin" />
+                        <Button
+                            size="sm"
+                            radius="sm"
+                            startContent={<Printer className="size-4" />}
+                            variant="solid"
+                            className="bg-white shadow hover:bg-gray-100"
+                        >
+                            Print Stickers
+                        </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

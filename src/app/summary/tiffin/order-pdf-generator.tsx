@@ -3,39 +3,26 @@
 import React, { useEffect, useState } from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { format } from "date-fns";
-// const PDFViewer = dynamic(
-//     () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
-//     {
-//         ssr: false,
-//         loading: () => <p>Loading...</p>,
-//     }
-// );
 
 // Updated Order type to include all required fields
 type Order = {
     id: string;
-    store: {
-        name: string;
-        id: string;
-    };
-    customer: {
-        name: string;
-        phone: string;
-    };
+    store: string;
+    customer: string;
+    phone: string;
     address: string;
-    deliveryDate: string;
-    createdDate: string;
+    createdAt: Date;
+    startDate: Date;
+    endDate: Date;
     totalPrice: number;
     tax: number;
     advancePaid: number;
     pendingBalance: number;
     paymentMethod: string;
     note: string;
-    items: Array<{
-        name: string;
-        quantity: number;
-        price: number;
-    }>;
+    status: string;
+    type: string;
+    numberOfWeeks: number;
 };
 
 // Updated styles to accommodate the new table structure
@@ -99,10 +86,10 @@ const styles = StyleSheet.create({
 });
 
 // Updated PDF document component
-const OrdersPDF = ({ orders }: { orders: Order[] }) => (
+const OrdersPDF = ({ orders }: { orders: Order[] | [] }) => (
     <Document>
         <Page size="A4" orientation="landscape" style={styles.page}>
-            <Text style={styles.title}>Orders Report</Text>
+            <Text style={styles.title}>Tiffin Orders Report</Text>
             <Text style={styles.subtitle}>
                 Printed on: {format(new Date(), "MMMM d, yyyy HH:mm:ss")}
             </Text>
@@ -128,7 +115,7 @@ const OrdersPDF = ({ orders }: { orders: Order[] }) => (
                         <Text>Created</Text>
                     </View>
                     <View style={styles.tableColHeader}>
-                        <Text>Delivery</Text>
+                        <Text>Date</Text>
                     </View>
                     <View style={styles.tableColHeader}>
                         <Text>Total</Text>
@@ -154,13 +141,13 @@ const OrdersPDF = ({ orders }: { orders: Order[] }) => (
                                 <Text>{order.id}</Text>
                             </View>
                             <View style={styles.tableCol}>
-                                <Text>{order.store.name}</Text>
+                                <Text>{order.store}</Text>
                             </View>
                             <View style={styles.tableCol}>
-                                <Text>{order.customer.name}</Text>
+                                <Text>{order.customer}</Text>
                             </View>
                             <View style={styles.tableCol}>
-                                <Text>{order.customer.phone}</Text>
+                                <Text>{order.phone}</Text>
                             </View>
                             <View style={styles.tableColWide}>
                                 <Text>{order.address}</Text>
@@ -168,18 +155,31 @@ const OrdersPDF = ({ orders }: { orders: Order[] }) => (
                             <View style={styles.tableCol}>
                                 <Text>
                                     {format(
-                                        new Date(order.createdDate),
+                                        new Date(
+                                            order.createdAt.getUTCFullYear(),
+                                            order.createdAt.getUTCMonth(),
+                                            order.createdAt.getUTCDate()
+                                        ),
                                         "MM/dd/yyyy"
                                     )}
                                 </Text>
                             </View>
                             <View style={styles.tableCol}>
                                 <Text>
+                                    SD:{" "}
                                     {format(
-                                        new Date(order.deliveryDate),
-                                        "MM/dd/yyyy"
+                                        new Date(order.startDate),
+                                        "dd/MM/yyyy"
                                     )}
                                 </Text>
+                                <Text>
+                                    ED:{" "}
+                                    {format(
+                                        new Date(order.endDate),
+                                        "dd/MM/yyyy"
+                                    )}
+                                </Text>
+                                <Text>No. of weeks: {order.numberOfWeeks}</Text>
                             </View>
                             <View style={styles.tableCol}>
                                 <Text>${order.totalPrice.toFixed(2)}</Text>
@@ -197,27 +197,27 @@ const OrdersPDF = ({ orders }: { orders: Order[] }) => (
                                 <Text>{order.paymentMethod}</Text>
                             </View>
                         </View>
-                        {/* Items sub-table */}
-                        <View style={styles.tableRow}>
-                            <View style={[styles.tableCol, { width: "100%" }]}>
-                                <Text style={{ fontWeight: "bold" }}>
-                                    Items:
-                                </Text>
-                                {order.items.map((item, index) => (
-                                    <Text key={index}>
-                                        {item.name} (x{item.quantity}) - $
-                                        {item.price.toFixed(2)}
-                                    </Text>
-                                ))}
-                            </View>
-                        </View>
                         {/* Note */}
                         <View style={styles.tableRow}>
-                            <View style={[styles.tableCol, { width: "100%" }]}>
+                            <View style={[styles.tableCol, { width: "80%" }]}>
                                 <Text style={{ fontWeight: "bold" }}>
                                     Note:{" "}
                                 </Text>
                                 <Text>{order.note}</Text>
+                            </View>
+                            <View style={[styles.tableCol, { width: "10%" }]}>
+                                <Text style={{ fontWeight: "bold" }}>
+                                    Type:{" "}
+                                </Text>
+                                <Text style={{ textTransform: "capitalize" }}>
+                                    {order.type}
+                                </Text>
+                            </View>
+                            <View style={[styles.tableCol, { width: "10%" }]}>
+                                <Text style={{ fontWeight: "bold" }}>
+                                    Status:{" "}
+                                </Text>
+                                <Text>{order.status}</Text>
                             </View>
                         </View>
                     </React.Fragment>
@@ -228,7 +228,7 @@ const OrdersPDF = ({ orders }: { orders: Order[] }) => (
 );
 
 // Component to display the PDF
-export default function OrdersPDFViewer({ orders }: { orders: Order[] }) {
+export default function OrdersPDFViewer({ orders }: { orders: Order[] | [] }) {
     const [PDFViewer, setPDFViewer] = useState<React.ComponentType | null>(
         null
     );
@@ -239,10 +239,14 @@ export default function OrdersPDFViewer({ orders }: { orders: Order[] }) {
         });
     }, []);
 
-    return (
+    return PDFViewer ? (
         // @ts-expect-error: PDFViewer is not defined
         <PDFViewer width="100%" height={600}>
             <OrdersPDF orders={orders} />
         </PDFViewer>
+    ) : (
+        <div className="h-screen flex justify-center items-center">
+            <p>Loading PDF Viewer...</p>
+        </div>
     );
 }

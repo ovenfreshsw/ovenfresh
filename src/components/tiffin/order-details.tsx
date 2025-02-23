@@ -125,7 +125,6 @@ export default function TiffinOrderDetails({
                     <div className="text-sm text-muted-foreground">
                         Created on{" "}
                         {format(
-                            // @ts-expect-error: orderData type doesn't contain createdAt
                             orderData?.createdAt,
                             "MMM d, yyyy 'at' h:mm a"
                         )}{" "}

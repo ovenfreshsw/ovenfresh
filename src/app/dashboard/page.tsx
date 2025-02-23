@@ -120,14 +120,6 @@
 
 // export default Home;
 
-"use client";
-
-import * as React from "react";
-import type {} from "@mui/x-date-pickers/themeAugmentation";
-import type {} from "@mui/x-charts/themeAugmentation";
-import type {} from "@mui/x-data-grid-pro/themeAugmentation";
-import type {} from "@mui/x-tree-view/themeAugmentation";
-import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Header from "@/components/dashboard/header";
@@ -137,24 +129,22 @@ export default function Dashboard() {
     return (
         <Box
             component="main"
-            sx={(theme) => ({
+            sx={{
                 flexGrow: 1,
-                backgroundColor: theme.vars
-                    ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
-                    : alpha(theme.palette.background.default, 1),
                 overflow: "auto",
-            })}
+                // position: "relative",
+            }}
         >
+            <Header />
             <Stack
                 spacing={2}
                 sx={{
                     alignItems: "center",
                     mx: 3,
                     pb: 5,
-                    mt: { xs: 8, md: 0 },
+                    mt: { xs: 8, md: 2 },
                 }}
             >
-                <Header />
                 <MainGrid />
             </Stack>
         </Box>

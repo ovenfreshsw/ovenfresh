@@ -365,7 +365,7 @@ export default function CateringOrderTable({
                         </Dropdown>
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
-                        <DatePickerWithRange />
+                        <DatePickerWithRange orderType="catering" />
                         <Button
                             size="sm"
                             radius="sm"
