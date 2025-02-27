@@ -58,7 +58,7 @@ async function getHandler(
         // Build the query object dynamically based on the presence of storeId
         const query = storeId ? { store: storeId } : {};
 
-        const orders = await Catering.findOne({ ...query, _id: orderId })
+        const orders = await Catering.findOne({ ...query, orderId })
             .populate({ path: "address", model: Address })
             .populate({ path: "customer", model: Customer })
             .populate({ path: "store", model: Store })

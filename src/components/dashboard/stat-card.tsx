@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -61,18 +63,9 @@ export default function StatCard({
     const daysInWeek = getLast30Days();
 
     const trendColors = {
-        up:
-            theme.palette.mode === "light"
-                ? theme.palette.success.main
-                : theme.palette.success.dark,
-        down:
-            theme.palette.mode === "light"
-                ? theme.palette.error.main
-                : theme.palette.error.dark,
-        neutral:
-            theme.palette.mode === "light"
-                ? theme.palette.grey[400]
-                : theme.palette.grey[700],
+        up: theme.palette.success.main,
+        down: theme.palette.error.main,
+        neutral: theme.palette.grey[400],
     };
 
     const labelColors = {

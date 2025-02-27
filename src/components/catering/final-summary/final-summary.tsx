@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import FinalItemCard from "./final-item-card";
 import {
     setAdvancePaid,
+    setFullyPaid,
     setNote,
     setPendingBalance,
     setTaxAmount,
@@ -29,17 +30,13 @@ export default function FinalSummary({
     const [noTax, setNoTax] = useState(false);
     const orderItems = useSelector((state: RootState) => state.cateringItem);
     const orderDetail = useSelector((state: RootState) => state.cateringOrder);
+    const deliveryCharge = orderDetail.deliveryCharge;
 
     const dispatch = useDispatch();
 
     const handleAdvanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        if (
-            value === "" ||
-            (Number.parseFloat(value) > 0 &&
-                Number.parseFloat(value) <=
-                    Number(form.getValues("totalPrice")))
-        ) {
+        if (value === "" || Number.parseFloat(value) > 0) {
             dispatch(setAdvancePaid(Number(value)));
         }
     };
@@ -57,20 +54,23 @@ export default function FinalSummary({
     useEffect(() => {
         if (noTax) {
             dispatch(setTaxAmount(0));
-            dispatch(setTotalPrice(subtotal));
+            dispatch(setTotalPrice(subtotal + deliveryCharge));
             return;
         }
         const tax =
             (subtotal * (Number(process.env.NEXT_PUBLIC_TAX_AMOUNT) || 0)) /
             100;
-        const total = subtotal + tax;
+        const total = subtotal + tax + deliveryCharge;
         dispatch(setTotalPrice(total));
         dispatch(setTaxAmount(tax));
-    }, [subtotal, noTax, dispatch]);
+    }, [subtotal, noTax, dispatch, deliveryCharge]);
 
     useEffect(() => {
         dispatch(
             setPendingBalance(orderDetail.totalPrice - orderDetail.advancePaid)
+        );
+        dispatch(
+            setFullyPaid(orderDetail.totalPrice - orderDetail.advancePaid <= 0)
         );
     }, [orderDetail.totalPrice, orderDetail.advancePaid, dispatch]);
 
@@ -158,6 +158,10 @@ export default function FinalSummary({
                                 </span>
                             </div>
                             <div className="flex justify-between">
+                                <span>Delivery Charge</span>
+                                <span>${orderDetail.deliveryCharge}</span>
+                            </div>
+                            <div className="flex justify-between">
                                 <span>Total</span>
                                 <span>
                                     ${orderDetail.totalPrice.toFixed(2)}
@@ -166,7 +170,13 @@ export default function FinalSummary({
                             <Separator />
                             <div className="flex justify-between font-semibold">
                                 <span>Pending Pay</span>
-                                <span>
+                                <span
+                                    className={
+                                        orderDetail.pendingBalance < 0
+                                            ? "text-red-500"
+                                            : ""
+                                    }
+                                >
                                     ${orderDetail.pendingBalance.toFixed(2)}
                                 </span>
                             </div>
@@ -217,7 +227,8 @@ export default function FinalSummary({
                                 </Label>
                                 <Input
                                     id="advance-amount"
-                                    type="string"
+                                    type="number"
+                                    step=""
                                     placeholder="Enter advance amount"
                                     value={orderDetail.advancePaid}
                                     onChange={handleAdvanceChange}

@@ -27,7 +27,6 @@ import {
     ListFilter,
     Loader2,
     PlusCircle,
-    Printer,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { TiffinDocument, TiffinDocumentPopulate } from "@/models/types/tiffin";
@@ -60,7 +59,7 @@ export const columns = [
 
 export const statusOptions = [
     { name: "Pending", uid: "pending" },
-    { name: "In Progress", uid: "in_progress" },
+    { name: "Ongoing", uid: "ongoing" },
     { name: "Delivered", uid: "delivered" },
     { name: "Cancelled", uid: "cancelled" },
 ];
@@ -69,7 +68,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
     DELIVERED: "success",
     CANCELLED: "danger",
     PENDING: "warning",
-    IN_PROGRESS: "primary",
+    ONGOING: "primary",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -77,8 +76,6 @@ const INITIAL_VISIBLE_COLUMNS = [
     "startDate",
     "endDate",
     "numberOfWeeks",
-    "totalPrice",
-    "pendingBalance",
     "status",
     "actions",
 ];
@@ -190,7 +187,7 @@ export default function TiffinOrderTable({
                             variant="flat"
                             className="capitalize"
                         >
-                            {cellValue?.toString()}
+                            {Boolean(cellValue) ? "Yes" : "No"}
                         </Chip>
                     );
                 case "status":
@@ -208,7 +205,9 @@ export default function TiffinOrderTable({
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
                             <Link
-                                href={`orders/tiffin-${order._id.toString()}`}
+                                href={`orders/tiffin-${
+                                    order.orderId
+                                }?mid=${order._id.toString()}`}
                             >
                                 <Eye
                                     size={18}
@@ -262,10 +261,10 @@ export default function TiffinOrderTable({
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
-                <div className="flex gap-3 items-end">
+                <div className="flex gap-3 items-end flex-wrap">
                     <Input
                         isClearable
-                        className="max-w-80"
+                        className="md:max-w-80"
                         classNames={{
                             inputWrapper: "rounded-md bg-white border h-9",
                         }}
@@ -349,8 +348,12 @@ export default function TiffinOrderTable({
                         </Dropdown>
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
-                        <DatePickerWithRange orderType="tiffin" />
-                        <Button
+                        <DatePickerWithRange
+                            orderType="tiffin"
+                            label="Print Report"
+                            printType="summary"
+                        />
+                        {/* <Button
                             size="sm"
                             radius="sm"
                             startContent={<Printer className="size-4" />}
@@ -358,7 +361,7 @@ export default function TiffinOrderTable({
                             className="bg-white shadow hover:bg-gray-100"
                         >
                             Print Stickers
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

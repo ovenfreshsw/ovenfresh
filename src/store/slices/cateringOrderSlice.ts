@@ -16,9 +16,11 @@ const initialState: CateringOrderState = {
     note: "",
     totalPrice: 0,
     tax: 0,
+    deliveryCharge: 0,
     advancePaid: 0,
     pendingBalance: 0,
     fullyPaid: false,
+    order_type: "delivery",
 };
 
 export const cateringOrderSlice = createSlice({
@@ -74,6 +76,14 @@ export const cateringOrderSlice = createSlice({
         setTaxAmount: (state, action: PayloadAction<number>) => {
             state.tax = action.payload;
         },
+
+        setDeliveryCharge: (state, action: PayloadAction<number>) => {
+            state.deliveryCharge = action.payload;
+        },
+
+        setOrderType: (state, action: PayloadAction<"pickup" | "delivery">) => {
+            state.order_type = action.payload;
+        },
     },
 });
 
@@ -89,6 +99,8 @@ export const {
     setFullyPaid,
     setTotalPrice,
     setTaxAmount,
+    setDeliveryCharge,
+    setOrderType,
 } = cateringOrderSlice.actions;
 
 export default cateringOrderSlice.reducer;

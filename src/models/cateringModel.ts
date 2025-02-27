@@ -76,14 +76,22 @@ const CateringSchema = new Schema<CateringDocument>(
             type: String,
             required: true,
         },
-        tax: {
-            type: Number,
-        },
+        tax: Number,
+        deliveryCharge: Number,
         note: String,
+        order_type: {
+            type: String,
+            enum: ["pickup", "delivery"],
+            required: true,
+        },
         status: {
             type: String,
-            enum: ["PENDING", "IN_PROGRESS", "DELIVERED", "CANCELLED"],
+            enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
             default: "PENDING",
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
         },
     },
     { versionKey: false, timestamps: true }

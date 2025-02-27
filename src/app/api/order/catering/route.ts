@@ -56,6 +56,8 @@ async function postHandler(req: AuthenticatedRequest) {
                 "yyyy-MM-dd"
             ),
             customer: customer._id,
+            customerName: customer.firstName + " " + customer.lastName,
+            customerPhone: customer.phone,
             address: customerAddress._id,
             paymentMethod: orderData.payment_method,
         });
@@ -75,14 +77,22 @@ async function getHandler(req: AuthenticatedRequest) {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
         const storeId = req.nextUrl.searchParams.get("storeId");
+        const limit = req.nextUrl.searchParams.get("limit");
 
-        // Build the query object dynamically based on the presence of storeId
-        const query = storeId ? { store: storeId } : {};
+        const filter = storeId ? { store: storeId } : {};
 
-        const orders = await Catering.find(query).populate({
-            path: "customer",
-            model: Customer,
-        });
+        let query = Catering.find(filter)
+            .populate({
+                path: "customer",
+                model: Customer,
+            })
+            .sort({ createdAt: -1 });
+
+        if (limit && !isNaN(Number(limit)) && Number(limit) > 0) {
+            query = query.limit(Number(limit)); // Apply limit only if it's a valid number
+        }
+
+        const orders = await query;
         // .populate({ path: "store", model: Store })
         // .populate({ path: "items.itemId", model: CateringMenu });
 

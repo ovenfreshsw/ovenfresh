@@ -282,7 +282,7 @@ export const colorSchemes = {
                 paper: "hsl(220, 35%, 97%)",
             },
             text: {
-                primary: gray[800],
+                primary: "hsl(var(--primary))",
                 secondary: gray[600],
                 warning: orange[400],
             },

@@ -2,10 +2,11 @@ import axios from "@/config/axios.config";
 import { CateringDocumentPopulate } from "@/models/types/catering";
 import { useQuery } from "@tanstack/react-query";
 
-async function getCateringOrders() {
+async function getCateringOrders(limit?: number) {
     const { data } = await axios.get("/api/order/catering", {
         params: {
             storeId: "676cee708588c68c668d3aa7",
+            limit,
         },
     });
 
@@ -14,9 +15,9 @@ async function getCateringOrders() {
     return null;
 }
 
-export function useCateringOrders() {
+export function useCateringOrders(limit?: number) {
     return useQuery({
         queryKey: ["order", "catering"],
-        queryFn: getCateringOrders,
+        queryFn: () => getCateringOrders(limit),
     });
 }

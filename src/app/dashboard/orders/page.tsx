@@ -13,15 +13,17 @@ import { getCateringOrdersServer } from "@/lib/api/order/get-catering-orders";
 import CateringOrders from "@/components/catering/catering-orders";
 
 const Orders = async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } },
+    });
     await Promise.all([
         queryClient.prefetchQuery({
             queryKey: ["order", "tiffin"],
-            queryFn: getTiffinOrdersServer,
+            queryFn: () => getTiffinOrdersServer(),
         }),
         queryClient.prefetchQuery({
             queryKey: ["order", "catering"],
-            queryFn: getCateringOrdersServer,
+            queryFn: () => getCateringOrdersServer(),
         }),
     ]);
 
@@ -34,6 +36,7 @@ const Orders = async () => {
                     alignItems: "center",
                     mx: 3,
                     pb: 5,
+                    pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
                 }}
             >

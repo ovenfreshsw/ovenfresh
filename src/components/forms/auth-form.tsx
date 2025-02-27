@@ -71,7 +71,9 @@ const AuthForm = () => {
                     name="username"
                     render={({ field }) => (
                         <FormItem className="mb-4 sm:mb-7">
-                            <Label htmlFor="username">Username</Label>
+                            <Label htmlFor="username" className="text-primary">
+                                Username
+                            </Label>
                             <FormControl className="space-y-2">
                                 <Input
                                     id="username"
@@ -90,7 +92,9 @@ const AuthForm = () => {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-primary">
+                                Password
+                            </Label>
                             <FormControl className="space-y-2">
                                 <Input
                                     id="password"

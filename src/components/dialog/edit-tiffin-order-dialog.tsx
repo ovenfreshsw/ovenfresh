@@ -59,7 +59,6 @@ const EditTiffinOrderDialog = ({
         const promise = () =>
             new Promise(async (resolve, reject) => {
                 const result = await editTiffinOrderAction(formData);
-                console.log(result);
 
                 setLoading(false);
                 setOpen(false);

@@ -6,23 +6,41 @@ import connectDB from "@/lib/mongodb";
 import Tiffin from "@/models/tiffinModel";
 import Catering from "@/models/cateringModel";
 import { Model } from "mongoose";
+import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
+import { format } from "date-fns";
+import {
+    dehydrate,
+    HydrationBoundary,
+    QueryClient,
+} from "@tanstack/react-query";
+import { getTiffinOrdersServer } from "@/lib/api/order/get-tiffin-orders";
+import { getCateringOrdersServer } from "@/lib/api/order/get-catering-orders";
+
+// Define OrderDocument type for Mongoose documents
+interface OrderDocument extends Document {
+    createdAt: Date;
+}
+
+// Define return type
+interface OrderStats {
+    totalLast30Days: number;
+    totalPrev30Days: number;
+    percentageChange: string;
+    trend: "up" | "down" | "same";
+    last30DaysCounts: number[];
+}
+
+// Function to generate the last 30 days as strings
+const generateLastNDays = (days: number): string[] => {
+    return Array.from({ length: days }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        return date.toISOString().split("T")[0]; // Format: "YYYY-MM-DD"
+    }).reverse();
+};
 
 export default async function Dashboard() {
     await connectDB();
-
-    // Define OrderDocument type for Mongoose documents
-    interface OrderDocument extends Document {
-        createdAt: Date;
-    }
-
-    // Function to generate the last 30 days as strings
-    const generateLastNDays = (days: number): string[] => {
-        return Array.from({ length: days }, (_, i) => {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            return date.toISOString().split("T")[0]; // Format: "YYYY-MM-DD"
-        }).reverse();
-    };
 
     // Get last 30 and previous 30 days
     const last30Days: string[] = generateLastNDays(30);
@@ -34,15 +52,6 @@ export default async function Dashboard() {
 
     const sixtyDaysAgo: Date = new Date();
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-
-    // Define return type
-    interface OrderStats {
-        totalLast30Days: number;
-        totalPrev30Days: number;
-        percentageChange: string;
-        trend: "up" | "down" | "same";
-        last30DaysCounts: number[];
-    }
 
     // Function to fetch order statistics
     const fetchOrderStats = async (
@@ -118,18 +127,39 @@ export default async function Dashboard() {
         };
     };
 
+    const queryClient = new QueryClient({
+        defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } },
+    });
+
     // Fetch stats for both Tiffin and Catering
     const getStats = async () => {
-        const [tiffinStats, cateringStats] = await Promise.all([
-            fetchOrderStats(Tiffin),
-            fetchOrderStats(Catering),
-        ]);
+        const [tiffinStats, cateringStats, tiffinCount, cateringCount] =
+            await Promise.all([
+                fetchOrderStats(Tiffin),
+                fetchOrderStats(Catering),
+                TiffinOrderStatus.countDocuments({
+                    date: format(new Date(), "yyyy-MM-dd"),
+                    status: "PENDING",
+                }),
+                Catering.countDocuments({
+                    deliveryDate: format(new Date(), "yyyy-MM-dd"),
+                    status: "PENDING",
+                }),
+                queryClient.prefetchQuery({
+                    queryKey: ["order", "tiffin"],
+                    queryFn: () => getTiffinOrdersServer(10),
+                }),
+                queryClient.prefetchQuery({
+                    queryKey: ["order", "catering"],
+                    queryFn: () => getCateringOrdersServer(10),
+                }),
+            ]);
 
-        return { tiffinStats, cateringStats };
+        return { tiffinStats, cateringStats, tiffinCount, cateringCount };
     };
 
-    const { tiffinStats, cateringStats } = await getStats();
-
+    const { tiffinStats, cateringStats, tiffinCount, cateringCount } =
+        await getStats();
     return (
         <Box
             component="main"
@@ -146,29 +176,34 @@ export default async function Dashboard() {
                     alignItems: "center",
                     mx: 3,
                     pb: 5,
+                    pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
                 }}
             >
-                <MainGrid
-                    tiffinStat={{
-                        percentageChange:
-                            tiffinStats.trend === "up"
-                                ? `+${tiffinStats.percentageChange}%`
-                                : `-${tiffinStats.percentageChange}%`,
-                        trend: tiffinStats.trend,
-                        data: tiffinStats.last30DaysCounts,
-                        totalLast30Days: tiffinStats.totalLast30Days,
-                    }}
-                    cateringStat={{
-                        percentageChange:
-                            cateringStats.trend === "up"
-                                ? `+${cateringStats.percentageChange}%`
-                                : `-${cateringStats.percentageChange}%`,
-                        trend: cateringStats.trend,
-                        data: cateringStats.last30DaysCounts,
-                        totalLast30Days: cateringStats.totalLast30Days,
-                    }}
-                />
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                    <MainGrid
+                        tiffinStat={{
+                            percentageChange:
+                                tiffinStats.trend === "up"
+                                    ? `+${tiffinStats.percentageChange}%`
+                                    : `-${tiffinStats.percentageChange}%`,
+                            trend: tiffinStats.trend,
+                            data: tiffinStats.last30DaysCounts,
+                            totalLast30Days: tiffinStats.totalLast30Days,
+                        }}
+                        cateringStat={{
+                            percentageChange:
+                                cateringStats.trend === "up"
+                                    ? `+${cateringStats.percentageChange}%`
+                                    : `-${cateringStats.percentageChange}%`,
+                            trend: cateringStats.trend,
+                            data: cateringStats.last30DaysCounts,
+                            totalLast30Days: cateringStats.totalLast30Days,
+                        }}
+                        tiffinCount={tiffinCount}
+                        cateringCount={cateringCount}
+                    />
+                </HydrationBoundary>
             </Stack>
         </Box>
     );

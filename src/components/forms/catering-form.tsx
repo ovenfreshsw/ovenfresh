@@ -36,10 +36,13 @@ import { useDispatch } from "react-redux";
 import { clearState } from "@/store/slices/cateringItemSlice";
 import {
     setCustomerDetails,
+    setDeliveryCharge,
     setDeliveryDate,
+    setOrderType,
 } from "@/store/slices/cateringOrderSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import OrderTypeSelect from "../select/order-type-select";
 
 export default function CateringForm({
     form,
@@ -282,9 +285,10 @@ export default function CateringForm({
                                                 field.onChange(e);
                                                 dispatch(
                                                     setDeliveryDate(
-                                                        (
-                                                            e as Date
-                                                        ).toISOString()
+                                                        format(
+                                                            e as Date,
+                                                            "yyyy-MM-dd"
+                                                        )
                                                     )
                                                 );
                                             }}
@@ -306,6 +310,41 @@ export default function CateringForm({
                                 <PaymentSelect form={form} />
                                 <FormDescription>
                                     Select a payment method
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="order_type"
+                        render={() => (
+                            <FormItem>
+                                <FormLabel>Order Type</FormLabel>
+                                <OrderTypeSelect
+                                    value={form.watch("order_type")}
+                                    onValueChange={(
+                                        val: "pickup" | "delivery"
+                                    ) => {
+                                        if (val === "delivery") {
+                                            dispatch(
+                                                setDeliveryCharge(
+                                                    Number(
+                                                        process.env
+                                                            .NEXT_PUBLIC_DELIVERY_CHARGE
+                                                    ) || 0
+                                                )
+                                            );
+                                        } else {
+                                            dispatch(setDeliveryCharge(0));
+                                        }
+                                        dispatch(setOrderType(val));
+                                        form.setValue("order_type", val);
+                                    }}
+                                />
+                                <FormDescription>
+                                    Select a order type
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

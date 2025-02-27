@@ -284,7 +284,7 @@ const EditAddressDialog = ({
                                 eDate!,
                                 numberOfWeeks || 0
                             ) && (
-                                <Alert severity="warning">
+                                <Alert severity="error">
                                     The dates do not match the {numberOfWeeks}{" "}
                                     weeks gap.
                                 </Alert>
@@ -302,7 +302,10 @@ const EditAddressDialog = ({
                         Cancel
                     </ShadButton>
                     <ShadButton
-                        disabled={loading}
+                        disabled={
+                            loading ||
+                            !isGapInWeeks(sDate!, eDate!, numberOfWeeks || 0)
+                        }
                         form="edit-address-form"
                         type="submit"
                     >

@@ -22,10 +22,13 @@ export interface CateringDocument {
     pendingBalance: number;
     fullyPaid: boolean;
     paymentMethod: string;
+    order_type: "pickup" | "delivery";
     totalPrice: number;
     tax: number;
+    deliveryCharge: number;
     note: string;
-    status: "PENDING" | "IN_PROGRESS" | "DELIVERED" | "CANCELLED";
+    status: "PENDING" | "ONGOING" | "DELIVERED" | "CANCELLED";
+    isDeleted: boolean;
 }
 
 // Use Omit<> to avoid repetition and improve maintainability

@@ -3,12 +3,12 @@ import { heroui } from "@heroui/theme";
 
 export default {
     darkMode: ["class"],
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/components/(badge|button|checkbox|chip|dropdown|input|pagination|table|user|ripple|spinner|form|menu|divider|popover|spacer|avatar).js"
-  ],
+    content: [
+        "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+        "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+        "./node_modules/@heroui/theme/dist/components/(badge|button|checkbox|chip|dropdown|input|pagination|table|user|ripple|spinner|form|menu|divider|popover|spacer|avatar).js",
+    ],
     theme: {
         extend: {
             colors: {

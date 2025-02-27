@@ -48,7 +48,7 @@ import Image from "next/image";
 
 const ORDER_STATUSES = [
     "PENDING",
-    "IN_PROGRESS",
+    "ONGOING",
     "DELIVERED",
     "CANCELLED",
 ] as const;
@@ -59,7 +59,7 @@ const getStatusIcon = (status: string) => {
     switch (status) {
         case "PENDING":
             return <Clock className="h-4 w-4" />;
-        case "IN_PROGRESS":
+        case "ONGOING":
             return <Truck className="h-4 w-4" />;
         case "DELIVERED":
             return <BadgeCheck className="h-4 w-4" />;
@@ -74,7 +74,7 @@ const getStatusColor = (status: string) => {
     switch (status) {
         case "PENDING":
             return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-        case "IN_PROGRESS":
+        case "ONGOING":
             return "bg-blue-100 text-blue-800 hover:bg-blue-100";
         case "DELIVERED":
             return "bg-green-100 text-green-800 hover:bg-green-100";
@@ -444,6 +444,7 @@ export default function CateringOrderDetails({
                     paymentMethod={orderData.paymentMethod}
                     pendingBalance={orderData.pendingBalance}
                     tax={orderData.tax}
+                    deliveryCharge={orderData.deliveryCharge}
                     totalPrice={orderData.totalPrice}
                 />
             </div>

@@ -19,6 +19,7 @@ export async function editPaymentAction(formData: FormData) {
             advancePaid,
             pendingBalance,
             fullyPaid,
+            deliveryCharge,
         } = Object.fromEntries(formData.entries());
 
         if (!orderId) return { error: "Invalid order ID." };
@@ -31,8 +32,10 @@ export async function editPaymentAction(formData: FormData) {
             advancePaid: true,
             pendingBalance: true,
             fullyPaid: true,
+            deliveryCharge: true,
         }).safeParse({
             tax: Number(tax),
+            deliveryCharge: Number(deliveryCharge),
             totalPrice: Number(total),
             payment_method: paymentMethod,
             advancePaid: Number(advancePaid),
@@ -50,6 +53,7 @@ export async function editPaymentAction(formData: FormData) {
                 {
                     $set: {
                         tax: result.data.tax,
+                        deliveryCharge: result.data.deliveryCharge,
                         totalPrice: result.data.totalPrice,
                         paymentMethod: result.data.payment_method,
                         advancePaid: result.data.advancePaid,

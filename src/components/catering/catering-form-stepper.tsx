@@ -84,7 +84,6 @@ export default function CateringFormStepper() {
                 lng: -79.347015,
             },
             store: "676cee708588c68c668d3aa7",
-            deliveryDate: order.deliveryDate,
             items: orderItems.map((item) => ({
                 itemId: item._id,
                 quantity: item.quantity,
@@ -111,12 +110,21 @@ export default function CateringFormStepper() {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Stepper activeStep={activeStep}>
+            <Stepper
+                activeStep={activeStep}
+                className="[svg_text]:text-red-500"
+            >
                 {steps.map((label) => {
                     const stepProps: { completed?: boolean } = {};
                     return (
                         <Step key={label} {...stepProps}>
-                            <StepLabel>{label}</StepLabel>
+                            <StepLabel
+                                classes={{
+                                    iconContainer: "[&svg>text]:text-red-500",
+                                }}
+                            >
+                                {label}
+                            </StepLabel>
                         </Step>
                     );
                 })}

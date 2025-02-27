@@ -10,6 +10,7 @@ import EditNoteRoundedIcon from "@mui/icons-material/EditNoteRounded";
 import LocalMallRoundedIcon from "@mui/icons-material/LocalMallRounded";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import LockClockIcon from "@mui/icons-material/LockClock";
 
 const mainListItems = [
     { text: "Dashboard", icon: <HomeRoundedIcon />, href: "/dashboard" },
@@ -23,11 +24,11 @@ const mainListItems = [
         icon: <LocalMallRoundedIcon />,
         href: "/dashboard/orders",
     },
-    // {
-    //     text: "Customer",
-    //     icon: <PeopleRoundedIcon />,
-    //     href: "/dashboard/customer",
-    // },
+    {
+        text: "Scheduled Orders",
+        icon: <LockClockIcon />,
+        href: "/dashboard/scheduled",
+    },
 ];
 
 export default function MenuContent() {

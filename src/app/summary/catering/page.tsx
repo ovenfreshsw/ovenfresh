@@ -7,7 +7,7 @@ import Address from "@/models/addressModel";
 import CateringMenu from "@/models/cateringMenuModel";
 import { CateringDocumentPopulate } from "@/models/types/catering";
 
-const TestPage = async ({
+const CateringSummaryPage = async ({
     searchParams,
 }: {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -67,4 +67,4 @@ const TestPage = async ({
     );
 };
 
-export default TestPage;
+export default CateringSummaryPage;

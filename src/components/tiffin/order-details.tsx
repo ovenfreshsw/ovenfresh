@@ -1,7 +1,15 @@
 "use client";
 
 import { format } from "date-fns";
-import { BadgeCheck, Clock, Package2, Truck, XCircle } from "lucide-react";
+import {
+    BadgeCheck,
+    Clock,
+    Package2,
+    Pencil,
+    Truck,
+    X,
+    XCircle,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,10 +30,21 @@ import StoreCard from "../order/store-card";
 import PaymentCard from "../order/payment-card";
 import { TiffinDocumentPopulate } from "@/models/types/tiffin";
 import EditTiffinOrderDialog from "../dialog/edit-tiffin-order-dialog";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "../ui/table";
+import { Button } from "../ui/button";
+import { Button as HeroButton } from "@heroui/button";
+import { updateDayOrderStatusAction } from "@/actions/update-day-order-status-action";
 
 const ORDER_STATUSES = [
     "PENDING",
-    "IN_PROGRESS",
+    "ONGOING",
     "DELIVERED",
     "CANCELLED",
 ] as const;
@@ -36,7 +55,7 @@ const getStatusIcon = (status: string) => {
     switch (status) {
         case "PENDING":
             return <Clock className="h-4 w-4" />;
-        case "IN_PROGRESS":
+        case "ONGOING":
             return <Truck className="h-4 w-4" />;
         case "DELIVERED":
             return <BadgeCheck className="h-4 w-4" />;
@@ -51,7 +70,7 @@ const getStatusColor = (status: string) => {
     switch (status) {
         case "PENDING":
             return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-        case "IN_PROGRESS":
+        case "ONGOING":
             return "bg-blue-100 text-blue-800 hover:bg-blue-100";
         case "DELIVERED":
             return "bg-green-100 text-green-800 hover:bg-green-100";
@@ -70,6 +89,10 @@ export default function TiffinOrderDetails({
     const [loading, setLoading] = useState(false);
     const [orderStatus, setOrderStatus] = useState(orderData?.status);
     const [showSettlementDialog, setShowSettlementDialog] = useState(false);
+    const [editDayStatus, setEditDayStatus] = useState(false);
+    const [dayStatusChange, setDayStatusChange] = useState<
+        { _id: string; status: Exclude<OrderStatus, "CANCELLED"> }[]
+    >([]);
 
     const updateOrderStatus = (newStatus: OrderStatus, settlement = false) => {
         const promise = () =>
@@ -99,6 +122,32 @@ export default function TiffinOrderDetails({
         });
     };
 
+    const saveDayStatus = () => {
+        const promise = () =>
+            new Promise(async (resolve, reject) => {
+                const result = await updateDayOrderStatusAction(
+                    orderData._id.toString(),
+                    dayStatusChange
+                );
+                if (result.success) resolve(result);
+                else reject(result);
+            });
+
+        toast.promise(promise, {
+            loading: "Updating order status...",
+            success: () => {
+                setLoading(false);
+                setEditDayStatus(false);
+                return `Order status has been updated`;
+            },
+            error: () => {
+                setLoading(false);
+                setEditDayStatus(false);
+                return "Failed to update order status.";
+            },
+        });
+    };
+
     const handleStatusUpdate = async (newStatus: string) => {
         setLoading(true);
 
@@ -109,6 +158,24 @@ export default function TiffinOrderDetails({
 
         updateOrderStatus(newStatus as OrderStatus);
     };
+
+    function handleDayStatusChange(
+        _id: string,
+        status: Exclude<OrderStatus, "CANCELLED">
+    ) {
+        setDayStatusChange((prev) => {
+            const existingIndex = prev.findIndex((item) => item._id === _id);
+            if (existingIndex !== -1) {
+                // Update existing item
+                const updatedArray = [...prev];
+                updatedArray[existingIndex] = { _id, status };
+                return updatedArray;
+            } else {
+                // Add new item
+                return [...prev, { _id, status }];
+            }
+        });
+    }
 
     useEffect(() => {
         setLoading(false);
@@ -211,6 +278,27 @@ export default function TiffinOrderDetails({
                                         {orderData.numberOfWeeks}
                                     </span>
                                 </div>
+                                <div>
+                                    Order extended:{" "}
+                                    <span className="capitalize font-semibold">
+                                        {orderData.extended ? "Yes" : "No"}
+                                    </span>
+                                </div>
+                                {orderData.extendedFrom.length > 0 && (
+                                    <div>
+                                        Order extended from:{" "}
+                                        <span className="capitalize font-semibold">
+                                            {orderData.extendedFrom.map(
+                                                (item, i) => (
+                                                    <b key={i}>
+                                                        {item}
+                                                        {", "}
+                                                    </b>
+                                                )
+                                            )}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -225,8 +313,127 @@ export default function TiffinOrderDetails({
                     paymentMethod={orderData.paymentMethod}
                     pendingBalance={orderData.pendingBalance}
                     tax={orderData.tax}
+                    deliveryCharge={0}
                     totalPrice={orderData.totalPrice}
                 />
+
+                <Card className="col-span-2">
+                    <CardHeader className="flex flex-row items-center space-y-0 justify-between">
+                        <CardTitle className="flex items-center gap-2">
+                            <Package2 className="h-5 w-5" />
+                            Order Summary
+                        </CardTitle>
+                        <div className="flex items-center gap-3">
+                            <HeroButton
+                                isIconOnly
+                                variant="flat"
+                                radius="full"
+                                size="sm"
+                                onPress={() =>
+                                    setEditDayStatus((prev) => !prev)
+                                }
+                            >
+                                {editDayStatus ? (
+                                    <X size={15} />
+                                ) : (
+                                    <Pencil size={15} />
+                                )}
+                            </HeroButton>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="overflow-x-scroll scrollbar-thin">
+                        <Table className="min-w-[550px]">
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">
+                                        Status
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                        Update status
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {orderData?.individualStatus.map(
+                                    (status, i) => (
+                                        <TableRow key={i}>
+                                            <TableCell>
+                                                {format(
+                                                    new Date(status.date),
+                                                    "EEEE, MMMM do, yyyy"
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <Badge
+                                                    className={`gap-1 ${getStatusColor(
+                                                        status.status
+                                                    )}`}
+                                                >
+                                                    {getStatusIcon(
+                                                        status.status
+                                                    )}
+                                                    {status.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-right w-[220px]">
+                                                <Select
+                                                    defaultValue={status.status}
+                                                    onValueChange={(
+                                                        value: Exclude<
+                                                            OrderStatus,
+                                                            "CANCELLED"
+                                                        >
+                                                    ) =>
+                                                        handleDayStatusChange(
+                                                            status._id,
+                                                            value
+                                                        )
+                                                    }
+                                                    disabled={!editDayStatus}
+                                                >
+                                                    <SelectTrigger
+                                                        id="status"
+                                                        className="w-[220px] ms-auto"
+                                                    >
+                                                        <SelectValue placeholder="Select a status" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="PENDING">
+                                                            PENDING
+                                                        </SelectItem>
+                                                        <SelectItem value="ONGOING">
+                                                            ONGOING
+                                                        </SelectItem>
+                                                        <SelectItem value="DELIVERED">
+                                                            DELIVERED
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                )}
+                            </TableBody>
+                        </Table>
+                        <div className="flex justify-end items-center gap-2 mt-3">
+                            <Button
+                                disabled={!editDayStatus}
+                                variant={"ghost"}
+                                size={"sm"}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={saveDayStatus}
+                                disabled={!editDayStatus || loading}
+                                size={"sm"}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
             <OrderSettlementDialog
                 open={showSettlementDialog}

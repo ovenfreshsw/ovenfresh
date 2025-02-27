@@ -52,9 +52,11 @@ export const ZodCateringSchema = z.object({
     note: z.string().optional(),
     totalPrice: z.number(),
     tax: z.number(),
+    deliveryCharge: z.number(),
     advancePaid: z.number(),
     pendingBalance: z.number(),
     fullyPaid: z.boolean(),
+    order_type: z.enum(["pickup", "delivery"]),
 });
 
 export const ZodCateringMenuSchema = z.object({

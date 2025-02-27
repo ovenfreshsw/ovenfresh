@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const ZodOrderStatusSchema = z.enum([
     "PENDING",
-    "IN_PROGRESS",
+    "ONGOING",
     "DELIVERED",
     "CANCELLED",
 ]);

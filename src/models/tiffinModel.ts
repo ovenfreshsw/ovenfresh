@@ -71,10 +71,22 @@ const TiffinSchema = new Schema<TiffinDocument>(
             required: true,
         },
         note: String,
+        extended: {
+            type: Boolean,
+            default: false,
+        },
+        extendedFrom: {
+            type: [String],
+            default: [],
+        },
         status: {
             type: String,
-            enum: ["PENDING", "ONGOING", "COMPLETED", "CANCELLED"],
+            enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
             default: "PENDING",
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
         },
     },
     { versionKey: false, timestamps: true }

@@ -20,8 +20,12 @@ import { format } from "date-fns";
 export function DatePickerWithRange({
     className,
     orderType,
+    printType,
+    label,
 }: React.HTMLAttributes<HTMLDivElement> & {
     orderType: "tiffin" | "catering";
+    printType: "summary" | "sticker";
+    label: string;
 }) {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: new Date(),
@@ -39,7 +43,7 @@ export function DatePickerWithRange({
                         variant="solid"
                         className="bg-white shadow hover:bg-gray-100"
                     >
-                        Print Report
+                        {label}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -56,7 +60,7 @@ export function DatePickerWithRange({
                             Cancel
                         </ShadButton>
                         <Link
-                            href={`/summary/${orderType}?from=${format(
+                            href={`/${printType}/${orderType}?from=${format(
                                 date?.from || new Date(),
                                 "yyyy-MM-dd"
                             )}&to=${format(

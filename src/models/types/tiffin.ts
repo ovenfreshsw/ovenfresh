@@ -22,7 +22,10 @@ export interface TiffinDocument {
     tax: number;
     order_type: "pickup" | "delivery";
     note: string;
-    status: "PENDING" | "ONGOING" | "COMPLETED" | "CANCELLED";
+    extended: boolean;
+    extendedFrom: string[];
+    status: "PENDING" | "ONGOING" | "DELIVERED" | "CANCELLED";
+    isDeleted: boolean;
 }
 
 // Use Omit<> to avoid repetition and improve maintainability
@@ -33,4 +36,10 @@ export interface TiffinDocumentPopulate
     address: AddressDocument;
     createdAt: Date;
     updatedAt: Date;
+    individualStatus: {
+        _id: string;
+        orderId: string;
+        date: Date;
+        status: "PENDING" | "ONGOING" | "DELIVERED";
+    }[];
 }

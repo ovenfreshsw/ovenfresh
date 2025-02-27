@@ -8,6 +8,7 @@ export async function getOrderServer<
 >(
     orderId: string,
     orderType: "tiffin" | "catering",
+    mid?: string,
     storeId?: string
 ): Promise<T | null> {
     const headerSequence = await headers();
@@ -19,6 +20,7 @@ export async function getOrderServer<
     const { data } = await axios.get(endpoint, {
         params: {
             storeId: storeId || "676cee708588c68c668d3aa7",
+            mid,
         },
         headers: {
             Cookie: `${cookie}`,

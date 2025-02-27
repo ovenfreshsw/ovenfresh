@@ -402,7 +402,14 @@ export default function TiffinForm() {
                         render={() => (
                             <FormItem>
                                 <FormLabel>Order Type</FormLabel>
-                                <OrderTypeSelect form={form} />
+                                <OrderTypeSelect
+                                    value={form.watch("order_type")}
+                                    onValueChange={(
+                                        val: "pickup" | "delivery"
+                                    ) => {
+                                        form.setValue("order_type", val);
+                                    }}
+                                />
                                 <FormDescription>
                                     Select a order type
                                 </FormDescription>

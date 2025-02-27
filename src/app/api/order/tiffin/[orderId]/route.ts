@@ -6,6 +6,7 @@ import Address from "@/models/addressModel";
 import Customer from "@/models/customerModel";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
+import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 
 // async function deleteHandler(
 //     req: AuthenticatedRequest,
@@ -49,17 +50,24 @@ async function getHandler(
 
         const { orderId } = await params;
         const storeId = req.nextUrl.searchParams.get("storeId");
+        const mid = req.nextUrl.searchParams.get("mid");
 
         // Build the query object dynamically based on the presence of storeId
         const query = storeId ? { store: storeId } : {};
 
-        const orders = await Tiffin.findOne({ ...query, _id: orderId })
-            .populate({ path: "address", model: Address })
-            .populate({ path: "customer", model: Customer })
-            .populate({ path: "store", model: Store });
+        const [orders, status] = await Promise.all([
+            Tiffin.findOne({ ...query, orderId })
+                .populate({ path: "address", model: Address })
+                .populate({ path: "customer", model: Customer })
+                .populate({ path: "store", model: Store }),
+            TiffinOrderStatus.find({ orderId: mid }),
+        ]);
 
-        return success200({ orders });
+        return success200({
+            orders: { ...orders?._doc, individualStatus: status },
+        });
     } catch (error) {
+        console.log(error);
         if (error instanceof Error) {
             return error500({ error: error.message });
         } else {

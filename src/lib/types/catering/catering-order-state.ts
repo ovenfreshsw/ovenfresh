@@ -13,9 +13,11 @@ export interface CateringOrderState {
     note?: string;
     totalPrice: number;
     tax: number;
+    deliveryCharge: number;
     advancePaid: number;
     pendingBalance: number;
     fullyPaid: boolean;
+    order_type: "pickup" | "delivery";
 }
 
 export interface CateringItemsState {

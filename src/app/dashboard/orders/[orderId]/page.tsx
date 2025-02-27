@@ -7,22 +7,27 @@ import { notFound } from "next/navigation";
 
 const OrderPage = async ({
     params,
+    searchParams,
 }: {
     params: Promise<{ orderId: string }>;
+    searchParams: Promise<{ mid: string | undefined }>;
 }) => {
     const { orderId: orderKey } = await params;
     const orderType = orderKey.split("-")[0];
-    const orderId = orderKey.split("-")[1];
+    const orderId = orderKey.split("-")[1] + "-" + orderKey.split("-")[2];
+    const mid = (await searchParams).mid;
 
     if (orderType !== "catering" && orderType !== "tiffin") {
         return notFound();
     }
 
-    const order = await getOrderServer(orderId, orderType).catch(() =>
-        notFound()
+    const order = await getOrderServer(orderId, orderType, mid as string).catch(
+        () => notFound()
     );
 
-    if (!order) notFound();
+    if (!order) {
+        return notFound();
+    }
 
     return (
         <div className="container mx-auto py-10">

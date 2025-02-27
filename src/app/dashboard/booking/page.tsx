@@ -34,6 +34,7 @@ const Booking = async () => {
                     alignItems: "center",
                     mx: 3,
                     pb: 5,
+                    pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
                 }}
             >

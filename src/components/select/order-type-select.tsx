@@ -7,21 +7,17 @@ import {
     SelectValue,
 } from "../ui/select";
 import { FormControl } from "../ui/form";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
-import { ZodTiffinSchema } from "@/lib/zod-schema/schema";
 
 type OrderTypeSelectProps = {
-    form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>;
+    value: string;
+    onValueChange: (value: "pickup" | "delivery") => void;
 };
 
-const OrderTypeSelect = ({ form }: OrderTypeSelectProps) => {
+const OrderTypeSelect = ({ value, onValueChange }: OrderTypeSelectProps) => {
     return (
         <Select
-            value={form.watch("order_type")} // Watch the selected value
-            onValueChange={(val: "pickup" | "delivery") => {
-                form.setValue("order_type", val);
-            }}
+            value={value} // Watch the selected value
+            onValueChange={onValueChange} // Call the onValueChange function when the value changes
             defaultValue="pickup"
         >
             <FormControl>

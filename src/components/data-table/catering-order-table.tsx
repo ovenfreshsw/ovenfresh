@@ -27,7 +27,6 @@ import {
     ListFilter,
     Loader2,
     PlusCircle,
-    Printer,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import {
@@ -78,12 +77,12 @@ export const columns = [
 export const statusOptions = [
     { name: "Pending", uid: "pending" },
     { name: "Ongoing", uid: "ongoing" },
-    { name: "Completed", uid: "completed" },
+    { name: "Delivered", uid: "delivered" },
     { name: "Cancelled", uid: "cancelled" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-    COMPLETED: "success",
+    DELIVERED: "success",
     CANCELLED: "danger",
     PENDING: "warning",
     ONGOING: "primary",
@@ -206,7 +205,7 @@ export default function CateringOrderTable({
                             variant="flat"
                             className="capitalize"
                         >
-                            {cellValue.toString()}
+                            {Boolean(cellValue) ? "Yes" : "No"}
                         </Chip>
                     );
                 case "status":
@@ -223,9 +222,7 @@ export default function CateringOrderTable({
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <Link
-                                href={`orders/catering-${order._id.toString()}`}
-                            >
+                            <Link href={`orders/catering-${order.orderId}`}>
                                 <Eye
                                     size={18}
                                     className="stroke-2 text-muted-foreground"
@@ -278,10 +275,10 @@ export default function CateringOrderTable({
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
-                <div className="flex gap-3 items-end">
+                <div className="flex gap-3 items-end flex-wrap">
                     <Input
                         isClearable
-                        className="max-w-80"
+                        className="md:max-w-80"
                         classNames={{
                             inputWrapper: "rounded-md bg-white border h-9",
                         }}
@@ -365,16 +362,16 @@ export default function CateringOrderTable({
                         </Dropdown>
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
-                        <DatePickerWithRange orderType="catering" />
-                        <Button
-                            size="sm"
-                            radius="sm"
-                            startContent={<Printer className="size-4" />}
-                            variant="solid"
-                            className="bg-white shadow hover:bg-gray-100"
-                        >
-                            Print Stickers
-                        </Button>
+                        <DatePickerWithRange
+                            orderType="catering"
+                            printType="summary"
+                            label="Print Report"
+                        />
+                        <DatePickerWithRange
+                            orderType="catering"
+                            printType="sticker"
+                            label="Print Stickers"
+                        />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

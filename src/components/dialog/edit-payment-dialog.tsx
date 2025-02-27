@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button as ShadButton } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Button } from "@heroui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import {
@@ -33,6 +33,7 @@ const EditPaymentDialog = ({
     paymentDetails: {
         subtotal: number;
         tax: number;
+        deliveryCharge: number;
         paymentMethod: string;
         advancePaid: number;
         pendingBalance: number;
@@ -84,7 +85,7 @@ const EditPaymentDialog = ({
                     <Pencil size={15} />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] max-h-screen overflow-y-scroll scrollbar-thin">
                 <DialogHeader>
                     <DialogTitle>Edit payment details</DialogTitle>
                 </DialogHeader>
@@ -111,6 +112,25 @@ const EditPaymentDialog = ({
                             className="col-span-2"
                         />
                     </div>
+                    {orderType === "catering" && (
+                        <div className="grid grid-cols-3 items-center gap-4">
+                            <Label
+                                htmlFor="deliveryCharge"
+                                className="text-right"
+                            >
+                                Delivery fee
+                            </Label>
+                            <Input
+                                id="deliveryCharge"
+                                name="deliveryCharge"
+                                type="number"
+                                min={0}
+                                step={"any"}
+                                defaultValue={paymentDetails.deliveryCharge}
+                                className="col-span-2"
+                            />
+                        </div>
+                    )}
                     <div className="grid grid-cols-3 items-center gap-4">
                         <Label htmlFor="total" className="text-right">
                             Total{" "}
@@ -125,7 +145,9 @@ const EditPaymentDialog = ({
                             min={0}
                             step={"any"}
                             defaultValue={
-                                paymentDetails.subtotal + paymentDetails.tax
+                                paymentDetails.subtotal +
+                                paymentDetails.tax +
+                                (paymentDetails.deliveryCharge || 0)
                             }
                             className="col-span-2"
                         />
@@ -216,11 +238,16 @@ const EditPaymentDialog = ({
                                 <SelectValue placeholder="fully paid" />
                             </SelectTrigger>
                             <SelectContent className="z-[1560]">
-                                <SelectItem value="true">True</SelectItem>
-                                <SelectItem value="false">False</SelectItem>
+                                <SelectItem value="true">Yes</SelectItem>
+                                <SelectItem value="false">No</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
+                    <span className="text-xs text-yellow-700 bg-yellow-500/20 p-1 rounded-md flex items-center gap-2">
+                        <TriangleAlert className="flex-shrink-0 size-4 ms-0.5" />
+                        Values are not synced automatically. Please ensure all
+                        amounts are manually updated.
+                    </span>
                 </form>
                 <DialogFooter>
                     <ShadButton
