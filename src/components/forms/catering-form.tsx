@@ -169,14 +169,18 @@ export default function CateringForm({
                                                     orderDetail.customerDetails
                                                         .firstName
                                                 }
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     dispatch(
                                                         setCustomerDetails({
                                                             firstName:
                                                                 e.target.value,
                                                         })
-                                                    )
-                                                }
+                                                    );
+                                                    form.setValue(
+                                                        "customerDetails.firstName",
+                                                        e.target.value
+                                                    );
+                                                }}
                                             />
                                         </FormControl>
 
@@ -201,14 +205,18 @@ export default function CateringForm({
                                                     orderDetail.customerDetails
                                                         .lastName
                                                 }
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     dispatch(
                                                         setCustomerDetails({
                                                             lastName:
                                                                 e.target.value,
                                                         })
-                                                    )
-                                                }
+                                                    );
+                                                    form.setValue(
+                                                        "customerDetails.lastName",
+                                                        e.target.value
+                                                    );
+                                                }}
                                             />
                                         </FormControl>
 
@@ -233,13 +241,17 @@ export default function CateringForm({
                                         value={
                                             orderDetail.customerDetails.address
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             dispatch(
                                                 setCustomerDetails({
                                                     address: e.target.value,
                                                 })
-                                            )
-                                        }
+                                            );
+                                            form.setValue(
+                                                "customerDetails.address",
+                                                e.target.value
+                                            );
+                                        }}
                                     />
                                 </FormControl>
                                 <FormMessage />

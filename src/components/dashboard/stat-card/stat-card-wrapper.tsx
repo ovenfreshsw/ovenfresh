@@ -17,7 +17,7 @@ const StatCardWrapper = async ({ type }: { type: "tiffin" | "catering" }) => {
     });
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <StatCard />
+            <StatCard type={type} />
         </HydrationBoundary>
     );
 };

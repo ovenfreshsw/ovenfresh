@@ -39,7 +39,7 @@ export const columns = [
     { name: "PHONE", uid: "customerPhone" },
     { name: "ORDER PLACED ON", uid: "createdAt" },
     { name: "START DATE", uid: "startDate" },
-    { name: "END DATE", uid: "endDate" },
+    // { name: "END DATE", uid: "endDate" },
     { name: "STATUS", uid: "status", sortable: true },
     { name: "ACTIONS", uid: "actions" },
 ];
@@ -70,8 +70,8 @@ const RecentTiffinOrderTable = () => {
                     return <p>{formatDate(new Date(cellValue as string))}</p>;
                 case "startDate":
                     return <p>{formatDate(new Date(cellValue as string))}</p>;
-                case "endDate":
-                    return <p>{formatDate(new Date(cellValue as string))}</p>;
+                // case "endDate":
+                //     return <p>{formatDate(new Date(cellValue as string))}</p>;
                 case "items":
                     return (
                         <p className="text-center">

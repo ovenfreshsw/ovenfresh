@@ -3,7 +3,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: CateringOrderState = {
     store: "",
-    deliveryDate: new Date().toISOString(),
+    deliveryDate: new Date(
+        new Date().setDate(new Date().getDate() + 1)
+    ).toISOString(),
     customerDetails: {
         firstName: "",
         lastName: "",

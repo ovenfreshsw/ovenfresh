@@ -44,7 +44,7 @@ async function postHandler(req: AuthenticatedRequest) {
                 customerId: customer._id,
                 address: customerDetails.address.trim(),
             }, // Match customer and address
-            { lat: data.lat, lng: data.lng }, // Update lat/lng if needed
+            { lat: customerDetails.lat, lng: customerDetails.lng }, // Update lat/lng if needed
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
 

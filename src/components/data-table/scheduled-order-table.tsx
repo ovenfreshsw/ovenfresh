@@ -78,7 +78,7 @@ export default function ScheduledOrderTable({
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS)
     );
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: "status",
         direction: "descending",

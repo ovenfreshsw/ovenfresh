@@ -304,7 +304,12 @@ const EditAddressDialog = ({
                     <ShadButton
                         disabled={
                             loading ||
-                            !isGapInWeeks(sDate!, eDate!, numberOfWeeks || 0)
+                            (orderType === "tiffin" &&
+                                !isGapInWeeks(
+                                    sDate!,
+                                    eDate!,
+                                    numberOfWeeks || 0
+                                ))
                         }
                         form="edit-address-form"
                         type="submit"

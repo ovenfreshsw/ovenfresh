@@ -110,7 +110,7 @@ export default function CateringOrderTable({
         new Set(INITIAL_VISIBLE_COLUMNS)
     );
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const [page, setPage] = React.useState(1);
 

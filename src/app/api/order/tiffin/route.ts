@@ -102,7 +102,7 @@ async function postHandler(req: AuthenticatedRequest) {
                     advancePaid,
                     pendingBalance: Number(pendingAmount)?.toFixed(2),
                     totalPrice: Number(totalAmount)?.toFixed(2),
-                    tax,
+                    tax: Number(tax)?.toFixed(2),
                     order_type,
                     note,
                     customer: customer._id,
