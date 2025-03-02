@@ -37,15 +37,8 @@ export const columns = [
     { name: "PHONE", uid: "customerPhone" },
     { name: "ORDER", uid: "order", sortable: true },
     { name: "ORDER TYPE", uid: "order_type" },
-    { name: "STATUS", uid: "status", sortable: true },
+    { name: "STATUS", uid: "status" },
     { name: "ACTIONS", uid: "actions" },
-];
-
-export const statusOptions = [
-    { name: "Pending", uid: "pending" },
-    { name: "Ongoing", uid: "ongoing" },
-    { name: "Delivered", uid: "delivered" },
-    { name: "Cancelled", uid: "cancelled" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -64,6 +57,11 @@ const INITIAL_VISIBLE_COLUMNS = [
     "actions",
 ];
 
+const orderOptions = [
+    { name: "Catering", uid: "catering" },
+    { name: "Tiffin", uid: "tiffin" },
+];
+
 export default function ScheduledOrderTable({
     orders,
     isPending,
@@ -75,11 +73,11 @@ export default function ScheduledOrderTable({
     date: Date;
     onDateChange: (date: Date) => void;
 }) {
+    const [orderFilter, setOrderFilter] = React.useState<Selection>("all");
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS)
     );
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: "status",
@@ -111,16 +109,16 @@ export default function ScheduledOrderTable({
             );
         }
         if (
-            statusFilter !== "all" &&
-            Array.from(statusFilter).length !== statusOptions.length
+            orderFilter !== "all" &&
+            Array.from(orderFilter).length !== orderOptions.length
         ) {
             filteredOrders = filteredOrders.filter((order) =>
-                Array.from(statusFilter).includes(order.status.toLowerCase())
+                Array.from(orderFilter).includes(order.order.toLowerCase())
             );
         }
 
         return filteredOrders;
-    }, [orders, filterValue, statusFilter, hasSearchFilter]);
+    }, [orders, filterValue, orderFilter, hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -262,23 +260,24 @@ export default function ScheduledOrderTable({
                                     variant="bordered"
                                     className="rounded-md bg-white border border-dashed shadow-sm h-9"
                                 >
-                                    Status
+                                    Order Type
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 disallowEmptySelection
-                                aria-label="Table Columns"
+                                aria-label="Order Type"
                                 closeOnSelect={false}
-                                selectedKeys={statusFilter}
+                                selectedKeys={orderFilter}
                                 selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
+                                onSelectionChange={setOrderFilter}
+                                className="max-h-96 overflow-y-scroll scrollbar-thin"
                             >
-                                {statusOptions.map((status) => (
+                                {orderOptions.map((column) => (
                                     <DropdownItem
-                                        key={status.uid}
+                                        key={column.uid}
                                         className="capitalize"
                                     >
-                                        {capitalize(status.name)}
+                                        {capitalize(column.name)}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
@@ -319,23 +318,28 @@ export default function ScheduledOrderTable({
                         <DateFilter date={date} onSelect={onDateChange} />
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
-                        <Link
-                            href={`/summary/scheduled?date=${format(
-                                date,
-                                "yyyy-MM-dd"
-                            )}&store=${orders[0]?.store?.toString()}`}
-                            target="_blank"
+                        <Button
+                            size="sm"
+                            radius="sm"
+                            startContent={<Printer className="size-4" />}
+                            variant="solid"
+                            className="bg-white shadow hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                            disabled={orders.length === 0}
                         >
-                            <Button
-                                size="sm"
-                                radius="sm"
-                                startContent={<Printer className="size-4" />}
-                                variant="solid"
-                                className="bg-white shadow hover:bg-gray-100"
-                            >
-                                Print Report
-                            </Button>
-                        </Link>
+                            {orders.length > 0 ? (
+                                <Link
+                                    href={`/summary/scheduled?date=${format(
+                                        date || new Date(),
+                                        "yyyy-MM-dd"
+                                    )}`}
+                                    target="_blank"
+                                >
+                                    Print Report
+                                </Link>
+                            ) : (
+                                "Print Report"
+                            )}
+                        </Button>
                         {/* <Button
                             size="sm"
                             radius="sm"
@@ -367,11 +371,10 @@ export default function ScheduledOrderTable({
         );
     }, [
         filterValue,
-        statusFilter,
+        orderFilter,
         visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
-        orders?.length,
         onClear,
         date,
         onDateChange,

@@ -10,7 +10,7 @@ import {
 } from "@heroui/table";
 import { Eye, Loader2 } from "lucide-react";
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { ObjectId } from "mongoose";
@@ -37,9 +37,9 @@ export const columns = [
     { name: "ID", uid: "orderId" },
     { name: "CUSTOMER", uid: "customerName" },
     { name: "PHONE", uid: "customerPhone" },
-    { name: "CREATED AT", uid: "createdAt" },
+    { name: "ORDER PLACED ON", uid: "createdAt" },
     { name: "START DATE", uid: "startDate" },
-    { name: "TOTAL", uid: "totalPrice" },
+    { name: "END DATE", uid: "endDate" },
     { name: "STATUS", uid: "status", sortable: true },
     { name: "ACTIONS", uid: "actions" },
 ];
@@ -69,6 +69,8 @@ const RecentTiffinOrderTable = () => {
                 case "createdAt":
                     return <p>{formatDate(new Date(cellValue as string))}</p>;
                 case "startDate":
+                    return <p>{formatDate(new Date(cellValue as string))}</p>;
+                case "endDate":
                     return <p>{formatDate(new Date(cellValue as string))}</p>;
                 case "items":
                     return (

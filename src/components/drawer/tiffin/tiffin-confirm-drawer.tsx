@@ -133,6 +133,7 @@ export function TiffinConfirmDrawer({
                                         "pendingAmount",
                                         pendingAmount.toString()
                                     );
+                                    form.setValue("note", note);
                                 }}
                             >
                                 Confirm order

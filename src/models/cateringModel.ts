@@ -89,10 +89,6 @@ const CateringSchema = new Schema<CateringDocument>(
             enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
             default: "PENDING",
         },
-        isDeleted: {
-            type: Boolean,
-            default: false,
-        },
     },
     { versionKey: false, timestamps: true }
 );

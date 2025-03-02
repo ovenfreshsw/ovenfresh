@@ -1,6 +1,6 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
+// import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import NavbarBreadcrumbs from "./navbar-breadcrumbs";
 import { NavUser } from "../nav/user";
 import { MapPin } from "lucide-react";
@@ -9,7 +9,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
-import { Badge } from "@heroui/badge";
+// import { Badge } from "@heroui/badge";
 
 export default async function Header() {
     const session = await getServerSession(authOptions);
@@ -40,7 +40,7 @@ export default async function Header() {
         >
             <NavbarBreadcrumbs />
             <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
-                <button className="px-1 flex items-center">
+                {/* <button className="px-1 flex items-center">
                     <Badge
                         color="danger"
                         content=""
@@ -52,7 +52,7 @@ export default async function Header() {
                     >
                         <NotificationsRoundedIcon className="text-primary-foreground" />
                     </Badge>
-                </button>
+                </button> */}
                 <div className="flex items-center gap-2">
                     <ShadBadge
                         variant="outline"

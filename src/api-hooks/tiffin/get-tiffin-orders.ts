@@ -19,5 +19,6 @@ export function useTiffinOrders(limit?: number) {
     return useQuery({
         queryKey: ["order", "tiffin"],
         queryFn: () => getTiffinOrders(limit),
+        staleTime: 5 * 60 * 1000,
     });
 }

@@ -14,7 +14,7 @@ const ScheduledOrders = ({ storeId }: { storeId: string }) => {
             "orders",
             "scheduled",
             storeId,
-            format(selectedDate, "yyyy-MM-dd"),
+            format(selectedDate || new Date(), "yyyy-MM-dd"),
         ],
         [selectedDate, storeId]
     );
@@ -28,7 +28,7 @@ const ScheduledOrders = ({ storeId }: { storeId: string }) => {
     const formattedDate = useMemo(() => {
         if (isToday(selectedDate)) return "Today";
         if (isTomorrow(selectedDate)) return "Tomorrow";
-        return format(selectedDate, "PPP");
+        return format(selectedDate || new Date(), "PPP");
     }, [selectedDate]);
 
     return (

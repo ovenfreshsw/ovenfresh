@@ -14,7 +14,7 @@ import {
 } from "@heroui/table";
 import { Eye, Loader2 } from "lucide-react";
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import Link from "next/link";
 import { useCateringOrders } from "@/api-hooks/catering/get-catering-orders";
 import { formatDate } from "@/lib/utils";
@@ -37,13 +37,12 @@ type CellValue = Array<
 >;
 
 export const columns = [
-    { name: "ID", uid: "orderId", sortable: true },
+    { name: "ID", uid: "orderId" },
     { name: "CUSTOMER", uid: "customerName" },
     { name: "PHONE", uid: "customerPhone" },
-    { name: "CREATED AT", uid: "createdAt" },
-    { name: "DELIVERY DATE", uid: "deliveryDate", sortable: true },
-    { name: "TOTAL", uid: "totalPrice" },
-    { name: "STATUS", uid: "status", sortable: true },
+    { name: "ORDER PLACED ON", uid: "createdAt" },
+    { name: "DELIVERY DATE", uid: "deliveryDate" },
+    { name: "STATUS", uid: "status" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -95,7 +94,11 @@ const RecentCateringOrderTable = () => {
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <Link href={`orders/catering-${order.orderId}`}>
+                            <Link
+                                href={`/dashboard/orders/catering-${
+                                    order.orderId
+                                }?mid=${order._id.toString()}`}
+                            >
                                 <Eye
                                     size={18}
                                     className="stroke-2 text-muted-foreground"

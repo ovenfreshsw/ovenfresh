@@ -28,11 +28,13 @@ const DateFilter = ({
                     initialFocus
                     mode="single"
                     defaultMonth={date}
-                    selected={date}
+                    selected={date || new Date()}
+                    required
                     onSelect={(date) => onSelect(date as Date)}
                     footer={
                         <span className="text-xs text-muted-foreground">
-                            Scheduled orders for {format(date, "yyyy-MM-dd")}
+                            Scheduled orders for{" "}
+                            {format(date || new Date(), "yyyy-MM-dd")}
                         </span>
                     }
                 />

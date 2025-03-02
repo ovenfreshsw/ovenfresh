@@ -7,32 +7,38 @@ import CateringMenu from "@/models/cateringMenuModel";
 import Catering from "@/models/cateringModel";
 import Customer from "@/models/customerModel";
 import Store from "@/models/storeModel";
+import Tiffin from "@/models/tiffinModel";
 
 async function deleteHandler(
     req: AuthenticatedRequest,
     { params }: { params: Promise<{ orderId: string }> }
 ) {
     try {
-        if (isRestricted(req.user)) return error403();
+        if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
         const { orderId } = await params;
-
-        const searchParams = req.nextUrl.searchParams.get("deleteCustomer");
-        const deleteCustomer = searchParams
-            ? searchParams.toLowerCase() === "true"
-            : false;
 
         const order = await Catering.findByIdAndDelete(orderId);
         if (!order) {
             return error404("Order not found.");
         }
 
-        if (deleteCustomer) {
-            const customer = await Customer.findByIdAndDelete(order.customer);
+        const [tiffinExist, cateringExist] = await Promise.all([
+            Tiffin.findOne({
+                customer: order.customer,
+                orderId: { $ne: order.orderId },
+            }),
+            Catering.findOne({
+                customer: order.customer,
+                orderId: { $ne: order.orderId },
+            }),
+        ]);
 
-            if (!customer) {
-                return error404("Customer not found.");
-            }
+        if (!tiffinExist && !cateringExist) {
+            await Promise.all([
+                Customer.findByIdAndDelete(order.customer),
+                Address.deleteMany({ customerId: order.customer }),
+            ]);
         }
 
         return success200({ message: "Order deleted successfully." });
@@ -58,7 +64,10 @@ async function getHandler(
         // Build the query object dynamically based on the presence of storeId
         const query = storeId ? { store: storeId } : {};
 
-        const orders = await Catering.findOne({ ...query, orderId })
+        const orders = await Catering.findOne({
+            ...query,
+            orderId,
+        })
             .populate({ path: "address", model: Address })
             .populate({ path: "customer", model: Customer })
             .populate({ path: "store", model: Store })
@@ -79,7 +88,7 @@ async function patchHandler(
     { params }: { params: Promise<{ orderId: string }> }
 ) {
     try {
-        if (isRestricted(req.user)) return error403();
+        if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
         const { orderId } = await params;
         const {
@@ -98,17 +107,23 @@ async function patchHandler(
         const order = await Catering.findById(orderId);
         if (!order) return error404("Order not found in database.");
 
-        const { totalPrice, tax, advancePaid } = order;
+        const { totalPrice, tax, advancePaid, deliveryCharge } = order;
 
         const newSubtotal = items.reduce(
             (acc, item) => acc + item.priceAtOrder * item.quantity,
             0
         );
 
-        const newTotal = totalPrice + newSubtotal;
+        // const newTotal = totalPrice + newSubtotal;
         const taxRate = Number(process.env.NEXT_PUBLIC_TAX_AMOUNT || 0);
-        const newTax = tax > 0 ? (newTotal * taxRate) / 100 : 0;
-        const updatedTotal = tax > 0 ? newTotal + newTax : newTotal;
+
+        const oldSubtotal = totalPrice - tax - deliveryCharge;
+        const subtotal = oldSubtotal + newSubtotal;
+        const newTax = tax > 0 ? (subtotal * taxRate) / 100 : 0;
+        const updatedTotal =
+            tax > 0
+                ? subtotal + newTax + deliveryCharge
+                : subtotal + deliveryCharge;
         const pendingBalance = updatedTotal - advancePaid;
         const fullyPaid = pendingBalance <= 0;
 

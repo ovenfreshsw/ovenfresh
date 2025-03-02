@@ -19,5 +19,6 @@ export function useCateringOrders(limit?: number) {
     return useQuery({
         queryKey: ["order", "catering"],
         queryFn: () => getCateringOrders(limit),
+        staleTime: 5 * 60 * 1000,
     });
 }

@@ -8,13 +8,23 @@ const TiffinOrderStatusSchema = new Schema<TiffinOrderStatusDocument>(
             ref: "Tiffin",
             required: true,
         },
+        store: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Store",
+            required: true,
+        },
         date: {
             type: Date,
             required: true,
         },
-        status: {
+        lunch: {
             type: String,
-            enum: ["PENDING", "ONGOING", "DELIVERED"],
+            enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
+            default: "PENDING",
+        },
+        dinner: {
+            type: String,
+            enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
             default: "PENDING",
         },
     },

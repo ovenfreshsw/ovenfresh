@@ -12,6 +12,7 @@ const AddressCard = ({
     orderId,
     orderType,
     numberOfWeeks,
+    order_type,
 }: {
     address: CateringDocumentPopulate["address"];
     deliveryDate?: Date;
@@ -20,6 +21,7 @@ const AddressCard = ({
     orderId: string;
     orderType: "catering" | "tiffin";
     numberOfWeeks?: number;
+    order_type?: "pickup" | "delivery";
 }) => {
     return (
         <Card>
@@ -45,10 +47,16 @@ const AddressCard = ({
                         Coordinates: {address.lat}, {address.lng}
                     </div>
                     {orderType === "catering" && deliveryDate ? (
-                        <div className="text-sm text-muted-foreground">
-                            Delivery Date:{" "}
-                            {format(deliveryDate, "MMMM d, yyyy")}
-                        </div>
+                        <>
+                            <div className="text-sm text-muted-foreground">
+                                Delivery Date:{" "}
+                                {format(deliveryDate, "MMMM d, yyyy")}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                                Order Type:{" "}
+                                <span className="capitalize">{order_type}</span>
+                            </div>
+                        </>
                     ) : (
                         startDate &&
                         endDate && (

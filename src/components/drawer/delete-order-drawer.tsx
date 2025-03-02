@@ -25,10 +25,27 @@ import {
 } from "@/components/ui/drawer";
 import LoadingButton from "@/components/ui/loading-button";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { useDeleteOrder } from "@/api-hooks/delete-order";
+import { QueryClient } from "@tanstack/react-query";
 
-export function DeleteOrderDrawer() {
+export function DeleteOrderDrawer({
+    orderId,
+    orderType,
+}: {
+    orderId: string;
+    orderType: "catering" | "tiffin";
+}) {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery("(min-width: 768px)");
+
+    function onSuccess(queryClient: QueryClient) {
+        queryClient.invalidateQueries({ queryKey: ["order", orderType] });
+        toast.success("Order deleted successfully!");
+        setOpen(false);
+    }
+
+    const mutation = useDeleteOrder(onSuccess);
 
     if (isDesktop) {
         return (
@@ -56,7 +73,12 @@ export function DeleteOrderDrawer() {
                                 Cancel
                             </Button>
                         </DialogClose>
-                        <LoadingButton isLoading={false}>
+                        <LoadingButton
+                            isLoading={mutation.isPending}
+                            onClick={() =>
+                                mutation.mutate({ orderId, orderType })
+                            }
+                        >
                             Continue
                         </LoadingButton>
                     </DialogFooter>
@@ -89,7 +111,12 @@ export function DeleteOrderDrawer() {
                             Cancel
                         </Button>
                     </DrawerClose>
-                    <LoadingButton isLoading={false}>Continue</LoadingButton>
+                    <LoadingButton
+                        isLoading={mutation.isPending}
+                        onClick={() => mutation.mutate({ orderId, orderType })}
+                    >
+                        Continue
+                    </LoadingButton>
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>

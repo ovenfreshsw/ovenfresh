@@ -55,6 +55,7 @@ async function postHandler(req: AuthenticatedRequest) {
                 new Date(orderData.deliveryDate),
                 "yyyy-MM-dd"
             ),
+            pendingBalance: Number(orderData.pendingBalance)?.toFixed(2),
             customer: customer._id,
             customerName: customer.firstName + " " + customer.lastName,
             customerPhone: customer.phone,

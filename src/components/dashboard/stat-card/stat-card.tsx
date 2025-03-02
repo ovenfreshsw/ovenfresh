@@ -10,15 +10,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { areaElementClasses } from "@mui/x-charts/LineChart";
-
-export type StatCardProps = {
-    title: string;
-    value: string;
-    interval: string;
-    trend: "up" | "down" | "neutral";
-    data: number[];
-    percentage?: string;
-};
+import { useLastMonthStats } from "@/api-hooks/last-month-stat";
+import StatCardSKeleton from "@/components/skeleton/stat-card-skeleton";
 
 function getLast30Days() {
     const days = [];
@@ -50,16 +43,11 @@ function AreaGradient({ color, id }: { color: string; id: string }) {
     );
 }
 
-export default function StatCard({
-    title,
-    value,
-    interval,
-    trend,
-    data,
-    percentage,
-}: StatCardProps) {
+export default function StatCard() {
+    const { data, isPending } = useLastMonthStats("tiffin");
+
     const theme = useTheme();
-    // const daysInWeek = getDaysInMonth(4, 2024);
+
     const daysInWeek = getLast30Days();
 
     const trendColors = {
@@ -74,9 +62,13 @@ export default function StatCard({
         neutral: "default" as const,
     };
 
-    const color = labelColors[trend];
-    const chartColor = trendColors[trend];
+    if (!data) return <h1>Failed to retrieve data</h1>;
+
+    const color = labelColors[data.trend];
+    const chartColor = trendColors[data.trend];
     const trendValues = { up: "+25%", down: "-25%", neutral: "+5%" };
+
+    if (isPending) return <StatCardSKeleton />;
 
     return (
         <Card
@@ -85,8 +77,13 @@ export default function StatCard({
             className="!bg-primary-foreground"
         >
             <CardContent className="bg-transparent">
-                <Typography component="h2" variant="subtitle2" gutterBottom>
-                    {title}
+                <Typography
+                    component="h2"
+                    variant="subtitle2"
+                    gutterBottom
+                    className="capitalize"
+                >
+                    {data.title}
                 </Typography>
                 <Stack
                     direction="column"
@@ -105,13 +102,15 @@ export default function StatCard({
                             }}
                         >
                             <Typography variant="h4" component="p">
-                                {value}
+                                {data.value}
                             </Typography>
                             <Chip
                                 size="small"
                                 color={color}
                                 label={
-                                    percentage ? percentage : trendValues[trend]
+                                    data.percentage
+                                        ? data.percentage
+                                        : trendValues[data.trend]
                                 }
                             />
                         </Stack>
@@ -119,13 +118,13 @@ export default function StatCard({
                             variant="caption"
                             sx={{ color: "text.secondary" }}
                         >
-                            {interval}
+                            Last 30 days
                         </Typography>
                     </Stack>
                     <Box sx={{ width: "100%", height: 50 }}>
                         <SparkLineChart
                             colors={[chartColor]}
-                            data={data}
+                            data={data.data}
                             area
                             showHighlight
                             showTooltip
@@ -135,13 +134,13 @@ export default function StatCard({
                             }}
                             sx={{
                                 [`& .${areaElementClasses.root}`]: {
-                                    fill: `url(#area-gradient-${value})`,
+                                    fill: `url(#area-gradient-${data.value})`,
                                 },
                             }}
                         >
                             <AreaGradient
                                 color={chartColor}
-                                id={`area-gradient-${value}`}
+                                id={`area-gradient-${data.value}`}
                             />
                         </SparkLineChart>
                     </Box>

@@ -25,7 +25,6 @@ export interface TiffinDocument {
     extended: boolean;
     extendedFrom: string[];
     status: "PENDING" | "ONGOING" | "DELIVERED" | "CANCELLED";
-    isDeleted: boolean;
 }
 
 // Use Omit<> to avoid repetition and improve maintainability
@@ -40,6 +39,7 @@ export interface TiffinDocumentPopulate
         _id: string;
         orderId: string;
         date: Date;
-        status: "PENDING" | "ONGOING" | "DELIVERED";
+        lunch: "PENDING" | "ONGOING" | "DELIVERED";
+        dinner: "PENDING" | "ONGOING" | "DELIVERED";
     }[];
 }

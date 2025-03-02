@@ -13,7 +13,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
     ...props
 }) => {
     return (
-        <Button {...props}>
+        <Button {...props} disabled={isLoading}>
             {isLoading ? (
                 <>
                     <Loader2 className="animate-spin" /> Loading

@@ -45,15 +45,7 @@ import PaymentCard from "../order/payment-card";
 import { updateOrderItemsAction } from "@/actions/update-order-items-action";
 import { AddItemDrawer } from "../drawer/catering/add-item-drawer";
 import Image from "next/image";
-
-const ORDER_STATUSES = [
-    "PENDING",
-    "ONGOING",
-    "DELIVERED",
-    "CANCELLED",
-] as const;
-
-type OrderStatus = (typeof ORDER_STATUSES)[number];
+import { ORDER_STATUSES, OrderStatus } from "@/lib/types/order-status";
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -275,6 +267,7 @@ export default function CateringOrderDetails({
                     deliveryDate={orderData.deliveryDate}
                     orderId={orderData._id.toString()}
                     orderType="catering"
+                    order_type={orderData.order_type}
                 />
 
                 <Card className="md:col-span-2">

@@ -3,6 +3,7 @@
 import connectDB from "@/lib/mongodb";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
+import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -52,12 +53,44 @@ export async function updateOrderStatusAction(
                     $set: data,
                 }
             );
+            if (
+                status === "DELIVERED" ||
+                status === "CANCELLED" ||
+                status === "PENDING"
+            ) {
+                await Promise.all([
+                    await TiffinOrderStatus.updateMany(
+                        {
+                            orderId,
+                            lunch: { $ne: "DELIVERED" },
+                        },
+                        {
+                            $set: {
+                                lunch: status, // Set the new status for lunch
+                            },
+                        }
+                    ),
+                    // Update dinner if it's not already 'DELIVERED'
+                    await TiffinOrderStatus.updateMany(
+                        {
+                            orderId,
+                            dinner: { $ne: "DELIVERED" },
+                        },
+                        {
+                            $set: {
+                                dinner: status, // Set the new status for dinner
+                            },
+                        }
+                    ),
+                ]);
+            }
         }
 
         revalidatePath("/dashboard/orders");
 
         return { success: true };
     } catch (error) {
+        console.log(error);
         if (error instanceof Error) {
             return { error: error.message };
         } else {

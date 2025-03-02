@@ -32,7 +32,7 @@ async function getHandler(req: AuthenticatedRequest) {
         }));
 
         const tiffinData = tiffin
-            .filter((item) => item.orderId.store.toString() === storeId)
+            .filter((item) => item.store.toString() === storeId)
             .map((item) => ({
                 _id: item.orderId._id.toString(),
                 store: item.orderId.store._id,
@@ -42,7 +42,7 @@ async function getHandler(req: AuthenticatedRequest) {
                 order: "tiffin",
                 orderId: item.orderId.orderId,
                 order_type: item.orderId.order_type,
-                status: item.status,
+                status: item.dinner,
             }));
 
         return success200({ orders: cateringData.concat(tiffinData) });

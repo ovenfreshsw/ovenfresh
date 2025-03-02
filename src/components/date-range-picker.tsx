@@ -64,7 +64,7 @@ export function DatePickerWithRange({
                                 date?.from || new Date(),
                                 "yyyy-MM-dd"
                             )}&to=${format(
-                                date?.to || new Date(),
+                                date?.to || date?.from || new Date(),
                                 "yyyy-MM-dd"
                             )}`}
                             target="_blank"

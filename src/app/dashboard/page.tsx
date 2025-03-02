@@ -1,165 +1,21 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Header from "@/components/dashboard/header";
-import MainGrid from "@/components/dashboard/main-grid";
-import connectDB from "@/lib/mongodb";
-import Tiffin from "@/models/tiffinModel";
-import Catering from "@/models/cateringModel";
-import { Model } from "mongoose";
-import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
-import { format } from "date-fns";
-import {
-    dehydrate,
-    HydrationBoundary,
-    QueryClient,
-} from "@tanstack/react-query";
-import { getTiffinOrdersServer } from "@/lib/api/order/get-tiffin-orders";
-import { getCateringOrdersServer } from "@/lib/api/order/get-catering-orders";
+import { Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import ScheduledStatCard from "@/components/dashboard/scheduled-stat/scheduled-stat-card";
+import RecentCateringOrderTable from "@/components/data-table/catering/recent-catering-order-table";
+import RecentTiffinOrderTable from "@/components/data-table/tiffin/recent-tiffin-order-table";
+import StatCardWrapper from "@/components/dashboard/stat-card/stat-card-wrapper";
+import { Suspense } from "react";
+import TiffinServerWrapper from "@/components/data-table/tiffin/tiffin-server-wrapper";
+import TableSkeleton from "@/components/skeleton/table-skeleton";
+import StatCardSKeleton from "@/components/skeleton/stat-card-skeleton";
+import CateringServerWrapper from "@/components/data-table/catering/catering-server-wrapper";
+import ScheduledStatServerWrapper from "@/components/dashboard/scheduled-stat/scheduled-stat-server-wrapper";
+import ScheduledStatSkeleton from "@/components/skeleton/scheduled-stat-skeleton";
 
-// Define OrderDocument type for Mongoose documents
-interface OrderDocument extends Document {
-    createdAt: Date;
-}
-
-// Define return type
-interface OrderStats {
-    totalLast30Days: number;
-    totalPrev30Days: number;
-    percentageChange: string;
-    trend: "up" | "down" | "same";
-    last30DaysCounts: number[];
-}
-
-// Function to generate the last 30 days as strings
-const generateLastNDays = (days: number): string[] => {
-    return Array.from({ length: days }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        return date.toISOString().split("T")[0]; // Format: "YYYY-MM-DD"
-    }).reverse();
-};
-
-export default async function Dashboard() {
-    await connectDB();
-
-    // Get last 30 and previous 30 days
-    const last30Days: string[] = generateLastNDays(30);
-    const prev30Days: string[] = generateLastNDays(30).map((date) => {
-        const d = new Date(date);
-        d.setDate(d.getDate() - 30);
-        return d.toISOString().split("T")[0];
-    });
-
-    const sixtyDaysAgo: Date = new Date();
-    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-
-    // Function to fetch order statistics
-    const fetchOrderStats = async (
-        Model: Model<OrderDocument>
-    ): Promise<OrderStats> => {
-        const orderSummary = await Model.aggregate([
-            { $match: { createdAt: { $gte: sixtyDaysAgo } } },
-            {
-                $group: {
-                    _id: {
-                        $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt",
-                        },
-                    },
-                    count: { $sum: 1 },
-                },
-            },
-            { $sort: { _id: 1 } },
-        ]);
-
-        const orderCountsMap: Record<string, number> = {};
-
-        // Populate counts from MongoDB
-        orderSummary.forEach(
-            ({ _id, count }: { _id: string; count: number }) => {
-                orderCountsMap[_id] = count;
-            }
-        );
-
-        // Ensure all 30 days have values, defaulting to 0 if missing
-        const last30DaysCounts: number[] = last30Days.map(
-            (date) => orderCountsMap[date] || 0
-        );
-        const prev30DaysCounts: number[] = prev30Days.map(
-            (date) => orderCountsMap[date] || 0
-        );
-
-        // Calculate total orders for last 30 days and previous 30 days
-        const totalLast30Days: number = last30DaysCounts.reduce(
-            (sum, count) => sum + count,
-            0
-        );
-        const totalPrev30Days: number = prev30DaysCounts.reduce(
-            (sum, count) => sum + count,
-            0
-        );
-
-        // Calculate percentage change
-        const percentageChange: number =
-            totalPrev30Days === 0
-                ? totalLast30Days > 0
-                    ? 100
-                    : 0
-                : ((totalLast30Days - totalPrev30Days) / totalPrev30Days) * 100;
-
-        const formattedPercentageChange = percentageChange.toFixed(0);
-
-        // Determine trend
-        let trend: "up" | "down" | "same" = "same";
-        if (totalLast30Days > totalPrev30Days) {
-            trend = "up";
-        } else if (totalLast30Days < totalPrev30Days) {
-            trend = "down";
-        }
-
-        return {
-            totalLast30Days,
-            totalPrev30Days,
-            percentageChange: formattedPercentageChange,
-            trend,
-            last30DaysCounts,
-        };
-    };
-
-    const queryClient = new QueryClient({
-        defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } },
-    });
-
-    // Fetch stats for both Tiffin and Catering
-    const getStats = async () => {
-        const [tiffinStats, cateringStats, tiffinCount, cateringCount] =
-            await Promise.all([
-                fetchOrderStats(Tiffin),
-                fetchOrderStats(Catering),
-                TiffinOrderStatus.countDocuments({
-                    date: format(new Date(), "yyyy-MM-dd"),
-                    status: "PENDING",
-                }),
-                Catering.countDocuments({
-                    deliveryDate: format(new Date(), "yyyy-MM-dd"),
-                    status: "PENDING",
-                }),
-                queryClient.prefetchQuery({
-                    queryKey: ["order", "tiffin"],
-                    queryFn: () => getTiffinOrdersServer(10),
-                }),
-                queryClient.prefetchQuery({
-                    queryKey: ["order", "catering"],
-                    queryFn: () => getCateringOrdersServer(10),
-                }),
-            ]);
-
-        return { tiffinStats, cateringStats, tiffinCount, cateringCount };
-    };
-
-    const { tiffinStats, cateringStats, tiffinCount, cateringCount } =
-        await getStats();
+export default function Dashboard() {
     return (
         <Box
             component="main"
@@ -180,30 +36,50 @@ export default async function Dashboard() {
                     mt: { xs: 8, md: 2 },
                 }}
             >
-                <HydrationBoundary state={dehydrate(queryClient)}>
-                    <MainGrid
-                        tiffinStat={{
-                            percentageChange:
-                                tiffinStats.trend === "up"
-                                    ? `+${tiffinStats.percentageChange}%`
-                                    : `-${tiffinStats.percentageChange}%`,
-                            trend: tiffinStats.trend,
-                            data: tiffinStats.last30DaysCounts,
-                            totalLast30Days: tiffinStats.totalLast30Days,
-                        }}
-                        cateringStat={{
-                            percentageChange:
-                                cateringStats.trend === "up"
-                                    ? `+${cateringStats.percentageChange}%`
-                                    : `-${cateringStats.percentageChange}%`,
-                            trend: cateringStats.trend,
-                            data: cateringStats.last30DaysCounts,
-                            totalLast30Days: cateringStats.totalLast30Days,
-                        }}
-                        tiffinCount={tiffinCount}
-                        cateringCount={cateringCount}
-                    />
-                </HydrationBoundary>
+                <Box
+                    sx={{
+                        width: "100%",
+                        maxWidth: { sm: "100%", md: "1700px" },
+                    }}
+                >
+                    {/* cards */}
+                    <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+                        Overview
+                    </Typography>
+                    <Grid container spacing={2} columns={12} sx={{ mb: 2 }}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 6 }}>
+                            <Suspense fallback={<ScheduledStatSkeleton />}>
+                                <ScheduledStatServerWrapper>
+                                    <ScheduledStatCard />
+                                </ScheduledStatServerWrapper>
+                            </Suspense>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                            <Suspense fallback={<StatCardSKeleton />}>
+                                <StatCardWrapper type="tiffin" />
+                            </Suspense>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                            <Suspense fallback={<StatCardSKeleton />}>
+                                <StatCardWrapper type="catering" />
+                            </Suspense>
+                        </Grid>
+                        <Grid size={{ xs: 12 }}>
+                            <Suspense fallback={<TableSkeleton />}>
+                                <CateringServerWrapper>
+                                    <RecentCateringOrderTable />
+                                </CateringServerWrapper>
+                            </Suspense>
+                        </Grid>
+                        <Grid size={{ xs: 12 }}>
+                            <Suspense fallback={<TableSkeleton />}>
+                                <TiffinServerWrapper>
+                                    <RecentTiffinOrderTable />
+                                </TiffinServerWrapper>
+                            </Suspense>
+                        </Grid>
+                    </Grid>
+                </Box>
             </Stack>
         </Box>
     );

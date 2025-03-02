@@ -28,7 +28,6 @@ export interface CateringDocument {
     deliveryCharge: number;
     note: string;
     status: "PENDING" | "ONGOING" | "DELIVERED" | "CANCELLED";
-    isDeleted: boolean;
 }
 
 // Use Omit<> to avoid repetition and improve maintainability

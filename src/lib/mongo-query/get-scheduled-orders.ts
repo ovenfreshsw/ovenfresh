@@ -16,7 +16,6 @@ async function getScheduledCateringOrders(
         {
             deliveryDate: format(new Date(date), "yyyy-MM-dd"),
             status: { $in: ["PENDING", "ONGOING"] },
-            isDeleted: false,
             store: mongoose.Types.ObjectId.createFromHexString(store),
         },
         "_id orderId customerName customerPhone status store order_type items"
@@ -35,8 +34,11 @@ async function getScheduledCateringOrders(
 
 async function getScheduledTiffinOrders(date: Date | string) {
     return await TiffinOrderStatus.find({
-        date: format(new Date(date), "yyyy-MM-dd"),
-        status: { $in: ["PENDING", "ONGOING"] },
+        date: new Date(date),
+        $or: [
+            { lunch: { $in: ["PENDING", "ONGOING"] } },
+            { dinner: { $in: ["PENDING", "ONGOING"] } },
+        ],
     }).populate({
         path: "orderId",
         model: Tiffin,

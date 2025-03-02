@@ -5,6 +5,8 @@ import {
     getScheduledCateringOrders,
     getScheduledTiffinOrders,
 } from "@/lib/mongo-query/get-scheduled-orders";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const ScheduledPage = async ({
     searchParams,
@@ -12,10 +14,11 @@ const ScheduledPage = async ({
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
     const date = (await searchParams)?.date as string;
-    const store = (await searchParams)?.store as string;
+    const session = await getServerSession(authOptions);
+    const store = session?.user?.storeId;
 
     if (!store) {
-        throw new Error("Store ID not provided!");
+        throw new Error("Store ID not found!");
     }
 
     // Parse dates and check validity

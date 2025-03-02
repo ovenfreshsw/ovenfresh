@@ -19,7 +19,8 @@ import mongoose from "mongoose";
 async function createOrderStatus(
     orderId: mongoose.Types.ObjectId,
     startDate: string,
-    endDate: string
+    endDate: string,
+    store: string
 ) {
     const statuses = [];
     const currentDate = new Date(startDate);
@@ -27,7 +28,9 @@ async function createOrderStatus(
         statuses.push({
             orderId: orderId,
             date: formatDate(new Date(currentDate), "yyyy-MM-dd"),
-            status: "PENDING", // Default status
+            lunch: "PENDING",
+            dinner: "PENDING",
+            store,
         });
 
         currentDate.setDate(currentDate.getDate() + 1); // Move to next day
@@ -111,7 +114,8 @@ async function postHandler(req: AuthenticatedRequest) {
                 createOrderStatus(
                     tiffinId,
                     formatDate(new Date(start_date), "yyyy-MM-dd"),
-                    formatDate(new Date(end_date), "yyyy-MM-dd")
+                    formatDate(new Date(end_date), "yyyy-MM-dd"),
+                    store
                 ),
             ]);
 
@@ -122,6 +126,7 @@ async function postHandler(req: AuthenticatedRequest) {
             return error400("Invalid data format.", {});
         }
     } catch (error) {
+        console.log(error);
         if (error instanceof Error) {
             return error500({ error: error.message });
         } else {
@@ -140,7 +145,9 @@ async function getHandler(req: AuthenticatedRequest) {
         // Build the query object dynamically based on the presence of storeId
         const filter = storeId ? { store: storeId } : {};
 
-        let query = Tiffin.find(filter).sort({ createdAt: -1 });
+        let query = Tiffin.find(filter).sort({
+            createdAt: -1,
+        });
 
         if (limit && !isNaN(Number(limit)) && Number(limit) > 0) {
             query = query.limit(Number(limit)); // Apply limit only if it's a valid number

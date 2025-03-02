@@ -1,12 +1,11 @@
-import React from "react";
-import KitchenStickers from "./pdf-sticker-generator";
-import { endOfDay, isValid, startOfDay } from "date-fns";
 import connectDB from "@/lib/mongodb";
-import Catering from "@/models/cateringModel";
 import CateringMenu from "@/models/cateringMenuModel";
+import Catering from "@/models/cateringModel";
+import { endOfDay, isValid, startOfDay } from "date-fns";
+import CateringSheet from "./pdf-sticker-generator";
 import { CateringDocumentPopulate } from "@/models/types/catering";
 
-const StickerPage = async ({
+const CateringStickerPage = async ({
     searchParams,
 }: {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -24,7 +23,7 @@ const StickerPage = async ({
     const orders = (await Catering.find({
         deliveryDate: {
             $gte: fromDate,
-            $lte: toDate.setDate(toDate.getDate() + 1),
+            $lte: toDate,
         },
     }).populate({
         path: "items.itemId",
@@ -33,22 +32,22 @@ const StickerPage = async ({
     })) as CateringDocumentPopulate[];
 
     return (
-        <>
-            <KitchenStickers
-                orders={orders.map((order) => ({
-                    orderId: order.orderId,
-                    deliveryDate: order.deliveryDate,
-                    customerName: order.customerName,
-                    phone: order.customerPhone,
-                    items: order.items.map((item) => ({
-                        name: item.itemId.name,
-                        quantity: item.quantity,
-                    })),
-                    note: order.note,
-                }))}
-            />
-        </>
+        <CateringSheet
+            orders={orders.map((order) => ({
+                id: order.orderId,
+                deliveryDate: order.deliveryDate,
+                order_type: order.order_type,
+                customerName: order.customerName,
+                phone: order.customerPhone,
+                note: order.note,
+                items: order.items.map((item) => ({
+                    name: item.itemId.name,
+                    quantity: item.quantity,
+                    priceAtOrder: item.priceAtOrder,
+                })),
+            }))}
+        />
     );
 };
 
-export default StickerPage;
+export default CateringStickerPage;

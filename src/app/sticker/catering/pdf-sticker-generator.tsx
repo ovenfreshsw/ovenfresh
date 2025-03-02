@@ -1,130 +1,88 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { format } from "date-fns";
 
 type Order = {
-    orderId: string;
+    id: string;
     deliveryDate: Date;
+    order_type: "pickup" | "delivery";
     customerName: string;
     phone: string;
-    items: { name: string; quantity: number }[];
     note: string;
+};
+
+type CateringOrder = Order & {
+    items: Array<{
+        name: string;
+        quantity: number;
+        priceAtOrder: number;
+    }>;
 };
 
 // Create styles
 const styles = StyleSheet.create({
     page: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        padding: 10,
+        flexDirection: "column",
+        backgroundColor: "#ffffff",
+        padding: 30,
     },
-    sticker: {
-        width: "50%",
-        height: "25%",
-        padding: 8,
-        boxSizing: "border-box",
+    title: {
+        fontSize: 18,
+        marginBottom: 10,
+        textAlign: "center",
     },
-    orderHeader: {
-        borderBottom: 1,
-        paddingBottom: 5,
-        marginBottom: 5,
-    },
-    orderId: {
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    datetime: {
-        fontSize: 10,
-        color: "#666",
-    },
-    customerInfo: {
-        fontSize: 10,
-        marginBottom: 3,
-    },
-    itemsContainer: {
-        marginTop: 5,
-    },
-    itemRow: {
-        flexDirection: "row",
-        marginBottom: 3,
-    },
-    quantity: {
+    subtitle: {
         fontSize: 12,
+        marginBottom: 20,
+        textAlign: "center",
+    },
+    table: {
+        display: "flex",
+        width: "auto",
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderRightWidth: 0,
+        borderBottomWidth: 0,
+    },
+    tableRow: {
+        margin: "auto",
+        flexDirection: "row",
+    },
+    tableColHeader: {
+        width: "20%",
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        padding: 5,
+        fontSize: 8,
         fontWeight: "bold",
-        width: 25,
+        backgroundColor: "#f0f0f0",
     },
-    itemName: {
-        fontSize: 12,
-        fontWeight: "bold",
-        flex: 1,
+    tableCol: {
+        width: "20%",
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        padding: 5,
+        fontSize: 7,
     },
-    specialInstructions: {
-        fontSize: 9,
-        marginLeft: 25,
-        color: "#666",
-        fontStyle: "italic",
-    },
-    totalItems: {
-        fontSize: 11,
-        fontWeight: "bold",
-        marginTop: 3,
-        borderTop: 1,
-        paddingTop: 3,
-    },
-    priority: {
-        fontSize: 10,
-        color: "red",
-        position: "absolute",
-        top: 8,
-        right: 8,
-    },
-    address: {
-        fontSize: 9,
-        marginTop: 3,
-        color: "#444",
+    tableColWide: {
+        width: "20%",
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        padding: 5,
+        fontSize: 7,
     },
 });
 
-// Kitchen Order Sticker component
-const KitchenOrderSticker = ({ order }: { order: Order }) => {
-    const totalItems = order.items.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-    );
-
-    return (
-        <View style={styles.sticker}>
-            <View style={styles.orderHeader}>
-                <Text style={styles.orderId}>{order.orderId}</Text>
-                <Text style={styles.datetime}>
-                    {format(order.deliveryDate, "dd/MM/yyyy")}
-                </Text>
-            </View>
-            <Text style={styles.customerInfo}>
-                {order.customerName} | {order.phone}
-            </Text>
-            <View style={styles.itemsContainer}>
-                {order.items.map((item, index) => (
-                    <View key={index}>
-                        <View style={styles.itemRow}>
-                            <Text style={styles.quantity}>
-                                {item.quantity}x
-                            </Text>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                        </View>
-                    </View>
-                ))}
-            </View>
-            <Text style={styles.totalItems}>Total Items: {totalItems}</Text>
-            <Text style={styles.address}>Note: {order.note}</Text>
-        </View>
-    );
-};
-
 // PDF Document component
-export default function KitchenStickers({ orders }: { orders: Order[] }) {
+export default function CateringSheet({ orders }: { orders: CateringOrder[] }) {
     const [PDFViewer, setPDFViewer] = useState<React.ComponentType | null>(
         null
     );
@@ -139,11 +97,146 @@ export default function KitchenStickers({ orders }: { orders: Order[] }) {
         // @ts-expect-error: PDFViewer is not defined
         <PDFViewer width="100%" height={800}>
             <Document>
-                <Page size="A4" style={styles.page}>
-                    {orders.map((order, index) => (
-                        <KitchenOrderSticker key={index} order={order} />
-                    ))}
-                </Page>
+                {orders.length > 0 && (
+                    <Page size="A4" style={styles.page}>
+                        <View
+                            style={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <Text style={styles.title}>
+                                Catering Order Sheet
+                            </Text>
+                            <Text style={styles.subtitle}>
+                                Printed on:{" "}
+                                {format(new Date(), "MMMM d, yyyy HH:mm:ss")}
+                            </Text>
+                        </View>
+                        <View style={styles.table}>
+                            {/* Table Header */}
+                            <View style={styles.tableRow}>
+                                <View
+                                    style={{
+                                        ...styles.tableColHeader,
+                                        width: "15%",
+                                    }}
+                                >
+                                    <Text>Order ID</Text>
+                                </View>
+                                <View
+                                    style={{
+                                        ...styles.tableColHeader,
+                                        width: "15%",
+                                    }}
+                                >
+                                    <Text>Customer</Text>
+                                </View>
+                                <View
+                                    style={{
+                                        ...styles.tableColHeader,
+                                        width: "20%",
+                                    }}
+                                >
+                                    <Text>Phone</Text>
+                                </View>
+                                <View
+                                    style={{
+                                        ...styles.tableColWide,
+                                        width: "20%",
+                                    }}
+                                >
+                                    <Text>Note</Text>
+                                </View>
+                                <View
+                                    style={{
+                                        ...styles.tableColHeader,
+                                        width: "10%",
+                                    }}
+                                >
+                                    <Text>Type</Text>
+                                </View>
+                                <View
+                                    style={{
+                                        ...styles.tableColHeader,
+                                        width: "20%",
+                                    }}
+                                >
+                                    <Text>Items</Text>
+                                </View>
+                            </View>
+                            {/* Table Body */}
+                            {orders.map((order) => (
+                                <React.Fragment key={order.id}>
+                                    <View style={styles.tableRow}>
+                                        <View
+                                            style={{
+                                                ...styles.tableCol,
+                                                width: "15%",
+                                            }}
+                                        >
+                                            <Text>{order.id}</Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                ...styles.tableCol,
+                                                width: "15%",
+                                            }}
+                                        >
+                                            <Text>{order.customerName}</Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                ...styles.tableCol,
+                                                width: "20%",
+                                            }}
+                                        >
+                                            <Text>{order.phone}</Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                ...styles.tableColWide,
+                                                width: "20%",
+                                            }}
+                                        >
+                                            <Text>{order.note}</Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                ...styles.tableCol,
+                                                width: "10%",
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    textTransform: "capitalize",
+                                                }}
+                                            >
+                                                {order.order_type}
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                ...styles.tableCol,
+                                                width: "20%",
+                                            }}
+                                        >
+                                            {order.items?.map((item, index) => (
+                                                <Text key={index}>
+                                                    {item.name} (x
+                                                    {item.quantity}) - $
+                                                    {item.priceAtOrder}
+                                                </Text>
+                                            ))}
+                                        </View>
+                                    </View>
+                                </React.Fragment>
+                            ))}
+                        </View>
+                    </Page>
+                )}
             </Document>
         </PDFViewer>
     ) : (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTiffinOrders } from "@/api-hooks/tiffin/get-tiffin-orders";
-import TiffinOrderTable from "../data-table/tiffin-order-table";
+import TiffinOrderTable from "../data-table/tiffin/tiffin-order-table";
 
 const TiffinOrders = () => {
     const { data: tiffinOrders, isPending } = useTiffinOrders();

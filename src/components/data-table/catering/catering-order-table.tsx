@@ -29,10 +29,29 @@ import {
     PlusCircle,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { TiffinDocument, TiffinDocumentPopulate } from "@/models/types/tiffin";
+import {
+    CateringDocument,
+    CateringDocumentPopulate,
+} from "@/models/types/catering";
 import Link from "next/link";
-import { DeleteOrderDrawer } from "../drawer/delete-order-drawer";
-import { DatePickerWithRange } from "../date-range-picker";
+import { DeleteOrderDrawer } from "../../drawer/delete-order-drawer";
+import { DatePickerWithRange } from "../../date-range-picker";
+import { ObjectId } from "mongoose";
+import { CustomerDocument } from "@/models/types/customer";
+
+type CellValue = Array<
+    | string
+    | number
+    | boolean
+    | ObjectId
+    | CustomerDocument
+    | {
+          itemId: string;
+          priceAtOrder: number;
+          quantity: number;
+      }[]
+    | Date
+>;
 
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -42,16 +61,14 @@ export const columns = [
     { name: "ID", uid: "_id", sortable: true },
     { name: "CUSTOMER", uid: "customerName" },
     { name: "PHONE", uid: "customerPhone" },
-    { name: "START DATE", uid: "startDate", sortable: true },
-    { name: "END DATE", uid: "endDate", sortable: true },
-    { name: "NO. OF WEEKS", uid: "numberOfWeeks" },
+    { name: "DELIVERY DATE", uid: "deliveryDate", sortable: true },
+    { name: "NO. OF ITEMS", uid: "items" },
     { name: "PAYMENT METHOD", uid: "paymentMethod" },
     { name: "ADVANCE PAID", uid: "advancePaid" },
     { name: "PENDING BALANCE", uid: "pendingBalance" },
     { name: "TAX", uid: "tax" },
     { name: "TOTAL", uid: "totalPrice" },
     { name: "FULLY PAID", uid: "fullyPaid" },
-    { name: "ORDER TYPE", uid: "order_type" },
     { name: "NOTE", uid: "note" },
     { name: "STATUS", uid: "status", sortable: true },
     { name: "ACTIONS", uid: "actions" },
@@ -73,19 +90,20 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = [
     "customerName",
-    "startDate",
-    "endDate",
-    "numberOfWeeks",
+    "deliveryDate",
+    "items",
+    "totalPrice",
+    "pendingBalance",
     "status",
     "actions",
 ];
 
-export default function TiffinOrderTable({
-    orders,
+export default function CateringOrderTable({
     isPending,
+    orders,
 }: {
     isPending: boolean;
-    orders: TiffinDocumentPopulate[];
+    orders: CateringDocumentPopulate[];
 }) {
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
@@ -123,7 +141,7 @@ export default function TiffinOrderTable({
             Array.from(statusFilter).length !== statusOptions.length
         ) {
             filteredOrders = filteredOrders.filter((order) =>
-                Array.from(statusFilter).includes(order.status.toLowerCase())
+                Array.from(statusFilter).includes(order.status)
             );
         }
 
@@ -142,18 +160,22 @@ export default function TiffinOrderTable({
     const sortedItems = React.useMemo(() => [...items], [items]);
 
     const renderCell = React.useCallback(
-        (order: TiffinDocument, columnKey: React.Key) => {
-            const cellValue = order[columnKey as keyof TiffinDocument];
+        (order: CateringDocument, columnKey: React.Key) => {
+            const cellValue = order[columnKey as keyof CateringDocument];
 
             switch (columnKey) {
-                case "startDate":
+                case "deliveryDate":
                     return <p>{formatDate(new Date(cellValue as string))}</p>;
-                case "endDate":
-                    return <p>{formatDate(new Date(cellValue as string))}</p>;
+                case "items":
+                    return (
+                        <p className="text-center">
+                            {(cellValue as unknown as CellValue)?.length}
+                        </p>
+                    );
                 case "paymentMethod":
                     return (
                         <p className="capitalize flex items-center gap-1 text-sm justify-center">
-                            {cellValue?.toString() === "cash" ? (
+                            {cellValue.toString() === "cash" ? (
                                 <Banknote
                                     size={17}
                                     className="text-muted-foreground"
@@ -164,7 +186,7 @@ export default function TiffinOrderTable({
                                     className="text-muted-foreground"
                                 />
                             )}
-                            {cellValue?.toString()}
+                            {cellValue.toString()}
                         </p>
                     );
                 case "advancePaid":
@@ -175,10 +197,6 @@ export default function TiffinOrderTable({
                     return <p className="text-center">{`$${cellValue}`}</p>;
                 case "totalPrice":
                     return `$${cellValue}`;
-                case "numberOfWeeks":
-                    return (
-                        <p className="text-center">{cellValue?.toString()}</p>
-                    );
                 case "fullyPaid":
                     return (
                         <Chip
@@ -204,17 +222,16 @@ export default function TiffinOrderTable({
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <Link
-                                href={`orders/tiffin-${
-                                    order.orderId
-                                }?mid=${order._id.toString()}`}
-                            >
+                            <Link href={`orders/catering-${order.orderId}`}>
                                 <Eye
                                     size={18}
                                     className="stroke-2 text-muted-foreground"
                                 />
                             </Link>
-                            <DeleteOrderDrawer />
+                            <DeleteOrderDrawer
+                                orderId={order._id.toString()}
+                                orderType="catering"
+                            />
                         </div>
                     );
                 default:
@@ -349,19 +366,15 @@ export default function TiffinOrderTable({
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
                         <DatePickerWithRange
-                            orderType="tiffin"
-                            label="Print Report"
+                            orderType="catering"
                             printType="summary"
+                            label="Print Report"
                         />
-                        {/* <Button
-                            size="sm"
-                            radius="sm"
-                            startContent={<Printer className="size-4" />}
-                            variant="solid"
-                            className="bg-white shadow hover:bg-gray-100"
-                        >
-                            Print Stickers
-                        </Button> */}
+                        <DatePickerWithRange
+                            orderType="catering"
+                            printType="sticker"
+                            label="Print Sticker"
+                        />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -467,11 +480,11 @@ export default function TiffinOrderTable({
                 isLoading={isPending}
                 loadingContent={<Loader2 className="animate-spin" />}
             >
-                {(item: TiffinDocumentPopulate) => (
-                    <TableRow key={item._id}>
+                {(item: CateringDocumentPopulate) => (
+                    <TableRow key={item._id.toString()}>
                         {(columnKey) => (
                             <TableCell>
-                                {/* @ts-expect-error: renderCell doesn't take TiffinDocPopulate type */}
+                                {/* @ts-expect-error: renderCell doesn't take CateringDocPopulate type */}
                                 {renderCell(item, columnKey)}
                             </TableCell>
                         )}
