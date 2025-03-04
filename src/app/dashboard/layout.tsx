@@ -23,9 +23,9 @@ export default async function DashboardLayout(
     ) {
         return (
             <ErrorComponent
-                message="You are not authorized to access this page"
+                message="You are not authorized to access this page."
                 code={403}
-                key={"Forbidden"}
+                title="Forbidden"
             />
         );
     }

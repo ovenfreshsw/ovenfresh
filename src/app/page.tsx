@@ -21,9 +21,9 @@ export default async function Home() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-white sm:bg-gray-100 lg:py-10">
-            <Card className="relative w-full max-w-sm h-screen sm:h-auto rounded-none sm:rounded-2xl sm:p-3 shadow-none sm:shadow border-none sm:border-solid">
+            <Card className="relative pt-24 sm:pt-3 w-full max-w-sm h-screen sm:h-auto rounded-none sm:rounded-2xl sm:p-3 shadow-none sm:shadow border-none sm:border-solid">
                 <CardHeader className="text-primary">
-                    <div className="my-5 absolute -top-16 left-1/2 -translate-x-1/2">
+                    <div className="my-5 absolute top-0 sm:-top-16 left-1/2 -translate-x-1/2">
                         <Image
                             src={"/logo.webp"}
                             alt="Logo"

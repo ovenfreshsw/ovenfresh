@@ -1,3 +1,4 @@
+import { getCoordinates } from "@/lib/google";
 import {
     error400,
     error403,
@@ -28,6 +29,19 @@ async function postHandler(req: AuthenticatedRequest) {
 
         const { customerDetails, ...orderData } = result.data;
 
+        let lat = customerDetails.lat;
+        let lng = customerDetails.lng;
+
+        // Get lat and lng of the address
+        if (!lat || !lng) {
+            const coordinates = await getCoordinates(
+                data.customerDetails.placeId
+            );
+            if (!coordinates) return error400("Unable to get coordinates.", {});
+            lat = coordinates.lat;
+            lng = coordinates.lng;
+        }
+
         // 1️⃣ Find or Create Customer (Atomic)
         const customer = await Customer.findOneAndUpdate(
             { phone: customerDetails.phone }, // Search by phone
@@ -43,8 +57,9 @@ async function postHandler(req: AuthenticatedRequest) {
             {
                 customerId: customer._id,
                 address: customerDetails.address.trim(),
+                placeId: data.customerDetails.placeId,
             }, // Match customer and address
-            { lat: customerDetails.lat, lng: customerDetails.lng }, // Update lat/lng if needed
+            { lat, lng }, // Update lat/lng if needed
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
 

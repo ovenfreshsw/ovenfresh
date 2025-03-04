@@ -119,11 +119,11 @@ export function TiffinConfirmDrawer({
                                 </Button>
                             </DialogClose>
                             <LoadingButton
-                                disabled={
-                                    advanceAmount === "" ||
-                                    !form.formState.isValid ||
-                                    mutation.isPending
-                                }
+                                // disabled={
+                                //     advanceAmount === "" ||
+                                //     !form.formState.isValid ||
+                                //     mutation.isPending
+                                // }
                                 isLoading={mutation.isPending}
                                 type="submit"
                                 form="tiffin-form"

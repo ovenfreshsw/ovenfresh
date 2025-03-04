@@ -80,8 +80,8 @@ export default function CateringFormStepper() {
             ...order,
             customerDetails: {
                 ...order.customerDetails,
-                lat: 43.65107,
-                lng: -79.347015,
+                lat: Number(order.customerDetails.lat || 0),
+                lng: Number(order.customerDetails.lng || 0),
             },
             store: "676cee708588c68c668d3aa7",
             items: orderItems.map((item) => ({

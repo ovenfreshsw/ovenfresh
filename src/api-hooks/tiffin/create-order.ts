@@ -9,8 +9,22 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 
-export async function handleCreate(values: z.infer<typeof ZodTiffinSchema>) {
-    const { data: result } = await axios.post("/api/order/tiffin", values);
+type CreateTiffinOrderProps = {
+    values: z.infer<typeof ZodTiffinSchema>;
+    googleAddress: {
+        address: string;
+        placeId: string;
+    };
+};
+
+export async function handleCreate({
+    values,
+    googleAddress,
+}: CreateTiffinOrderProps) {
+    const { data: result } = await axios.post("/api/order/tiffin", {
+        ...values,
+        googleAddress,
+    });
     return result;
 }
 

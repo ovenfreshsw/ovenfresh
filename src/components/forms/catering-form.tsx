@@ -43,6 +43,10 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import OrderTypeSelect from "../select/order-type-select";
+import AddressAutocomplete from "../address-autocomplete";
+import { useSearchAddress } from "@/api-hooks/use-search-address";
+import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
+import { Textarea } from "../ui/textarea";
 
 export default function CateringForm({
     form,
@@ -57,9 +61,14 @@ export default function CateringForm({
     const orderDetail = useSelector((state: RootState) => state.cateringOrder);
 
     const debouncedPhone = useDebounce(phone, 300);
+    const debouncedAddress = useDebounce(
+        orderDetail.customerDetails.address,
+        500
+    );
 
     // React queries
     const { data: customers } = useSearchCustomer(debouncedPhone);
+    const { data: addressPredictions } = useSearchAddress(debouncedAddress);
 
     // Automatically toggle showAutocomplete when customers update
     useEffect(() => {
@@ -68,6 +77,17 @@ export default function CateringForm({
 
     useClickOutside(clickOutsideRef, () => setShowAutocomplete(false));
 
+    function setSelectedAddress(address: PlaceAutocompleteResult) {
+        dispatch(
+            setCustomerDetails({
+                address: address.description,
+                placeId: address.place_id,
+            })
+        );
+        form.setValue("customerDetails.lat", 0);
+        form.setValue("customerDetails.lng", 0);
+    }
+
     function setSelectedCustomer(customer: CustomerSearchResult) {
         dispatch(
             setCustomerDetails({
@@ -75,6 +95,7 @@ export default function CateringForm({
                 firstName: customer.firstName || "",
                 lastName: customer.lastName || "",
                 address: customer.address.address || "",
+                placeId: customer.address.placeId,
             })
         );
 
@@ -85,11 +106,14 @@ export default function CateringForm({
             "customerDetails.address",
             customer.address.address || ""
         );
+        form.setValue("customerDetails.lat", customer.address.lat);
+        form.setValue("customerDetails.lng", customer.address.lng);
     }
 
     function resetForm() {
         form.reset();
         dispatch(clearState());
+        setPhone("");
     }
 
     return (
@@ -234,7 +258,31 @@ export default function CateringForm({
                             <FormItem>
                                 <FormLabel>Address</FormLabel>
                                 <FormControl>
-                                    <Input
+                                    <AddressAutocomplete
+                                        addresses={addressPredictions ?? []}
+                                        setSelectedAddress={setSelectedAddress}
+                                    >
+                                        <Textarea
+                                            placeholder="address"
+                                            {...field}
+                                            value={
+                                                orderDetail.customerDetails
+                                                    .address
+                                            }
+                                            onChange={(e) => {
+                                                dispatch(
+                                                    setCustomerDetails({
+                                                        address: e.target.value,
+                                                    })
+                                                );
+                                                form.setValue(
+                                                    "customerDetails.address",
+                                                    e.target.value
+                                                );
+                                            }}
+                                        />
+                                    </AddressAutocomplete>
+                                    {/* <Input
                                         placeholder="address"
                                         type="text"
                                         {...field}
@@ -252,7 +300,7 @@ export default function CateringForm({
                                                 e.target.value
                                             );
                                         }}
-                                    />
+                                    /> */}
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

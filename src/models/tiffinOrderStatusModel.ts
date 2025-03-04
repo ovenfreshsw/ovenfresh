@@ -17,14 +17,9 @@ const TiffinOrderStatusSchema = new Schema<TiffinOrderStatusDocument>(
             type: Date,
             required: true,
         },
-        lunch: {
+        status: {
             type: String,
-            enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
-            default: "PENDING",
-        },
-        dinner: {
-            type: String,
-            enum: ["PENDING", "ONGOING", "DELIVERED", "CANCELLED"],
+            enum: ["PENDING", "ONGOING", "DELIVERED"],
             default: "PENDING",
         },
     },

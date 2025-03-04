@@ -7,7 +7,6 @@ import { format } from "date-fns";
 type Order = {
     orderId: string;
     deliveryDate: Date;
-    meal: "lunch" | "dinner";
     order_type: "pickup" | "delivery";
     customerName: string;
     phone: string;
@@ -54,11 +53,6 @@ const styles = StyleSheet.create({
         fontSize: 10,
         marginBottom: 3,
     },
-    meal: {
-        fontSize: 14,
-        marginBottom: 3,
-        textTransform: "capitalize",
-    },
     address: {
         fontSize: 9,
         marginTop: 3,
@@ -79,7 +73,6 @@ const KitchenOrderSticker = ({ order }: { order: Order }) => {
             <Text style={styles.customerInfo}>
                 {order.customerName} | {order.phone}
             </Text>
-            <Text style={styles.meal}>{order.meal}</Text>
             <Text style={styles.address}>Note: {order.note}</Text>
         </View>
     );

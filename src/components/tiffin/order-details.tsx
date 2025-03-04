@@ -153,43 +153,16 @@ export default function TiffinOrderDetails({
         updateOrderStatus(newStatus as OrderStatus);
     };
 
-    function handleDayStatusChange(
-        _id: string,
-        meal: "lunch" | "dinner",
-        status: OrderStatus
-    ) {
+    function handleDayStatusChange(_id: string, status: OrderStatus) {
         setDayStatusChange((prev) => {
             const existingIndex = prev.findIndex((item) => item._id === _id);
             if (existingIndex !== -1) {
                 // Update the existing item
-                const updatedArray = [...prev];
-                updatedArray[existingIndex] = {
-                    ...updatedArray[existingIndex],
-                    [meal]: status, // Update the specific meal (lunch or dinner)
-                };
-                return updatedArray;
+                prev[existingIndex].status = status;
+                return [...prev];
             } else {
                 // If the item doesn't exist, create a new one with the existing meal values
-                const newItem: DayStatus = {
-                    _id,
-                    // Preserve existing values if available, otherwise use 'PENDING'
-                    lunch: "PENDING", // default lunch if not available
-                    dinner: "PENDING", // default dinner if not available
-                };
-
-                // If there's already a value for lunch or dinner in the state, we preserve it
-                const existingMealData = orderData.individualStatus.find(
-                    (item) => item._id === _id
-                );
-                if (existingMealData) {
-                    newItem.lunch = existingMealData.lunch;
-                    newItem.dinner = existingMealData.dinner;
-                }
-
-                // Now update the meal that was passed (lunch or dinner)
-                newItem[meal] = status;
-
-                return [...prev, newItem];
+                return [...prev, { _id, status }];
             }
         });
     }
@@ -334,7 +307,7 @@ export default function TiffinOrderDetails({
                     totalPrice={orderData.totalPrice}
                 />
 
-                <Card className="col-span-2">
+                <Card className="md:col-span-2">
                     <CardHeader className="flex flex-row items-center space-y-0 justify-between">
                         <CardTitle className="flex items-center gap-2">
                             <Package2 className="h-5 w-5" />
@@ -364,13 +337,7 @@ export default function TiffinOrderDetails({
                                 <TableRow>
                                     <TableHead>Date</TableHead>
                                     <TableHead className="text-right">
-                                        Lunch
-                                    </TableHead>
-                                    <TableHead className="text-right">
-                                        Update status
-                                    </TableHead>
-                                    <TableHead className="text-right">
-                                        Dinner
+                                        Status
                                     </TableHead>
                                     <TableHead className="text-right">
                                         Update status
@@ -390,24 +357,23 @@ export default function TiffinOrderDetails({
                                             <TableCell className="text-right">
                                                 <Badge
                                                     className={`gap-1 ${getStatusColor(
-                                                        status.lunch
+                                                        status.status
                                                     )}`}
                                                 >
                                                     {getStatusIcon(
-                                                        status.lunch
+                                                        status.status
                                                     )}
-                                                    {status.lunch}
+                                                    {status.status}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right w-[150px]">
                                                 <Select
-                                                    defaultValue={status.lunch}
+                                                    defaultValue={status.status}
                                                     onValueChange={(
                                                         value: OrderStatus
                                                     ) =>
                                                         handleDayStatusChange(
                                                             status._id,
-                                                            "lunch",
                                                             value
                                                         )
                                                     }
@@ -428,57 +394,6 @@ export default function TiffinOrderDetails({
                                                         </SelectItem>
                                                         <SelectItem value="DELIVERED">
                                                             DELIVERED
-                                                        </SelectItem>
-                                                        <SelectItem value="CANCELLED">
-                                                            CANCELLED
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <Badge
-                                                    className={`gap-1 ${getStatusColor(
-                                                        status.dinner
-                                                    )}`}
-                                                >
-                                                    {getStatusIcon(
-                                                        status.dinner
-                                                    )}
-                                                    {status.dinner}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right w-[150px]">
-                                                <Select
-                                                    defaultValue={status.dinner}
-                                                    onValueChange={(
-                                                        value: OrderStatus
-                                                    ) =>
-                                                        handleDayStatusChange(
-                                                            status._id,
-                                                            "dinner",
-                                                            value
-                                                        )
-                                                    }
-                                                    disabled={!editDayStatus}
-                                                >
-                                                    <SelectTrigger
-                                                        id="status"
-                                                        className="w-[150px] ms-auto"
-                                                    >
-                                                        <SelectValue placeholder="Select a status" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="PENDING">
-                                                            PENDING
-                                                        </SelectItem>
-                                                        <SelectItem value="ONGOING">
-                                                            ONGOING
-                                                        </SelectItem>
-                                                        <SelectItem value="DELIVERED">
-                                                            DELIVERED
-                                                        </SelectItem>
-                                                        <SelectItem value="CANCELLED">
-                                                            CANCELLED
                                                         </SelectItem>
                                                     </SelectContent>
                                                 </Select>
