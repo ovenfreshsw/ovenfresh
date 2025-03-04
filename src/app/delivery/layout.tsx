@@ -1,3 +1,4 @@
+import Navbar from "@/components/delivery/navbar";
 import ErrorComponent from "@/components/error";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
@@ -28,5 +29,11 @@ export default async function DashboardLayout({
     await connectDB();
     const store = await Store.findById(session.user.storeId);
 
-    return <>{children}</>;
+    return (
+        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 max-w-md mx-auto">
+            {/* Header */}
+            <Navbar store={store.location || "Not Found"} />
+            {children}
+        </div>
+    );
 }

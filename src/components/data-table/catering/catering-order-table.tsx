@@ -369,11 +369,13 @@ export default function CateringOrderTable({
                             orderType="catering"
                             printType="summary"
                             label="Print Report"
+                            disabled={orders.length === 0}
                         />
                         <DatePickerWithRange
                             orderType="catering"
                             printType="sticker"
                             label="Print Sticker"
+                            disabled={orders.length === 0}
                         />
                     </div>
                 </div>

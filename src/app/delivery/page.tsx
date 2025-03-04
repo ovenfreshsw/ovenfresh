@@ -36,10 +36,7 @@ export default function DeliveryDashboard() {
     // };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 max-w-md mx-auto">
-            {/* Header */}
-            <Navbar />
-
+        <>
             {/* Welcome Section */}
             <WelcomeSection />
 
@@ -262,6 +259,6 @@ export default function DeliveryDashboard() {
                     </Button>
                 </div>
             </div> */}
-        </div>
+        </>
     );
 }

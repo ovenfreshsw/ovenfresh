@@ -77,9 +77,11 @@ async function getHandler(
             TiffinOrderStatus.find({ orderId: mid }),
         ]);
 
-        return success200({
-            orders: { ...orders?._doc, individualStatus: status },
-        });
+        if (orders)
+            return success200({
+                orders: { ...orders?._doc, individualStatus: status },
+            });
+        else return success200({ orders: null });
     } catch (error) {
         if (error instanceof Error) {
             return error500({ error: error.message });

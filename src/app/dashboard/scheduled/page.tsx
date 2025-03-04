@@ -2,7 +2,6 @@ import Header from "@/components/dashboard/header";
 import ScheduledOrders from "@/components/scheduled-orders/scheduled-orders";
 import { getScheduledOrdersServer } from "@/lib/api/order/get-scheduled-orders";
 import { authOptions } from "@/lib/auth";
-import AppError from "@/lib/error";
 import { Box, Stack } from "@mui/material";
 import {
     dehydrate,
@@ -18,7 +17,7 @@ const ScheduledPage = async () => {
     const storeId = session?.user?.storeId;
 
     if (!storeId) {
-        throw new AppError("Store ID not found!", 404);
+        throw new Error("Store ID not found!");
     }
 
     const queryClient = new QueryClient({

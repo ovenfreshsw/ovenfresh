@@ -355,11 +355,13 @@ export default function TiffinOrderTable({
                             orderType="tiffin"
                             label="Print Report"
                             printType="summary"
+                            disabled={orders.length === 0}
                         />
                         <DatePickerWithRange
                             orderType="tiffin"
                             printType="sticker"
                             label="Print Stickers"
+                            disabled={orders.length === 0}
                         />
                     </div>
                 </div>

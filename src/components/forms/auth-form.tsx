@@ -42,7 +42,7 @@ const AuthForm = () => {
                 username: data.username,
                 password: data.password,
                 redirect: false,
-                callbackUrl: callback.get("callbackUrl") || "/dashboard",
+                callbackUrl: callback.get("callbackUrl") || undefined,
             });
 
             if (signInResponse?.error) {
@@ -55,13 +55,14 @@ const AuthForm = () => {
             toast.success("Signed in successfully. redirecting...");
             router.refresh();
 
+            console.log(signInResponse?.url, "URL");
+            console.log(userRole, "USER ROLE");
+
             // Redirect based on role
-            if (signInResponse?.url) {
-                router.replace(signInResponse?.url);
-            } else if (userRole === "DELIVERY") {
+            if (userRole === "DELIVERY") {
                 router.replace("/delivery");
             } else {
-                router.replace("/dashboard");
+                router.replace(signInResponse?.url ?? "/dashboard");
             }
         } catch (error) {
             if (error instanceof Error) {
