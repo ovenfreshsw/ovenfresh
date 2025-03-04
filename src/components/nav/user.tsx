@@ -15,8 +15,12 @@ import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 
 export function NavUser({
+    children,
+    triggerClassname,
     user,
 }: {
+    children: React.ReactNode;
+    triggerClassname?: string;
     user: {
         name: string;
         avatar: string;
@@ -36,21 +40,8 @@ export function NavUser({
     }
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex flex-row text-primary gap-2 bg-primary-foreground rounded-xl p-1 pe-3">
-                <Avatar className="h-8 w-8 rounded-xl text-primary">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-xl uppercase bg-primary text-primary-foreground">
-                        {user.name[0]}
-                    </AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate text-xs capitalize">
-                        Welcome {user.role}
-                    </span>
-                    <span className="truncate font-semibold capitalize">
-                        {user.name}
-                    </span>
-                </div>
+            <DropdownMenuTrigger className={triggerClassname}>
+                {children}
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { ZodAuthSchema } from "@/lib/zod-schema/schema";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import {
     Form,
@@ -49,9 +49,20 @@ const AuthForm = () => {
                 form.reset();
                 throw new Error("Invalid credentials.");
             }
+            const session = await getSession();
+            const userRole = session?.user?.role;
+
             toast.success("Signed in successfully. redirecting...");
             router.refresh();
-            router.replace(signInResponse?.url || "/");
+
+            // Redirect based on role
+            if (signInResponse?.url) {
+                router.replace(signInResponse?.url);
+            } else if (userRole === "DELIVERY") {
+                router.replace("/delivery");
+            } else {
+                router.replace("/dashboard");
+            }
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);

@@ -1,6 +1,5 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-// import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import NavbarBreadcrumbs from "./navbar-breadcrumbs";
 import { NavUser } from "../nav/user";
 import { MapPin } from "lucide-react";
@@ -9,16 +8,25 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
-// import { Badge } from "@heroui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import ErrorComponent from "../error";
 
 export default async function Header() {
     const session = await getServerSession(authOptions);
 
     if (
         !session?.user.id ||
-        (!session?.user.storeId && session?.user.role !== "SUPERADMIN")
-    )
-        return null;
+        (!session?.user.storeId && session?.user.role !== "SUPERADMIN") ||
+        session?.user.role !== "MANAGER"
+    ) {
+        return (
+            <ErrorComponent
+                message="You are not authorized to access this page"
+                code={403}
+                key={"Forbidden"}
+            />
+        );
+    }
 
     await connectDB();
     const store = await Store.findById(session.user.storeId);
@@ -68,7 +76,25 @@ export default async function Header() {
                         name: session.user.username,
                         role: session.user.role.toLowerCase(),
                     }}
-                />
+                    triggerClassname="flex flex-row text-primary gap-2 bg-primary-foreground rounded-xl p-1 pe-3"
+                >
+                    <>
+                        <Avatar className="h-8 w-8 rounded-xl text-primary">
+                            <AvatarImage src={""} alt={session.user.username} />
+                            <AvatarFallback className="rounded-xl uppercase bg-primary text-primary-foreground">
+                                {session.user.username[0]}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                            <span className="truncate text-xs capitalize">
+                                Welcome {session.user.role}
+                            </span>
+                            <span className="truncate font-semibold capitalize">
+                                {session.user.username}
+                            </span>
+                        </div>
+                    </>
+                </NavUser>
             </Stack>
         </Stack>
     );

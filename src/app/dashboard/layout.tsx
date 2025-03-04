@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
+import ErrorComponent from "@/components/error";
 
 export default async function DashboardLayout(
     { children }: { children: React.ReactNode },
@@ -17,9 +18,17 @@ export default async function DashboardLayout(
 
     if (
         !session?.user.id ||
-        (!session?.user.storeId && session?.user.role !== "SUPERADMIN")
-    )
-        return null;
+        (!session?.user.storeId && session?.user.role !== "SUPERADMIN") ||
+        session?.user.role !== "MANAGER"
+    ) {
+        return (
+            <ErrorComponent
+                message="You are not authorized to access this page"
+                code={403}
+                key={"Forbidden"}
+            />
+        );
+    }
 
     await connectDB();
     const store = await Store.findById(session.user.storeId);

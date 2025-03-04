@@ -1,20 +1,19 @@
-"use client"; // Error boundaries must be Client Components
+"use client";
 
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import React from "react";
+import { Button } from "./ui/button";
 import Link from "next/link";
 
-export default function Error({
-    error,
+const ErrorComponent = ({
+    message,
+    code,
+    title,
 }: {
-    error: Error & { digest?: string };
-}) {
-    useEffect(() => {
-        // Log the error to an error reporting service
-        console.error(error);
-    }, [error]);
-
+    message: string;
+    code?: number;
+    title?: string;
+}) => {
     return (
         <main className="min-h-screen flex items-center justify-center p-4 bg-background">
             <div className="max-w-md w-full text-center space-y-6">
@@ -25,14 +24,16 @@ export default function Error({
                             aria-hidden="true"
                         />
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tighter">400</h1>
+                    <h1 className="text-4xl font-bold tracking-tighter">
+                        {code || 500}
+                    </h1>
                     <h2 className="text-2xl font-semibold text-muted-foreground">
-                        Bad Request
+                        {title || "Something went wrong"}
                     </h2>
                 </div>
 
                 <div className="space-y-4">
-                    <h1 className="font-bold">- {error.message} -</h1>
+                    <h1 className="font-bold">- {message} -</h1>
                     <p className="text-muted-foreground">
                         Oops! The server cannot process this request due to
                         invalid syntax or missing parameters.
@@ -58,4 +59,6 @@ export default function Error({
             </div>
         </main>
     );
-}
+};
+
+export default ErrorComponent;
