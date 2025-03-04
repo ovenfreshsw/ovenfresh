@@ -1,6 +1,4 @@
-
-
-import WelcomeSection from "./welcome-section";
+import WelcomeSection from "./welcome-section/welcome-section";
 
 const MainContent = () => {
     return (

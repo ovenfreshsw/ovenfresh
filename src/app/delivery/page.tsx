@@ -1,11 +1,7 @@
-// "use client";
-
-// import { useState } from "react";
 import {
     Phone,
     MapPin,
     CheckCircle,
-    ChevronRight,
     Clock,
     CreditCard,
     DollarSign,
@@ -20,9 +16,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Navbar from "@/components/delivery/navbar";
-import WelcomeSection from "@/components/delivery/welcome-section";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import WelcomeSection from "@/components/delivery/welcome-section/welcome-section";
+import { Suspense } from "react";
+import WelcomeSectionServerWrapper from "@/components/delivery/welcome-section/welcome-section-server-wrapper";
+import DeliveryStatSkeleton from "@/components/skeleton/delivery-stat-skeleton";
 
 export default function DeliveryDashboard() {
     // const markAsDelivered = (orderId: string) => {
@@ -38,10 +36,14 @@ export default function DeliveryDashboard() {
     return (
         <>
             {/* Welcome Section */}
-            <WelcomeSection />
+            <Suspense fallback={<DeliveryStatSkeleton />}>
+                <WelcomeSectionServerWrapper>
+                    <WelcomeSection />
+                </WelcomeSectionServerWrapper>
+            </Suspense>
 
             {/* Main Content */}
-            {/* <main className="flex-1 container mx-auto px-4 py-4">
+            <main className="flex-1 container mx-auto px-4 py-4">
                 <Tabs defaultValue="active" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 mb-4">
                         <TabsTrigger value="active">Active Orders</TabsTrigger>
@@ -49,14 +51,14 @@ export default function DeliveryDashboard() {
                     </TabsList>
 
                     <TabsContent value="active" className="space-y-4">
-                        {activeOrders.length === 0 ? (
+                        {[].length === 0 ? (
                             <div className="text-center py-8">
                                 <p className="text-muted-foreground">
                                     No active orders
                                 </p>
                             </div>
                         ) : (
-                            activeOrders.map((order) => (
+                            [].map((order: any) => (
                                 <Card key={order.id} className="mb-4">
                                     <CardHeader className="pb-2">
                                         <div className="flex justify-between items-start">
@@ -126,9 +128,9 @@ export default function DeliveryDashboard() {
                                             </Button>
                                         </div>
                                         <Button
-                                            onClick={() =>
-                                                markAsDelivered(order.id)
-                                            }
+                                            // onClick={() =>
+                                            //     markAsDelivered(order.id)
+                                            // }
                                             size="sm"
                                             className="flex items-center"
                                         >
@@ -141,7 +143,7 @@ export default function DeliveryDashboard() {
                         )}
                     </TabsContent>
 
-                    <TabsContent value="completed" className="space-y-4">
+                    {/* <TabsContent value="completed" className="space-y-4">
                         {completedOrders.length === 0 ? (
                             <div className="text-center py-8">
                                 <p className="text-muted-foreground">
@@ -200,12 +202,12 @@ export default function DeliveryDashboard() {
                                 </Card>
                             ))
                         )}
-                    </TabsContent>
+                    </TabsContent> */}
                 </Tabs>
-            </main> */}
+            </main>
 
             {/* Bottom Navigation */}
-            {/* <div className="fixed bottom-6 left-0 right-0 flex justify-center z-20">
+            <div className="fixed bottom-6 left-0 right-0 flex justify-center z-20">
                 <div className="bg-background rounded-full shadow-lg flex items-center p-1 border border-border">
                     <Button
                         variant="ghost"
@@ -229,7 +231,7 @@ export default function DeliveryDashboard() {
                             <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16Z"></path>
                             <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4"></path>
                         </svg>
-                        <span>Catering</span>
+                        <span>Tiffin</span>
                     </Button>
                     <div className="w-px h-8 bg-border mx-1"></div>
                     <Button
@@ -255,10 +257,10 @@ export default function DeliveryDashboard() {
                             <path d="m2 2 20 20"></path>
                             <path d="M4 4 2 6"></path>
                         </svg>
-                        <span>Tiffin</span>
+                        <span>Catering</span>
                     </Button>
                 </div>
-            </div> */}
+            </div>
         </>
     );
 }
