@@ -6,6 +6,7 @@ export interface CateringOrderState {
         lastName: string;
         phone: string;
         address: string;
+        placeId: string;
         lat: string;
         lng: string;
     };

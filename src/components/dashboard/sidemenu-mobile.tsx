@@ -1,5 +1,4 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Stack from "@mui/material/Stack";
@@ -9,6 +8,7 @@ import SignOutButton from "../sign-out-button";
 import { Badge as ShadBadge } from "../ui/badge";
 import { Badge } from "@heroui/badge";
 import { MapPin } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface SideMenuMobileProps {
     open: boolean | undefined;
@@ -40,7 +40,7 @@ export default function SideMenuMobile({
         >
             <Stack
                 sx={{
-                    width: "70dvw",
+                    width: "80dvw",
                     height: "100%",
                 }}
             >
@@ -52,20 +52,22 @@ export default function SideMenuMobile({
                         direction="row"
                         sx={{ gap: 1, alignItems: "center", flexGrow: 1, p: 1 }}
                     >
-                        <Avatar
-                            sizes="small"
-                            alt={username}
-                            src="/static/images/avatar/7.jpg"
-                            sx={{ width: 24, height: 24 }}
-                            className="capitalize"
-                        />
-                        <div className="flex items-center gap-1">
+                        <Avatar>
+                            <AvatarImage
+                                src="/static/images/avatar/7.jpg"
+                                alt={username}
+                            />
+                            <AvatarFallback className="bg-primary text-primary-foreground capitalize">
+                                {username.charAt(0)}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex items-center flex-col">
                             <h6 className="text-primary capitalize text-lg">
                                 {username}
                             </h6>
-                            <p className="text-primary/70">
+                            <p className="text-primary/70 text-xs">
                                 &#040;
-                                <span className="text-xs mx-1">{role}</span>
+                                <span>{role}</span>
                                 &#041;
                             </p>
                         </div>

@@ -334,7 +334,7 @@ export default function TiffinOrderDetails({
                     totalPrice={orderData.totalPrice}
                 />
 
-                <Card className="col-span-2">
+                <Card className="md:col-span-2">
                     <CardHeader className="flex flex-row items-center space-y-0 justify-between">
                         <CardTitle className="flex items-center gap-2">
                             <Package2 className="h-5 w-5" />

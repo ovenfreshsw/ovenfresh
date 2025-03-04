@@ -12,6 +12,10 @@ const AddressSchema = new Schema<AddressDocument>(
             type: String,
             required: true,
         },
+        placeId: {
+            type: String,
+            required: true,
+        },
         lat: {
             type: Number,
             required: true,

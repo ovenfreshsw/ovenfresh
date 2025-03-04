@@ -11,6 +11,7 @@ const initialState: CateringOrderState = {
         lastName: "",
         phone: "",
         address: "",
+        placeId: "",
         lat: "",
         lng: "",
     },

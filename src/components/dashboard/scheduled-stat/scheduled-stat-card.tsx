@@ -31,12 +31,12 @@ const ScheduledStatCard = () => {
                 </Link>
             </CardHeader>
             <CardContent className="p-5 pt-0 flex-1 flex items-center">
-                <div className="flex items-start justify-evenly w-full">
-                    <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row items-start justify-evenly w-full">
+                    <div className="flex items-center space-x-2 w-full">
                         <div className="p-2 bg-primary/10 rounded-full">
                             <KitchenIcon className="size-5 text-primary" />
                         </div>
-                        <div>
+                        <div className="w-full">
                             <p className="font-medium text-lg">Tiffin Orders</p>
                             <p className="leading-tight flex justify-between text-sm">
                                 Total:{" "}
@@ -58,12 +58,19 @@ const ScheduledStatCard = () => {
                             </p>
                         </div>
                     </div>
-                    <Separator orientation="vertical" className="mx-4 h-12" />
-                    <div className="flex items-center space-x-2">
+                    <Separator
+                        orientation="vertical"
+                        className="mx-4 h-12 hidden sm:block"
+                    />
+                    <Separator
+                        orientation="horizontal"
+                        className="my-4 sm:hidden"
+                    />
+                    <div className="flex items-center space-x-2 w-full">
                         <div className="p-2 bg-primary/10 rounded-full">
                             <TakeoutDiningIcon className="size-5 text-primary" />
                         </div>
-                        <div>
+                        <div className="w-full">
                             <p className="font-medium text-lg">
                                 Catering Orders
                             </p>

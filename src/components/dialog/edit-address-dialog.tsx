@@ -22,6 +22,10 @@ import { AddressDocument } from "@/models/types/address";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Alert } from "@mui/material";
+import AddressAutocomplete from "../address-autocomplete";
+import { useSearchAddress } from "@/api-hooks/use-search-address";
+import { useDebounce } from "@/hooks/use-debounce";
+import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
 
 function isGapInWeeks(
     startDate: Date,
@@ -60,11 +64,23 @@ const EditAddressDialog = ({
 }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [addressInput, setAddressInput] = useState({
+        address: address.address,
+        key: 0,
+    });
+    const [placeId, setPlaceId] = useState<string>(address.placeId);
     const [dDate, setDDate] = useState<Date | undefined>(deliveryDate);
     const [sDate, setSDate] = useState<Date | undefined>(startDate);
     const [eDate, setEDate] = useState<Date | undefined>(
         new Date(endDate || "")
     );
+
+    const debouncedAddress = useDebounce(addressInput.address, 500);
+
+    const { data: addressPredictions } = useSearchAddress({
+        address: debouncedAddress,
+        key: addressInput.key,
+    });
 
     const handleSubmit = async (formData: FormData) => {
         formData.append("orderId", orderId);
@@ -103,6 +119,11 @@ const EditAddressDialog = ({
         setOpen(false);
     }
 
+    function setSelectedAddress(selectedAddress: PlaceAutocompleteResult) {
+        setAddressInput({ address: selectedAddress.description, key: 0 });
+        setPlaceId(selectedAddress.place_id);
+    }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -123,13 +144,25 @@ const EditAddressDialog = ({
                         <Label htmlFor="address" className="text-right">
                             Address
                         </Label>
-                        <Input
-                            id="address"
-                            name="address"
-                            defaultValue={address.address}
-                            className="col-span-3"
-                        />
+                        <AddressAutocomplete
+                            addresses={addressPredictions || []}
+                            setSelectedAddress={setSelectedAddress}
+                            className="w-full"
+                        >
+                            <Input
+                                id="address"
+                                name="address"
+                                value={addressInput.address}
+                                onChange={(e) =>
+                                    setAddressInput({
+                                        address: e.target.value,
+                                        key: 1,
+                                    })
+                                }
+                            />
+                        </AddressAutocomplete>
                     </div>
+                    <input name="placeId" hidden readOnly value={placeId} />
                     {orderType === "catering" ? (
                         <div className="flex items-center gap-4">
                             <Label htmlFor="deliveryDate">Delivery Date</Label>

@@ -41,6 +41,9 @@ import TiffinWeeksSelect from "../select/tiffin-weeks-select";
 import AddressCommand from "../commands/address-command";
 import OrderTypeSelect from "../select/order-type-select";
 import { Textarea } from "../ui/textarea";
+import { useSearchAddress } from "@/api-hooks/use-search-address";
+import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
+import AddressAutocomplete from "../address-autocomplete";
 
 function getStoreId() {
     return "676cee708588c68c668d3aa7";
@@ -48,9 +51,11 @@ function getStoreId() {
 
 export default function TiffinForm() {
     const [confirmOrderOpen, setConfirmOrderOpen] = useState(false);
-    const clickOutsideRef = useRef(null);
+    const clickOutsidePhoneRef = useRef(null);
     const [phone, setPhone] = useState("");
-    const [showAutocomplete, setShowAutocomplete] = useState(false);
+    const [addressInput, setAddressInput] = useState({ address: "", key: 0 });
+    const [address, setAddress] = useState({ address: "", placeId: "" });
+    const [showPhoneAutocomplete, setShowPhoneAutocomplete] = useState(false);
     const [endDateText, setEndDateText] = useState("");
 
     const form = useForm<z.infer<typeof ZodTiffinSchema>>({
@@ -84,16 +89,16 @@ export default function TiffinForm() {
     }
 
     const debouncedPhone = useDebounce(phone, 300);
+    const debouncedAddress = useDebounce(addressInput.address, 500);
 
     // React queries
     const mutation = useCreateTiffinOrder(onSuccess);
     const { data: customers } = useSearchCustomer(debouncedPhone);
+    const { data: addressPredictions } = useSearchAddress({
+        address: debouncedAddress,
+        key: addressInput.key,
+    });
     const { data: tiffinMenu, error, isPending } = useTiffinMenu();
-
-    useEffect(() => {
-        form.setValue("customerDetails.lat", 43.65107);
-        form.setValue("customerDetails.lng", -79.347015);
-    }, [form]);
 
     function onSubmit(values: z.infer<typeof ZodTiffinSchema>) {
         const total = Number(form.getValues("totalAmount"));
@@ -101,10 +106,17 @@ export default function TiffinForm() {
 
         const subtotal = (total * 100) / (100 + taxRate);
 
+        if (!address.placeId) {
+            return toast.error("Please select a valid address!");
+        }
+
         mutation.mutate({
-            ...values,
-            totalAmount:
-                values.tax === 0 ? subtotal.toString() : values.totalAmount,
+            values: {
+                ...values,
+                totalAmount:
+                    values.tax === 0 ? subtotal.toString() : values.totalAmount,
+            },
+            googleAddress: address,
         });
     }
 
@@ -123,9 +135,9 @@ export default function TiffinForm() {
         calculateEndDate("2", form, setEndDateText);
     }, [form]);
 
-    // Automatically toggle showAutocomplete when customers update
+    // Automatically toggle showPhoneAutocomplete when customers update
     useEffect(() => {
-        setShowAutocomplete((customers?.length ?? 0) > 0);
+        setShowPhoneAutocomplete((customers?.length ?? 0) > 0);
     }, [customers]);
 
     function resetForm() {
@@ -138,9 +150,24 @@ export default function TiffinForm() {
         form.setValue("store", getStoreId());
         const { total } = calculateTotalAmount(form, tiffinMenu);
         form.setValue("totalAmount", total.toString());
+        setPhone("");
+        setAddressInput({ address: "", key: 0 });
+        setAddress({ address: "", placeId: "" });
     }
 
-    useClickOutside(clickOutsideRef, () => setShowAutocomplete(false));
+    useClickOutside(clickOutsidePhoneRef, () => {
+        setShowPhoneAutocomplete(false);
+    });
+
+    function setSelectedAddress(address: PlaceAutocompleteResult) {
+        setAddress({
+            address: address.description,
+            placeId: address.place_id,
+        });
+        setAddressInput({ address: address.description, key: 0 });
+        form.setValue("customerDetails.lat", 0);
+        form.setValue("customerDetails.lng", 0);
+    }
 
     function setSelectedCustomer(customer: CustomerSearchResult) {
         form.setValue("customerDetails.phone", customer.phone || "");
@@ -153,6 +180,13 @@ export default function TiffinForm() {
                 shouldValidate: true,
             }
         );
+        form.setValue("customerDetails.lat", customer.address.lat);
+        form.setValue("customerDetails.lng", customer.address.lng);
+        setAddressInput({ address: customer.address.address || "", key: 0 });
+        setAddress({
+            address: customer.address.address || "",
+            placeId: customer.address.placeId,
+        });
     }
 
     if (error) {
@@ -205,7 +239,7 @@ export default function TiffinForm() {
                                     <FormControl className="w-full">
                                         <div
                                             className="relative"
-                                            ref={clickOutsideRef}
+                                            ref={clickOutsidePhoneRef}
                                         >
                                             <PhoneInput
                                                 placeholder="phone"
@@ -216,11 +250,11 @@ export default function TiffinForm() {
                                                 }}
                                                 defaultCountry="CA"
                                             />
-                                            {showAutocomplete && (
+                                            {showPhoneAutocomplete && (
                                                 <AddressCommand
                                                     customers={customers}
                                                     setShowAutocomplete={
-                                                        setShowAutocomplete
+                                                        setShowPhoneAutocomplete
                                                     }
                                                     setSelectedCustomer={
                                                         setSelectedCustomer
@@ -285,10 +319,23 @@ export default function TiffinForm() {
                             <FormItem>
                                 <FormLabel>Address</FormLabel>
                                 <FormControl>
-                                    <Textarea
-                                        placeholder="address"
-                                        {...field}
-                                    />
+                                    <AddressAutocomplete
+                                        addresses={addressPredictions ?? []}
+                                        setSelectedAddress={setSelectedAddress}
+                                    >
+                                        <Textarea
+                                            placeholder="address"
+                                            {...field}
+                                            value={addressInput.address}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setAddressInput({
+                                                    address: e.target.value,
+                                                    key: 1,
+                                                });
+                                            }}
+                                        />
+                                    </AddressAutocomplete>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

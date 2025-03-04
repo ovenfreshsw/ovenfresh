@@ -3,7 +3,7 @@ import Image from "next/image";
 
 function ItemCardSummary({ item }: { item: CateringItemsState }) {
     return (
-        <div className="flex gap-2">
+        <div className="flex gap-2 px-3">
             <Image
                 src={item.image}
                 alt={item.name}

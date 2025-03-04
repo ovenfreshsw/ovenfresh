@@ -1,5 +1,6 @@
 "use server";
 
+import { getCoordinates } from "@/lib/google";
 import connectDB from "@/lib/mongodb";
 import {
     ZodCateringSchema,
@@ -29,6 +30,7 @@ export async function editAddressAction(formData: FormData) {
             orderType,
             addressId,
             address,
+            placeId,
             customerId,
             lat,
             lng,
@@ -53,22 +55,16 @@ export async function editAddressAction(formData: FormData) {
             orderType === "catering"
                 ? ZodCustomerSchema.merge(ZodCateringSchema).pick({
                       address: true,
-                      lat: true,
-                      lng: true,
                       deliveryDate: true,
                   })
                 : ZodCustomerSchema.merge(ZodTiffinSchema).pick({
                       address: true,
-                      lat: true,
-                      lng: true,
                       start_date: true,
                       end_date: true,
                   });
 
         const validated = validationSchema.safeParse({
             address,
-            lat: Number(lat),
-            lng: Number(lng),
             deliveryDate,
             start_date: startDate,
             end_date: endDate,
@@ -81,10 +77,7 @@ export async function editAddressAction(formData: FormData) {
         const validatedData = validated.data as ValidatedDataType;
 
         // Check if address details have changed
-        const isAddressSame =
-            currentAddress.address === validatedData.address &&
-            currentAddress.lat === validatedData.lat &&
-            currentAddress.lng === validatedData.lng;
+        const isAddressSame = currentAddress.address === validatedData.address;
 
         if (isAddressSame) {
             // Only update order details if the address is unchanged
@@ -99,14 +92,17 @@ export async function editAddressAction(formData: FormData) {
                 Tiffin.findOne({ address: addressId, _id: { $ne: orderId } }),
             ]);
 
+            const location = await getCoordinates(placeId.toString());
+
             let newAddressId = addressId as string;
 
             if (isAddressInUse.some((order) => order)) {
                 // Create a new address if it's used by another order
                 const newAddress = await Address.create({
                     address: validatedData.address,
-                    lat: validatedData.lat,
-                    lng: validatedData.lng,
+                    lat: location?.lat,
+                    lng: location?.lng,
+                    placeId: placeId,
                     customerId,
                 });
 
@@ -118,8 +114,8 @@ export async function editAddressAction(formData: FormData) {
                     {
                         $set: {
                             address: validatedData.address,
-                            lat: validatedData.lat,
-                            lng: validatedData.lng,
+                            lat: location?.lat,
+                            lng: location?.lng,
                         },
                     }
                 );

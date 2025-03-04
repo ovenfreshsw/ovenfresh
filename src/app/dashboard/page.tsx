@@ -30,7 +30,7 @@ export default function Dashboard() {
                 spacing={2}
                 sx={{
                     alignItems: "center",
-                    mx: 3,
+                    mx: { xs: 2, md: 3 },
                     pb: 5,
                     pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
