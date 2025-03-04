@@ -58,7 +58,6 @@ function calculateEndDate(
     form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>,
     setEndDateText: React.Dispatch<React.SetStateAction<string>>
 ) {
-    const oneWeek = 7 * 24 * 60 * 60 * 1000;
     const start = new Date(form.getValues("start_date"));
     const weeksNumber = parseFloat(weeks);
 
@@ -66,7 +65,17 @@ function calculateEndDate(
         return;
     }
 
-    const endDate = new Date(start.getTime() + weeksNumber * oneWeek);
+    let daysToAdd = weeksNumber * 5 - 1; // Include the start date as Day 1
+
+    while (daysToAdd > 0) {
+        start.setDate(start.getDate() + 1); // Move forward one day
+        if (start.getDay() !== 6 && start.getDay() !== 0) {
+            // Skip Sat & Sun
+            daysToAdd--; // Count only business days
+        }
+    }
+
+    const endDate = new Date(start);
     const formattedDate = formatDate(endDate);
     form.setValue("end_date", endDate.toDateString());
 

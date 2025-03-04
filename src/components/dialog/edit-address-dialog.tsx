@@ -230,7 +230,7 @@ const EditAddressDialog = ({
                                             mode="single"
                                             id="startDate"
                                             selected={sDate}
-                                            disabled={{ before: new Date() }}
+                                            disabled={{ dayOfWeek: [0, 6] }}
                                             onSelect={(e) =>
                                                 setSDate(e as Date)
                                             }

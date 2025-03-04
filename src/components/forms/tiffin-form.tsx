@@ -384,9 +384,10 @@ export default function TiffinForm() {
                                                     selected={
                                                         new Date(field.value)
                                                     }
-                                                    disabled={{
-                                                        before: new Date(),
-                                                    }}
+                                                    disabled={[
+                                                        { dayOfWeek: [0, 6] },
+                                                        { before: new Date() },
+                                                    ]}
                                                     onSelect={(e) => {
                                                         field.onChange(
                                                             e?.toDateString()
