@@ -29,8 +29,7 @@ async function createOrderStatus(
         statuses.push({
             orderId: orderId,
             date: formatDate(new Date(currentDate), "yyyy-MM-dd"),
-            lunch: "PENDING",
-            dinner: "PENDING",
+            status: "PENDING",
             store,
         });
 

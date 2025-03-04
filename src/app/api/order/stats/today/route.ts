@@ -40,12 +40,12 @@ async function getHandler(req: AuthenticatedRequest) {
             countDocuments(TiffinOrderStatus, {
                 store: storeObjectId,
                 date: today,
-                $or: [{ lunch: "PENDING" }, { dinner: "PENDING" }],
+                status: "PENDING",
             }),
             countDocuments(TiffinOrderStatus, {
                 store: storeObjectId,
                 date: today,
-                $or: [{ lunch: "DELIVERED" }, { dinner: "DELIVERED" }],
+                status: "DELIVERED",
             }),
             countDocuments(Catering, {
                 store: storeObjectId,

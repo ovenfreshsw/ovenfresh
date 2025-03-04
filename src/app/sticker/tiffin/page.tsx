@@ -25,49 +25,25 @@ const StickerPage = async ({
             $gte: fromDate,
             $lte: toDate,
         },
-        $or: [
-            { lunch: { $in: ["PENDING", "ONGOING"] } },
-            { dinner: { $in: ["PENDING", "ONGOING"] } },
-        ],
+        status: { $in: ["PENDING", "ONGOING"] },
     }).populate({
         path: "orderId",
         model: Tiffin,
         select: "customerName customerPhone orderId order_type note",
     });
 
-    const meals = orders.flatMap((order) => {
-        const meals = [];
-
-        if (order.lunch === "PENDING") {
-            meals.push({
-                orderId: order.orderId.orderId,
-                deliveryDate: order.date,
-                customerName: order.orderId.customerName,
-                order_type: order.orderId.order_type,
-                phone: order.orderId.customerPhone,
-                meal: "lunch" as const,
-                note: order.orderId.note,
-            });
-        }
-
-        if (order.dinner === "PENDING") {
-            meals.push({
-                orderId: order.orderId.orderId,
-                deliveryDate: order.date,
-                customerName: order.orderId.customerName,
-                order_type: order.orderId.order_type,
-                phone: order.orderId.customerPhone,
-                meal: "dinner" as const,
-                note: order.orderId.note,
-            });
-        }
-
-        return meals;
-    });
-
     return (
         <>
-            <KitchenStickers orders={meals} />
+            <KitchenStickers
+                orders={orders.map((order) => ({
+                    orderId: order.orderId.orderId,
+                    deliveryDate: order.date,
+                    customerName: order.orderId.customerName,
+                    order_type: order.orderId.order_type,
+                    phone: order.orderId.customerPhone,
+                    note: order.orderId.note,
+                }))}
+            />
         </>
     );
 };

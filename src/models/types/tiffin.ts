@@ -39,7 +39,6 @@ export interface TiffinDocumentPopulate
         _id: string;
         orderId: string;
         date: Date;
-        lunch: "PENDING" | "ONGOING" | "DELIVERED";
-        dinner: "PENDING" | "ONGOING" | "DELIVERED";
+        status: "PENDING" | "ONGOING" | "DELIVERED";
     }[];
 }

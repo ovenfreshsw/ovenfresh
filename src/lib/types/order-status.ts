@@ -9,8 +9,7 @@ type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 type DayStatus = {
     _id: string;
-    lunch: OrderStatus;
-    dinner: OrderStatus;
+    status: OrderStatus;
 };
 
 export { ORDER_STATUSES };

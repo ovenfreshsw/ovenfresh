@@ -15,12 +15,12 @@ export async function updateDayOrderStatusAction(
 
         if (!orderId) return { error: "Invalid order ID." };
 
-        const bulkOps = data.map(({ _id, lunch, dinner }) => ({
+        const bulkOps = data.map(({ _id, status }) => ({
             updateOne: {
                 filter: {
                     _id: mongoose.Types.ObjectId.createFromHexString(_id),
                 }, // Convert _id if necessary
-                update: { $set: { lunch, dinner } },
+                update: { $set: { status } },
             },
         }));
 

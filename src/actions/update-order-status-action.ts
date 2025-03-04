@@ -58,31 +58,10 @@ export async function updateOrderStatusAction(
                 status === "CANCELLED" ||
                 status === "PENDING"
             ) {
-                await Promise.all([
-                    await TiffinOrderStatus.updateMany(
-                        {
-                            orderId,
-                            lunch: { $ne: "DELIVERED" },
-                        },
-                        {
-                            $set: {
-                                lunch: status, // Set the new status for lunch
-                            },
-                        }
-                    ),
-                    // Update dinner if it's not already 'DELIVERED'
-                    await TiffinOrderStatus.updateMany(
-                        {
-                            orderId,
-                            dinner: { $ne: "DELIVERED" },
-                        },
-                        {
-                            $set: {
-                                dinner: status, // Set the new status for dinner
-                            },
-                        }
-                    ),
-                ]);
+                await TiffinOrderStatus.updateMany(
+                    { orderId, status: { $ne: "DELIVERED" } },
+                    { $set: { status } }
+                );
             }
         }
 
