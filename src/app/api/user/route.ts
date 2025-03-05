@@ -6,14 +6,14 @@ import {
     success201,
 } from "@/lib/response";
 import User from "@/models/userModel";
-import { NextRequest } from "next/server";
 import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { decryptPassword, encryptPassword } from "@/lib/password";
 import bcrypt from "bcryptjs";
 import { isRestricted } from "@/lib/utils";
+import { AuthenticatedRequest } from "@/lib/types/auth-request";
 
-async function postHandler(req: NextRequest) {
+async function postHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user)) return error403();
 
@@ -57,14 +57,16 @@ async function postHandler(req: NextRequest) {
         if (result.error) {
             return error400("Invalid data format.", {});
         }
-    } catch (error: any) {
-        console.log(error);
-
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 
-async function getHandler(req: NextRequest) {
+async function getHandler(req: AuthenticatedRequest) {
     try {
         if (req.user?.role !== "ADMIN") {
             return error403();
@@ -74,22 +76,33 @@ async function getHandler(req: NextRequest) {
             role: { $nin: ["ADMIN", "SUPERADMIN"] },
         });
 
-        const decryptedUsers = users.map((user: any) => {
-            const decryptedPassword = decryptPassword(user.lpp, user.iv);
-            return {
-                id: user._id,
-                username: user.username,
-                role: user.role,
-                storeId: user.storeId,
-                password: decryptedPassword,
-            };
-        });
+        const decryptedUsers = users.map(
+            (user: {
+                lpp: string;
+                iv: string;
+                _id: string;
+                username: string;
+                role: string;
+                storeId: string;
+            }) => {
+                const decryptedPassword = decryptPassword(user.lpp, user.iv);
+                return {
+                    id: user._id,
+                    username: user.username,
+                    role: user.role,
+                    storeId: user.storeId,
+                    password: decryptedPassword,
+                };
+            }
+        );
 
         return success200({ users: decryptedUsers });
-    } catch (error: any) {
-        console.log(error);
-
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 

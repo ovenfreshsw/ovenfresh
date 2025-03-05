@@ -1,0 +1,46 @@
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
+import { Button } from "@heroui/button";
+import { Filter } from "lucide-react";
+
+const DateFilter = ({
+    date,
+    onSelect,
+}: {
+    date: Date;
+    onSelect: (date: Date) => void;
+}) => {
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    startContent={<Filter className="h-4 w-4" />}
+                    size="sm"
+                    variant="bordered"
+                    className="rounded-md bg-white border border-dashed shadow-sm h-9"
+                >
+                    Filter by date
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                    initialFocus
+                    mode="single"
+                    defaultMonth={date}
+                    selected={date || new Date()}
+                    required
+                    onSelect={(date) => onSelect(date as Date)}
+                    footer={
+                        <span className="text-xs text-muted-foreground">
+                            Scheduled orders for{" "}
+                            {format(date || new Date(), "yyyy-MM-dd")}
+                        </span>
+                    }
+                />
+            </PopoverContent>
+        </Popover>
+    );
+};
+
+export default DateFilter;

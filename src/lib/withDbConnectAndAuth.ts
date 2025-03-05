@@ -1,19 +1,21 @@
 import dbConnect from "@/lib/mongodb";
-import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
 import { NextRequest } from "next/server";
 import { error401, error500 } from "./response";
 import verifyToken from "./jwt/verify-token";
+import { AuthenticatedRequest } from "./types/auth-request";
+import { getServerSession } from "next-auth";
 
-export function withDbConnectAndAuth(handler: Function, isAuthRequired = true) {
-    return async (req: NextRequest, context: any) => {
+export function withDbConnectAndAuth(handler: unknown, isAuthRequired = true) {
+    return async (req: NextRequest, context: unknown) => {
         try {
-            const [_, session] = await Promise.all([
+            const [, session] = await Promise.all([
                 dbConnect(),
                 getServerSession(authOptions),
             ]);
 
             if (isAuthRequired === false) {
+                // @ts-expect-error: handler type doesn't match NextRequest type
                 return await handler(req, context);
             }
 
@@ -23,10 +25,11 @@ export function withDbConnectAndAuth(handler: Function, isAuthRequired = true) {
                     return error401("Unauthorized");
                 }
             } else {
-                (req as any).user = session.user; // Attach user to request
+                (req as AuthenticatedRequest).user = session.user; // Attach user to request
             }
 
-            return await handler(req, context); // Proceed with the handler
+            // @ts-expect-error: handler type doesn't match NextRequest type
+            return await handler(req as AuthenticatedRequest, context); // Proceed with the handler
         } catch (error) {
             console.error("Middleware Error:", error);
             return error500({

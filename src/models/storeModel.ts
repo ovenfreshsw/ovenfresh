@@ -11,19 +11,16 @@ const StoreSchema = new Schema<StoreDocument>(
             type: String,
             required: true,
         },
-        city: {
-            type: String,
-            required: true,
-        },
-        province: {
-            type: String,
-            required: true,
-        },
-        zip: {
-            type: String,
-            required: true,
-        },
         phone: String,
+        location: String,
+        lat: {
+            type: Number,
+            required: true,
+        },
+        lng: {
+            type: Number,
+            required: true,
+        },
     },
     { versionKey: false }
 );

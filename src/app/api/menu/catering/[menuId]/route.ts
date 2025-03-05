@@ -1,4 +1,4 @@
-import { deleteFile, extractPublicId } from "@/lib/cloudinary";
+import { deleteFile, extractPublicId } from "@/config/cloudinary.config";
 import {
     error400,
     error403,
@@ -7,15 +7,15 @@ import {
     error500,
     success200,
 } from "@/lib/response";
+import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import CateringMenu from "@/models/cateringMenuModel";
 import Catering from "@/models/cateringModel";
-import { NextRequest } from "next/server";
 
 async function deleteHandler(
-    req: NextRequest,
+    req: AuthenticatedRequest,
     { params }: { params: Promise<{ menuId: string }> }
 ) {
     try {
@@ -51,13 +51,17 @@ async function deleteHandler(
         }
 
         return success200({ message: "Menu deleted successfully." });
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 
 async function putHandler(
-    req: NextRequest,
+    req: AuthenticatedRequest,
     { params }: { params: Promise<{ menuId: string }> }
 ) {
     try {
@@ -86,7 +90,7 @@ async function putHandler(
                 const publicId = extractPublicId(result.data.image);
                 if (existingMenu.publicId !== publicId) {
                     await deleteFile(existingMenu.publicId);
-                    // @ts-ignore
+                    // @ts-expect-error: publicId might not exist in result.data, but we are assigning it anyway
                     result.data.publicId = publicId;
                 }
             }
@@ -102,8 +106,12 @@ async function putHandler(
         if (!result.error) {
             return error400("Invalid data format.", {});
         }
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 

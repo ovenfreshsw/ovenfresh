@@ -5,12 +5,12 @@ import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
 import { UserDocument } from "@/models/types/user";
 import User from "@/models/userModel";
 import mongoose from "mongoose";
-import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import { isRestricted } from "@/lib/utils";
+import { AuthenticatedRequest } from "@/lib/types/auth-request";
 
 async function updateHandler(
-    req: NextRequest,
+    req: AuthenticatedRequest,
     { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
@@ -35,7 +35,7 @@ async function updateHandler(
                 return error400("User not found.");
             }
 
-            let updatedUserData = {} as UserDocument;
+            const updatedUserData = {} as UserDocument;
 
             if (result.data?.password) {
                 const hashedPassword = encryptPassword(result.data.password);
@@ -80,14 +80,17 @@ async function updateHandler(
         if (result.error) {
             return error400("Invalid data format.", {});
         }
-    } catch (error: any) {
-        console.log(error);
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 
 async function deleteHandler(
-    req: NextRequest,
+    req: AuthenticatedRequest,
     { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
@@ -104,8 +107,12 @@ async function deleteHandler(
         }
 
         return success200({});
-    } catch (error: any) {
-        return error500({ error: error.message });
+    } catch (error) {
+        if (error instanceof Error) {
+            return error500({ error: error.message });
+        } else {
+            return error500({ error: "An unknown error occurred" });
+        }
     }
 }
 

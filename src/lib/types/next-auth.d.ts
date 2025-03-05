@@ -1,31 +1,13 @@
-import NextAuth from "next-auth";
-
-declare global {
-    namespace NodeJS {
-        interface Global {
-            user: {
-                id: string;
-                role: string;
-            };
-        }
-    }
-
-    // Extend the Request interface to include user property
-    interface Request {
-        user?: {
-                id: string;
-                role: string;
-            };
-    }
-}
+import { DefaultSession, DefaultUser } from "next-auth";
 
 declare module "next-auth" {
-    interface User {
+    interface User extends DefaultUser {
         username: string;
         role: string;
         isAuthenticated: boolean;
+        storeId: string; // Add storeId to the User interface
     }
-    interface Session {
+    interface Session extends DefaultSession {
         user: User & {
             username: string;
         };

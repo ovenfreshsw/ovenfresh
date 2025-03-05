@@ -5,10 +5,24 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: "http",
+                protocol: "https",
                 hostname: "res.cloudinary.com",
             },
         ],
+    },
+    redirects: async () => {
+        return [
+            {
+                source: "/sticker",
+                destination: "/dashboard/order",
+                permanent: true,
+            },
+            {
+                source: "/summary",
+                destination: "/dashboard/order",
+                permanent: true,
+            },
+        ];
     },
     async headers() {
         return [

@@ -13,22 +13,23 @@ import Image from "next/image";
 
 export default async function Home() {
     const session = await getServerSession(authOptions);
+
     if (session?.user.id) redirect("/dashboard");
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-white sm:bg-gray-100 lg:py-10">
-            <Card className="w-full max-w-md h-screen sm:h-auto rounded-none sm:rounded-2xl sm:p-5 shadow-none sm:shadow border-none sm:border-solid">
-                <CardHeader>
-                    <div className="my-5 relative">
+            <Card className="relative pt-24 sm:pt-3 w-full max-w-sm h-screen sm:h-auto rounded-none sm:rounded-2xl sm:p-3 shadow-none sm:shadow border-none sm:border-solid">
+                <CardHeader className="text-primary">
+                    <div className="my-5 absolute top-0 sm:-top-16 left-1/2 -translate-x-1/2">
                         <Image
                             src={"/logo.webp"}
                             alt="Logo"
-                            width={60}
-                            height={100}
+                            width={80}
+                            height={80}
                         />
                     </div>
                     <CardTitle className="text-lg">Welcome back!</CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardDescription className="text-sm text-primary">
                         Enter your credentials to access your account
                     </CardDescription>
                 </CardHeader>

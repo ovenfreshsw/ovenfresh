@@ -23,8 +23,10 @@ export function extractPublicId(url: string) {
             return match[1]; // Extracted public ID
         }
         throw new Error("Public ID not found");
-    } catch (error: any) {
-        console.error("Error extracting public ID:", error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error extracting public ID:", error.message);
+        }
         return null;
     }
 }

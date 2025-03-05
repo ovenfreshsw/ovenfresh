@@ -52,8 +52,12 @@ const AuthForm = () => {
             toast.success("Signed in successfully. redirecting...");
             router.refresh();
             router.replace(signInResponse?.url || "/");
-        } catch (error: any) {
-            setError(error.message);
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError("An unknown error occurred");
+            }
         } finally {
             setSignInIsLoading(false);
         }
@@ -67,7 +71,9 @@ const AuthForm = () => {
                     name="username"
                     render={({ field }) => (
                         <FormItem className="mb-4 sm:mb-7">
-                            <Label htmlFor="username">Username</Label>
+                            <Label htmlFor="username" className="text-primary">
+                                Username
+                            </Label>
                             <FormControl className="space-y-2">
                                 <Input
                                     id="username"
@@ -86,7 +92,9 @@ const AuthForm = () => {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-primary">
+                                Password
+                            </Label>
                             <FormControl className="space-y-2">
                                 <Input
                                     id="password"

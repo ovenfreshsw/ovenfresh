@@ -44,6 +44,7 @@ export const authOptions: NextAuthOptions = {
                     role: user.role,
                     isAuthenticated: true,
                     id: user._id,
+                    storeId: user.storeId,
                 };
             },
         }),
@@ -58,6 +59,7 @@ export const authOptions: NextAuthOptions = {
                     ...token,
                     id: user.id,
                     role: user.role,
+                    storeId: user.storeId.toString(),
                 };
             }
             return token;
@@ -65,9 +67,10 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             try {
                 if (token.sub) {
+                    await connectDB();
                     const user = await User.findById(token.sub);
 
-                    if (!user) {
+                    if (user) {
                         return {
                             ...session,
                             user: {
@@ -76,11 +79,12 @@ export const authOptions: NextAuthOptions = {
                                 role: user?.role,
                                 username: user?.username,
                                 isAuthenticated: false,
+                                storeId: user?.storeId.toString(),
                             },
                         };
                     }
                 }
-            } catch (error) {
+            } catch {
                 return {
                     ...session,
                     user: {
