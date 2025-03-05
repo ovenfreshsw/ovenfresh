@@ -6,13 +6,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { NumberTicker } from "@/components/ui/number-ticker";
-import Upload from "@/components/upload/upload";
-import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
-import { DataTable } from "@/components/data-table/data-table";
-import { columns } from "@/components/data-table/columns";
 import path from "path";
 import fs from "fs";
-import { RevenueGraph } from "@/components/graphs/revenue-graph";
 
 async function getData() {
     const filePath = path.join(
@@ -121,11 +116,8 @@ const Home = async () => {
             <div className="py-10 space-y-7">
                 <div className="border rounded-lg space-y-7 p-6 shadow">
                     <span className="font-medium">Recent orders</span>
-                    <DataTable data={data} columns={columns} />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <RevenueGraph />
-                </div>
+                <div className="grid grid-cols-2 gap-4"></div>
             </div>
         </div>
     );
