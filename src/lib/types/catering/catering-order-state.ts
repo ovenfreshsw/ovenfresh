@@ -5,7 +5,7 @@ export interface CateringOrderState {
         firstName: string;
         lastName: string;
         phone: string;
-        address: string;
+        address: { address: string; key: number };
         placeId: string;
         lat: string;
         lng: string;

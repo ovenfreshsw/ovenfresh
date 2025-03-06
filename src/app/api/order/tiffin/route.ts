@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/auth";
 import { getCoordinates } from "@/lib/google";
 import {
     error400,
@@ -12,10 +13,12 @@ import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodTiffinSchema } from "@/lib/zod-schema/schema";
 import Address from "@/models/addressModel";
 import Customer from "@/models/customerModel";
+import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import { formatDate } from "date-fns";
 import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
 
 async function createOrderStatus(
     orderId: mongoose.Types.ObjectId,
@@ -158,15 +161,20 @@ async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
-        const storeId = req.nextUrl.searchParams.get("storeId");
+        const session = await getServerSession(authOptions);
+        const storeId = session?.user.storeId;
+
+        if (!storeId) return error403();
+
         const limit = req.nextUrl.searchParams.get("limit");
 
         // Build the query object dynamically based on the presence of storeId
         const filter = storeId ? { store: storeId } : {};
 
-        let query = Tiffin.find(filter).sort({
-            createdAt: -1,
-        });
+        let query = Tiffin.find(filter)
+            .populate({ path: "store", model: Store, select: "location" })
+            .populate({ path: "address", model: Address, select: "address" })
+            .sort({ createdAt: -1 });
 
         if (limit && !isNaN(Number(limit)) && Number(limit) > 0) {
             query = query.limit(Number(limit)); // Apply limit only if it's a valid number

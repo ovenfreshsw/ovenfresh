@@ -11,6 +11,9 @@ import LocalMallRoundedIcon from "@mui/icons-material/LocalMallRounded";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LockClockIcon from "@mui/icons-material/LockClock";
+import PeopleIcon from "@mui/icons-material/People";
+import StoreIcon from "@mui/icons-material/Store";
+import { useSession } from "next-auth/react";
 
 const mainListItems = [
     { text: "Dashboard", icon: <HomeRoundedIcon />, href: "/dashboard" },
@@ -29,11 +32,34 @@ const mainListItems = [
         icon: <LockClockIcon />,
         href: "/dashboard/scheduled",
     },
+    {
+        text: "Staffs",
+        icon: <PeopleIcon />,
+        href: "/dashboard/staffs",
+    },
+    {
+        text: "Stores",
+        icon: <StoreIcon />,
+        href: "/dashboard/stores",
+    },
 ];
+
+// List of items that should be visible only to admins
+const adminOnlyItems = ["Staffs", "Stores"];
 
 export default function MenuContent() {
     const [selected, setSelected] = React.useState(0);
     const pathname = usePathname();
+    const session = useSession();
+    const role = session.data?.user.role;
+
+    // Filter based on user role
+    const filteredListItems =
+        role === "SUPERADMIN"
+            ? mainListItems // Include all items if the user is an admin
+            : mainListItems.filter(
+                  (item) => !adminOnlyItems.includes(item.text)
+              ); // Remove admin-only items for non-admin users
 
     React.useEffect(() => {
         setSelected(mainListItems.findIndex((item) => item.href === pathname));
@@ -42,7 +68,7 @@ export default function MenuContent() {
     return (
         <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
             <List dense>
-                {mainListItems.map((item, index) => (
+                {filteredListItems.map((item, index) => (
                     <ListItem
                         key={index}
                         disablePadding

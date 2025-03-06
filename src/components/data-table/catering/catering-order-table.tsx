@@ -38,6 +38,10 @@ import { DeleteOrderDrawer } from "../../drawer/delete-order-drawer";
 import { DatePickerWithRange } from "../../date-range-picker";
 import { ObjectId } from "mongoose";
 import { CustomerDocument } from "@/models/types/customer";
+import ExportToExcel from "@/components/csv/export-to-excel";
+import { format } from "date-fns";
+import { useSession } from "next-auth/react";
+import { Show } from "@/components/show";
 
 type CellValue = Array<
     | string
@@ -105,6 +109,9 @@ export default function CateringOrderTable({
     isPending: boolean;
     orders: CateringDocumentPopulate[];
 }) {
+    const session = useSession();
+    const userRole = session.data?.user.role;
+
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS)
@@ -275,6 +282,30 @@ export default function CateringOrderTable({
         setPage(1);
     }, []);
 
+    const excelData =
+        userRole === "SUPERADMIN" || userRole === "ADMIN"
+            ? React.useMemo(() => {
+                  return orders.map((order) => ({
+                      orderId: order.orderId,
+                      customerName: order.customerName,
+                      phone: order.customerPhone,
+                      address: order.address.address,
+                      deliveryDate: format(new Date(order.deliveryDate), "PPP"),
+                      orderType: order.order_type,
+                      items: order.items.map((item) => item.itemId.name),
+                      paymentMethod: order.paymentMethod,
+                      deliveryCharge: order.deliveryCharge,
+                      totalAmount: order.totalPrice - order.tax,
+                      tax: order.tax,
+                      fullyPaid: order.fullyPaid ? "Yes" : "No",
+                      status: order.status,
+                      note: order.note,
+                      orderPlaced: format(new Date(order.createdAt), "PPP"),
+                      store: order.store.location,
+                  }));
+              }, [orders])
+            : [];
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
@@ -365,15 +396,30 @@ export default function CateringOrderTable({
                         </Dropdown>
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
+                        <Show>
+                            <Show.When
+                                isTrue={
+                                    userRole === "ADMIN" ||
+                                    userRole === "SUPERADMIN"
+                                }
+                            >
+                                <ExportToExcel
+                                    filename="catering-orders.xlsx"
+                                    data={excelData}
+                                />
+                            </Show.When>
+                        </Show>
                         <DatePickerWithRange
                             orderType="catering"
                             printType="summary"
                             label="Print Report"
+                            disabled={orders.length === 0}
                         />
                         <DatePickerWithRange
                             orderType="catering"
                             printType="sticker"
                             label="Print Sticker"
+                            disabled={orders.length === 0}
                         />
                     </div>
                 </div>

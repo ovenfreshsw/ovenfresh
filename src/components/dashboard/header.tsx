@@ -2,27 +2,11 @@ import * as React from "react";
 import Stack from "@mui/material/Stack";
 // import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import NavbarBreadcrumbs from "./navbar-breadcrumbs";
-import { NavUser } from "../nav/user";
-import { MapPin } from "lucide-react";
-import { Badge as ShadBadge } from "../ui/badge";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import connectDB from "@/lib/mongodb";
-import Store from "@/models/storeModel";
+import StoreDisplay from "./store-display";
+import { Skeleton } from "../ui/skeleton";
 // import { Badge } from "@heroui/badge";
 
 export default async function Header() {
-    const session = await getServerSession(authOptions);
-
-    if (
-        !session?.user.id ||
-        (!session?.user.storeId && session?.user.role !== "SUPERADMIN")
-    )
-        return null;
-
-    await connectDB();
-    const store = await Store.findById(session.user.storeId);
-
     return (
         <Stack
             direction="row"
@@ -53,22 +37,16 @@ export default async function Header() {
                         <NotificationsRoundedIcon className="text-primary-foreground" />
                     </Badge>
                 </button> */}
-                <div className="flex items-center gap-2">
-                    <ShadBadge
-                        variant="outline"
-                        className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-primary-foreground"
-                    >
-                        <MapPin className="h-4 w-4" />
-                        <span className="capitalize">{store.location}</span>
-                    </ShadBadge>
-                </div>
-                <NavUser
-                    user={{
-                        avatar: "",
-                        name: session.user.username,
-                        role: session.user.role.toLowerCase(),
-                    }}
-                />
+                <React.Suspense
+                    fallback={
+                        <>
+                            <Skeleton className="h-9 w-[131px] rounded-xl bg-primary-foreground/40" />
+                            <Skeleton className="h-[42px] w-48 rounded-xl bg-primary-foreground/40" />
+                        </>
+                    }
+                >
+                    <StoreDisplay />
+                </React.Suspense>
             </Stack>
         </Stack>
     );

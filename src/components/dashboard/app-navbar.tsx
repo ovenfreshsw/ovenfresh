@@ -33,11 +33,13 @@ const Toolbar = styled(MuiToolbar)({
 export default function AppNavbar({
     username,
     role,
-    location,
+    active,
+    stores,
 }: {
     username: string;
     role: string;
-    location: string;
+    active: { id: string; location: string };
+    stores: { id: string; location: string }[];
 }) {
     const [open, setOpen] = React.useState(false);
 
@@ -106,7 +108,8 @@ export default function AppNavbar({
                         toggleDrawer={toggleDrawer}
                         role={role}
                         username={username}
-                        location={location}
+                        active={active}
+                        stores={stores}
                     />
                 </Stack>
             </Toolbar>

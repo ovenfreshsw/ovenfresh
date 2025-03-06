@@ -33,6 +33,10 @@ import { TiffinDocument, TiffinDocumentPopulate } from "@/models/types/tiffin";
 import Link from "next/link";
 import { DeleteOrderDrawer } from "../../drawer/delete-order-drawer";
 import { DatePickerWithRange } from "../../date-range-picker";
+import { format } from "date-fns";
+import ExportToExcel from "@/components/csv/export-to-excel";
+import { Show } from "@/components/show";
+import { useSession } from "next-auth/react";
 
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -87,6 +91,9 @@ export default function TiffinOrderTable({
     isPending: boolean;
     orders: TiffinDocumentPopulate[];
 }) {
+    const session = useSession();
+    const userRole = session.data?.user.role;
+
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS)
@@ -261,6 +268,30 @@ export default function TiffinOrderTable({
         setPage(1);
     }, []);
 
+    const excelData =
+        userRole === "SUPERADMIN" || userRole === "ADMIN"
+            ? React.useMemo(() => {
+                  return orders.map((order) => ({
+                      orderId: order.orderId,
+                      customerName: order.customerName,
+                      phone: order.customerPhone,
+                      address: order.address.address,
+                      startDate: format(new Date(order.startDate), "PPP"),
+                      endDate: format(new Date(order.endDate), "PPP"),
+                      numberOfWeeks: order.numberOfWeeks,
+                      orderType: order.order_type,
+                      paymentMethod: order.paymentMethod,
+                      totalAmount: order.totalPrice - order.tax,
+                      tax: order.tax,
+                      fullyPaid: order.fullyPaid ? "Yes" : "No",
+                      status: order.status,
+                      note: order.note,
+                      orderPlaced: format(new Date(order.createdAt), "PPP"),
+                      store: order.store.location,
+                  }));
+              }, [orders])
+            : [];
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
@@ -351,15 +382,30 @@ export default function TiffinOrderTable({
                         </Dropdown>
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
+                        <Show>
+                            <Show.When
+                                isTrue={
+                                    userRole === "ADMIN" ||
+                                    userRole === "SUPERADMIN"
+                                }
+                            >
+                                <ExportToExcel
+                                    filename="tiffin-orders.xlsx"
+                                    data={excelData}
+                                />
+                            </Show.When>
+                        </Show>
                         <DatePickerWithRange
                             orderType="tiffin"
                             label="Print Report"
                             printType="summary"
+                            disabled={orders.length === 0}
                         />
                         <DatePickerWithRange
                             orderType="tiffin"
                             printType="sticker"
                             label="Print Stickers"
+                            disabled={orders.length === 0}
                         />
                     </div>
                 </div>

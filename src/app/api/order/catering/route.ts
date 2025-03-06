@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/auth";
 import { getCoordinates } from "@/lib/google";
 import {
     error400,
@@ -11,13 +12,21 @@ import { generateOrderId, isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringSchema } from "@/lib/zod-schema/schema";
 import Address from "@/models/addressModel";
+import CateringMenu from "@/models/cateringMenuModel";
 import Catering from "@/models/cateringModel";
 import Customer from "@/models/customerModel";
+import Store from "@/models/storeModel";
 import { formatDate } from "date-fns";
+import { getServerSession } from "next-auth";
 
 async function postHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
+
+        const session = await getServerSession(authOptions);
+        const store = session?.user?.storeId;
+
+        if (!store) return error403();
 
         const data = await req.json();
         if (!data) return error400("Invalid data format.", {});
@@ -65,6 +74,7 @@ async function postHandler(req: AuthenticatedRequest) {
 
         const order = await Catering.create({
             ...orderData,
+            store,
             orderId: generateOrderId(),
             deliveryDate: formatDate(
                 new Date(orderData.deliveryDate),
@@ -92,7 +102,11 @@ async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
-        const storeId = req.nextUrl.searchParams.get("storeId");
+        const session = await getServerSession(authOptions);
+        const storeId = session?.user?.storeId;
+
+        if (!storeId) return error403();
+
         const limit = req.nextUrl.searchParams.get("limit");
 
         const filter = storeId ? { store: storeId } : {};
@@ -101,6 +115,21 @@ async function getHandler(req: AuthenticatedRequest) {
             .populate({
                 path: "customer",
                 model: Customer,
+            })
+            .populate({
+                path: "address",
+                model: Address,
+                select: "address",
+            })
+            .populate({
+                path: "store",
+                model: Store,
+                select: "location",
+            })
+            .populate({
+                path: "items.itemId",
+                model: CateringMenu,
+                select: "name",
             })
             .sort({ createdAt: -1 });
 

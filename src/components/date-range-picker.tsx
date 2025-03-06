@@ -22,10 +22,12 @@ export function DatePickerWithRange({
     orderType,
     printType,
     label,
+    disabled = false,
 }: React.HTMLAttributes<HTMLDivElement> & {
     orderType: "tiffin" | "catering";
     printType: "summary" | "sticker";
     label: string;
+    disabled?: boolean;
 }) {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: new Date(),
@@ -41,7 +43,8 @@ export function DatePickerWithRange({
                         radius="sm"
                         startContent={<Printer className="size-4" />}
                         variant="solid"
-                        className="bg-white shadow hover:bg-gray-100"
+                        className="bg-white shadow hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                        disabled={disabled}
                     >
                         {label}
                     </Button>

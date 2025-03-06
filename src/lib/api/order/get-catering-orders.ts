@@ -7,7 +7,6 @@ export async function getCateringOrdersServer(limit?: number) {
     const cookie = headerSequence.get("cookie");
     const { data } = await axios.get("/api/order/catering", {
         params: {
-            storeId: "676cee708588c68c668d3aa7",
             limit,
         },
         headers: {

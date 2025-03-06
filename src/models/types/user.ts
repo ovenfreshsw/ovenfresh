@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { StoreDocument } from "./store";
 
 export interface UserDocument {
     _id: string;
@@ -8,4 +9,8 @@ export interface UserDocument {
     lpp: string;
     storeId: mongoose.Schema.Types.ObjectId | null;
     iv?: string;
+}
+
+export interface UserDocumentPopulate extends Omit<UserDocument, "storeId"> {
+    storeId: StoreDocument;
 }

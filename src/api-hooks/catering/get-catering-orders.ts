@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 async function getCateringOrders(limit?: number) {
     const { data } = await axios.get("/api/order/catering", {
         params: {
-            storeId: "676cee708588c68c668d3aa7",
             limit,
         },
     });

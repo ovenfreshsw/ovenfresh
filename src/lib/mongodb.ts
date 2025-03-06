@@ -12,12 +12,10 @@ const cached = global.mongoose || { conn: null, promise: null };
 
 const connectDB = async () => {
     if (cached.conn) {
-        console.log("Using existing MongoDB connection");
         return cached.conn;
     }
 
     if (!cached.promise) {
-        console.log("Creating new MongoDB connection...");
         cached.promise = mongoose
             .connect(MONGODB_URI)
             .then((mongoose) => mongoose);
