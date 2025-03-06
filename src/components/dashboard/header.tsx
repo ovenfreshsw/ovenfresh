@@ -1,36 +1,11 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
 import NavbarBreadcrumbs from "./navbar-breadcrumbs";
-import { NavUser } from "../nav/user";
-import { MapPin } from "lucide-react";
-import { Badge as ShadBadge } from "../ui/badge";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import connectDB from "@/lib/mongodb";
-import Store from "@/models/storeModel";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import ErrorComponent from "../error";
+import StoreDisplay from "./store-display";
+import { Skeleton } from "../ui/skeleton";
+// import { Badge } from "@heroui/badge";
 
 export default async function Header() {
-    const session = await getServerSession(authOptions);
-
-    if (
-        !session?.user.id ||
-        (!session?.user.storeId && session?.user.role !== "SUPERADMIN") ||
-        session?.user.role !== "MANAGER"
-    ) {
-        return (
-            <ErrorComponent
-                message="You are not authorized to access this page"
-                code={403}
-                key={"Forbidden"}
-            />
-        );
-    }
-
-    await connectDB();
-    const store = await Store.findById(session.user.storeId);
-
     return (
         <Stack
             direction="row"
@@ -61,40 +36,16 @@ export default async function Header() {
                         <NotificationsRoundedIcon className="text-primary-foreground" />
                     </Badge>
                 </button> */}
-                <div className="flex items-center gap-2">
-                    <ShadBadge
-                        variant="outline"
-                        className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-primary-foreground"
-                    >
-                        <MapPin className="h-4 w-4" />
-                        <span className="capitalize">{store.location}</span>
-                    </ShadBadge>
-                </div>
-                <NavUser
-                    user={{
-                        avatar: "",
-                        name: session.user.username,
-                        role: session.user.role.toLowerCase(),
-                    }}
-                    triggerClassname="flex flex-row text-primary gap-2 bg-primary-foreground rounded-xl p-1 pe-3"
+                <React.Suspense
+                    fallback={
+                        <>
+                            <Skeleton className="h-9 w-[131px] rounded-xl bg-primary-foreground/40" />
+                            <Skeleton className="h-[42px] w-48 rounded-xl bg-primary-foreground/40" />
+                        </>
+                    }
                 >
-                    <>
-                        <Avatar className="h-8 w-8 rounded-xl text-primary">
-                            <AvatarImage src={""} alt={session.user.username} />
-                            <AvatarFallback className="rounded-xl uppercase bg-primary text-primary-foreground">
-                                {session.user.username[0]}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate text-xs capitalize">
-                                Welcome {session.user.role}
-                            </span>
-                            <span className="truncate font-semibold capitalize">
-                                {session.user.username}
-                            </span>
-                        </div>
-                    </>
-                </NavUser>
+                    <StoreDisplay />
+                </React.Suspense>
             </Stack>
         </Stack>
     );

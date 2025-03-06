@@ -7,6 +7,7 @@ import Breadcrumbs, { breadcrumbsClasses } from "@mui/material/Breadcrumbs";
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Show } from "../show";
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
     margin: theme.spacing(1, 0),
@@ -44,9 +45,24 @@ export default function NavbarBreadcrumbs() {
                         key={i}
                         className="capitalize last:!font-medium text-white"
                     >
-                        {role === "MANAGER" && path === "dashboard"
-                            ? `Manager ${path}`
-                            : path}
+                        <Show>
+                            <Show.When
+                                isTrue={
+                                    role === "MANAGER" && path === "dashboard"
+                                }
+                            >
+                                Manager {path}
+                            </Show.When>
+                            <Show.When
+                                isTrue={
+                                    role === "SUPERADMIN" &&
+                                    path === "dashboard"
+                                }
+                            >
+                                Admin {path}
+                            </Show.When>
+                            <Show.Else>{path}</Show.Else>
+                        </Show>
                     </Typography>
                 ))}
         </StyledBreadcrumbs>

@@ -4,7 +4,6 @@ declare module "next-auth" {
     interface User extends DefaultUser {
         username: string;
         role: string;
-        isAuthenticated: boolean;
         storeId: string; // Add storeId to the User interface
     }
     interface Session extends DefaultSession {

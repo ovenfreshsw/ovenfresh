@@ -43,8 +43,8 @@ export function DatePickerWithRange({
                         radius="sm"
                         startContent={<Printer className="size-4" />}
                         variant="solid"
+                        className="bg-white shadow hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                         disabled={disabled}
-                        className="bg-white shadow hover:bg-gray-100 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:shadow-none disabled:text-gray-500"
                     >
                         {label}
                     </Button>

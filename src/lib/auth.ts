@@ -40,70 +40,93 @@ export const authOptions: NextAuthOptions = {
                 if (!passwordMatch)
                     throw new Error("Invalid username or password");
                 return {
+                    id: user._id,
                     username: user.username,
                     role: user.role,
-                    isAuthenticated: true,
-                    id: user._id,
                     storeId: user.storeId,
+                    tokenVersion: user.tokenVersion,
                 };
             },
         }),
     ],
     callbacks: {
+        // async jwt({ token, user, trigger, session }) {
+        //     if (trigger === "update") {
+        //         return { ...token, ...session.user };
+        //     }
+        //     if (user) {
+        //         return {
+        //             ...token,
+        //             id: user.id,
+        //             role: user.role,
+        //             storeId: user.storeId?.toString(),
+        //         };
+        //     }
+        //     return token;
+        // },
         async jwt({ token, user, trigger, session }) {
-            if (trigger === "update") {
-                return { ...token, ...session.user };
-            }
             if (user) {
-                return {
-                    ...token,
-                    id: user.id,
-                    role: user.role,
-                    storeId: user.storeId.toString(),
-                };
+                token.id = user.id;
+                token.username = user.username;
+                token.role = user.role;
+                token.storeId = user.storeId;
             }
+
+            // Allow storeId update from client
+            if (trigger === "update" && session?.storeId) {
+                token.storeId = session.storeId;
+            }
+
             return token;
         },
-        async session({ session, token }) {
-            try {
-                if (token.sub) {
-                    await connectDB();
-                    const user = await User.findById(token.sub);
+        // async session({ session, token }) {
+        //     try {
+        //         if (token.sub) {
+        //             await connectDB();
+        //             const user = await User.findById(token.sub);
 
-                    if (user) {
-                        return {
-                            ...session,
-                            user: {
-                                ...session.user,
-                                id: token.sub,
-                                role: user?.role,
-                                username: user?.username,
-                                isAuthenticated: false,
-                                storeId: user?.storeId.toString(),
-                            },
-                        };
-                    }
-                }
-            } catch {
-                return {
-                    ...session,
-                    user: {
-                        ...session.user,
-                        id: token.sub,
-                        role: token.role,
-                        isAuthenticated: false,
-                    },
-                };
-            }
-            return {
-                ...session,
-                user: {
-                    ...session.user,
-                    id: token.sub,
-                    role: token.role,
-                    isAuthenticated: true,
-                },
+        //             if (user) {
+        //                 return {
+        //                     ...session,
+        //                     user: {
+        //                         id: token.sub,
+        //                         role: user?.role,
+        //                         username: user?.username,
+        //                         isAuthenticated: false,
+        //                         storeId: user?.storeId?.toString(),
+        //                     },
+        //                 };
+        //             }
+        //         }
+        //     } catch {
+        //         return {
+        //             ...session,
+        //             user: {
+        //                 ...session.user,
+        //                 id: token.sub,
+        //                 role: token.role,
+        //                 isAuthenticated: false,
+        //             },
+        //         };
+        //     }
+        //     return {
+        //         ...session,
+        //         user: {
+        //             ...session.user,
+        //             id: token.sub,
+        //             role: token.role,
+        //             isAuthenticated: true,
+        //         },
+        //     };
+        // },
+        async session({ session, token }) {
+            session.user = {
+                id: token.id as string,
+                username: token.username as string,
+                role: token.role as string,
+                storeId: token.storeId as string,
             };
+            return session;
         },
     },
 };

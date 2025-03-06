@@ -19,7 +19,8 @@ export default async function DashboardLayout(
     if (
         !session?.user.id ||
         (!session?.user.storeId && session?.user.role !== "SUPERADMIN") ||
-        session?.user.role !== "MANAGER"
+        (session?.user.role !== "MANAGER" &&
+            session?.user.role !== "SUPERADMIN")
     ) {
         return (
             <ErrorComponent
@@ -31,7 +32,8 @@ export default async function DashboardLayout(
     }
 
     await connectDB();
-    const store = await Store.findById(session.user.storeId);
+    const allStores = await Store.find();
+    const store = allStores.find((store) => store.id === session.user.storeId);
 
     return (
         <MuiThemeProvider props={props}>
@@ -41,7 +43,14 @@ export default async function DashboardLayout(
                 <AppNavbar
                     role={session.user.role}
                     username={session.user.username}
-                    location={store.location}
+                    active={{
+                        id: store._id.toString(),
+                        location: store.location,
+                    }}
+                    stores={allStores.map((store) => ({
+                        id: store._id.toString(),
+                        location: store.location,
+                    }))}
                 />
                 {/* Main content */}
                 {children}

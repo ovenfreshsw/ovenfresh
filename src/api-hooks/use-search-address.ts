@@ -12,6 +12,7 @@ async function getSearchResult(
         params: { address: query },
         signal,
     });
+
     if (data && data.result)
         return data.result as PlaceAutocompleteResult[] | undefined;
     return null;

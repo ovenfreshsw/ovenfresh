@@ -80,10 +80,10 @@ export default function CateringFormStepper() {
             ...order,
             customerDetails: {
                 ...order.customerDetails,
+                address: order.customerDetails.address.address,
                 lat: Number(order.customerDetails.lat || 0),
                 lng: Number(order.customerDetails.lng || 0),
             },
-            store: "676cee708588c68c668d3aa7",
             items: orderItems.map((item) => ({
                 itemId: item._id,
                 quantity: item.quantity,
@@ -91,6 +91,7 @@ export default function CateringFormStepper() {
             })),
         };
         const result = ZodCateringSchema.safeParse(data);
+
         if (result.success) {
             mutation.mutate({
                 ...data,
@@ -98,6 +99,8 @@ export default function CateringFormStepper() {
             });
         }
         if (result.error) {
+            console.log(result.error);
+
             toast.error("Please fill all the form fields!");
         }
     };

@@ -11,8 +11,14 @@ const StoreSchema = new Schema<StoreDocument>(
             type: String,
             required: true,
         },
-        phone: String,
-        location: String,
+        placeId: {
+            type: String,
+            required: true,
+        },
+        location: {
+            type: String,
+            required: true,
+        },
         lat: {
             type: Number,
             required: true,
@@ -21,6 +27,7 @@ const StoreSchema = new Schema<StoreDocument>(
             type: Number,
             required: true,
         },
+        phone: String,
     },
     { versionKey: false }
 );

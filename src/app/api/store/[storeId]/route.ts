@@ -1,16 +1,9 @@
-import {
-    error400,
-    error403,
-    error409,
-    error500,
-    success200,
-} from "@/lib/response";
+import { error400, error403, error500, success200 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import Store from "@/models/storeModel";
-import User from "@/models/userModel";
 
 async function updateHandler(
     req: AuthenticatedRequest,
@@ -59,41 +52,4 @@ async function updateHandler(
     }
 }
 
-async function deleteHandler(
-    req: AuthenticatedRequest,
-    { params }: { params: Promise<{ storeId: string }> }
-) {
-    try {
-        if (req.user?.role !== "ADMIN") {
-            return error403();
-        }
-
-        const { storeId } = await params;
-        // Step 1: Check if any users have this storeId
-        const userWithStore = await User.findOne({ storeId: storeId });
-
-        if (userWithStore) {
-            // If users are associated, block deletion
-            return error409(
-                "Cannot delete this store. There are users associated with this store."
-            );
-        }
-
-        const deletedStore = await Store.deleteOne({ _id: storeId });
-
-        if (!deletedStore.acknowledged) {
-            return error500({ error: "Failed to delete store" });
-        }
-
-        return success200({});
-    } catch (error) {
-        if (error instanceof Error) {
-            return error500({ error: error.message });
-        } else {
-            return error500({ error: "An unknown error occurred" });
-        }
-    }
-}
-
 export const PUT = withDbConnectAndAuth(updateHandler);
-export const DELETE = withDbConnectAndAuth(deleteHandler);

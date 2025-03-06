@@ -62,13 +62,16 @@ export default function CateringForm({
 
     const debouncedPhone = useDebounce(phone, 300);
     const debouncedAddress = useDebounce(
-        orderDetail.customerDetails.address,
+        orderDetail.customerDetails.address.address,
         500
     );
 
     // React queries
     const { data: customers } = useSearchCustomer(debouncedPhone);
-    const { data: addressPredictions } = useSearchAddress(debouncedAddress);
+    const { data: addressPredictions } = useSearchAddress({
+        address: debouncedAddress,
+        key: orderDetail.customerDetails.address.key,
+    });
 
     // Automatically toggle showAutocomplete when customers update
     useEffect(() => {
@@ -80,10 +83,11 @@ export default function CateringForm({
     function setSelectedAddress(address: PlaceAutocompleteResult) {
         dispatch(
             setCustomerDetails({
-                address: address.description,
+                address: { address: address.description, key: 0 },
                 placeId: address.place_id,
             })
         );
+        form.setValue("customerDetails.address", address.description || "");
         form.setValue("customerDetails.lat", 0);
         form.setValue("customerDetails.lng", 0);
     }
@@ -94,7 +98,7 @@ export default function CateringForm({
                 phone: customer.phone || "",
                 firstName: customer.firstName || "",
                 lastName: customer.lastName || "",
-                address: customer.address.address || "",
+                address: { address: customer.address.address || "", key: 0 },
                 placeId: customer.address.placeId,
             })
         );
@@ -267,12 +271,16 @@ export default function CateringForm({
                                             {...field}
                                             value={
                                                 orderDetail.customerDetails
-                                                    .address
+                                                    .address.address
                                             }
                                             onChange={(e) => {
                                                 dispatch(
                                                     setCustomerDetails({
-                                                        address: e.target.value,
+                                                        address: {
+                                                            address:
+                                                                e.target.value,
+                                                            key: 1,
+                                                        },
                                                     })
                                                 );
                                                 form.setValue(

@@ -10,7 +10,7 @@ const initialState: CateringOrderState = {
         firstName: "",
         lastName: "",
         phone: "",
-        address: "",
+        address: { address: "", key: 0 },
         placeId: "",
         lat: "",
         lng: "",

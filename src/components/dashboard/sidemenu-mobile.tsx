@@ -9,13 +9,16 @@ import { Badge as ShadBadge } from "../ui/badge";
 import { Badge } from "@heroui/badge";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Show } from "../show";
+import StoreSelect from "../select/store-select";
 
 interface SideMenuMobileProps {
     open: boolean | undefined;
     toggleDrawer: (newOpen: boolean) => () => void;
     username: string;
     role: string;
-    location: string;
+    active: { id: string; location: string };
+    stores: { id: string; location: string }[];
 }
 
 export default function SideMenuMobile({
@@ -23,7 +26,8 @@ export default function SideMenuMobile({
     toggleDrawer,
     username,
     role,
-    location,
+    active,
+    stores,
 }: SideMenuMobileProps) {
     return (
         <Drawer
@@ -82,13 +86,22 @@ export default function SideMenuMobile({
                     </Badge>
                 </Stack>
                 <div className="flex items-center gap-2 px-6 mb-2">
-                    <ShadBadge
-                        variant="outline"
-                        className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-primary"
-                    >
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span className="capitalize">{location}</span>
-                    </ShadBadge>
+                    <Show>
+                        <Show.When isTrue={role !== "SUPERADMIN"}>
+                            <ShadBadge
+                                variant="outline"
+                                className="h-8 gap-1.5 rounded-lg px-3 text-sm font-light text-primary"
+                            >
+                                <MapPin className="h-4 w-4 text-primary" />
+                                <span className="capitalize">
+                                    {active.location}
+                                </span>
+                            </ShadBadge>
+                        </Show.When>
+                        <Show.When isTrue={role === "SUPERADMIN"}>
+                            <StoreSelect active={active.id} stores={stores} />
+                        </Show.When>
+                    </Show>
                 </div>
                 <Divider />
                 <Stack sx={{ flexGrow: 1 }}>

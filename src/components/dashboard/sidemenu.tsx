@@ -31,16 +31,6 @@ export default function SideMenu() {
                 },
             }}
         >
-            {/* <Box
-                sx={{
-                    display: "flex",
-                    mt: "calc(var(--template-frame-height, 0px) + 4px)",
-                    p: 1.5,
-                }}
-            >
-                <SelectContent />
-            </Box> */}
-            {/* <Divider /> */}
             <div className="flex justify-center py-3 bg-primary-foreground">
                 <Image src={"/logo.webp"} alt="logo" width={100} height={100} />
             </div>
