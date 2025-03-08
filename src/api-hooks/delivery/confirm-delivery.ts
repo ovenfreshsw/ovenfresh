@@ -12,14 +12,17 @@ export async function handleConfirm({
     orderType,
     orderId,
     resource,
+    collect,
 }: {
     orderType: "catering" | "tiffin";
     orderId: string;
     resource?: string | CloudinaryUploadWidgetInfo | undefined;
+    collect: boolean;
 }) {
     const { data: result } = await axios.patch("/api/order/delivery/confirm", {
         orderId,
         orderType,
+        collect,
         url: (resource as CloudinaryUploadWidgetInfo)?.secure_url,
         publicId: (resource as CloudinaryUploadWidgetInfo)?.public_id,
     });

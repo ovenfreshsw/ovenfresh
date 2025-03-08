@@ -17,19 +17,24 @@ import { toast } from "sonner";
 import { QueryClient } from "@tanstack/react-query";
 import { useConfirmDelivery } from "@/api-hooks/delivery/confirm-delivery";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { Checkbox } from "@heroui/checkbox";
+import { Show } from "@/components/show";
 
 export function ConfirmDeliveryDrawer({
     orderType,
     orderId,
+    pendingBalance,
     disabled = false,
     resource,
 }: {
     orderType: "catering" | "tiffin";
     orderId: string;
+    pendingBalance: number;
     disabled?: boolean;
     resource?: string | CloudinaryUploadWidgetInfo | undefined;
 }) {
     const [open, setOpen] = React.useState(false);
+    const [collect, setCollect] = React.useState(false);
 
     function onSuccess(queryClient: QueryClient) {
         queryClient.invalidateQueries({
@@ -46,11 +51,11 @@ export function ConfirmDeliveryDrawer({
             <DrawerTrigger asChild>
                 <Button
                     size="sm"
-                    className="flex items-center"
+                    className="flex items-center flex-1"
                     disabled={disabled}
                 >
                     <CheckCircle className="h-4 w-4 mr-1" />
-                    Delivered
+                    Mark Delivered
                 </Button>
             </DrawerTrigger>
             <DrawerContent className="z-[1550] max-w-md mx-auto">
@@ -60,11 +65,31 @@ export function ConfirmDeliveryDrawer({
                         Are you sure you want to mark this order as delivered?
                     </DrawerDescription>
                 </DrawerHeader>
+                <Show>
+                    <Show.When isTrue={pendingBalance > 0}>
+                        <div className="flex items-center py-3 px-4">
+                            <Checkbox
+                                size="sm"
+                                isSelected={collect}
+                                onValueChange={setCollect}
+                            />
+                            <p className="text-sm">
+                                Collected pending balance{" "}
+                                <span className="font-bold">$22.1</span>
+                            </p>
+                        </div>
+                    </Show.When>
+                </Show>
                 <DrawerFooter className="pt-2">
                     <LoadingButton
                         isLoading={mutation.isPending}
                         onClick={() =>
-                            mutation.mutate({ orderId, orderType, resource })
+                            mutation.mutate({
+                                orderId,
+                                orderType,
+                                resource,
+                                collect,
+                            })
                         }
                         className="w-full"
                     >

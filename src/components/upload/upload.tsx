@@ -29,7 +29,6 @@ const Upload = ({
                 function handleOnClick() {
                     setResource(undefined);
                     open();
-                    console.log("CLICKED");
                 }
                 return <div onClick={handleOnClick}>{children}</div>;
             }}

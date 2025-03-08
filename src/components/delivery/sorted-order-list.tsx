@@ -1,19 +1,11 @@
 "use client";
 
 import { useDeliveryOrders } from "@/api-hooks/delivery/get-delivery-order";
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import {
     BadgeCheck,
     Camera,
     Check,
-    Clock,
-    Info,
     Loader2,
     MapPin,
     Phone,
@@ -27,6 +19,9 @@ import { ConfirmDeliveryDrawer } from "../drawer/delivery/confirm-delivery-drawe
 import { Show } from "../show";
 import Upload from "../upload/upload";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 const SortedOrderList = ({
     status,
@@ -59,118 +54,96 @@ const SortedOrderList = ({
                 }
             >
                 {spreadOrders?.map((order) => (
-                    <Card key={order._id} className="mb-4">
+                    <Card className="w-full max-w-md mx-auto" key={order._id}>
                         <CardHeader className="pb-2 px-3 pt-3">
                             <div className="flex justify-between items-center">
-                                <CardTitle className="text-lg">
+                                <p className="font-semibold text-lg">
                                     {order.orderId}
-                                </CardTitle>
-                                <div className="flex items-center gap-1">
-                                    <Show>
-                                        <Show.When
-                                            isTrue={resource !== undefined}
-                                        >
-                                            <span className="flex items-center gap-1 text-success text-xs">
-                                                <Check className="size-3" />{" "}
-                                                Uploaded
-                                            </span>
-                                        </Show.When>
-                                    </Show>
-                                    <Upload
-                                        folder={`catering-delivery/${order.orderId}`}
-                                        setResource={setResource}
-                                    >
-                                        <Button
-                                            size={"icon"}
-                                            variant={"outline"}
-                                            className="rounded-full"
-                                        >
-                                            <Camera className="size-4" />
-                                        </Button>
-                                    </Upload>
-                                    <Chip
-                                        variant={
-                                            order.fullyPaid ? "solid" : "flat"
-                                        }
-                                        color={
-                                            order.fullyPaid
-                                                ? "primary"
-                                                : "success"
-                                        }
-                                        size="sm"
-                                    >
-                                        {order.fullyPaid ? (
-                                            <div className="flex items-center gap-1">
-                                                <Check className="h-3 w-3 mr-1" />{" "}
-                                                Paid
-                                            </div>
-                                        ) : (
-                                            <>
-                                                Collect{" "}
-                                                <span className="font-bold">
-                                                    ${order.pendingBalance}
-                                                </span>
-                                            </>
-                                        )}
-                                    </Chip>
-                                </div>
+                                </p>
+                                <Badge
+                                    variant={
+                                        order.status === "DELIVERED"
+                                            ? "outline"
+                                            : "secondary"
+                                    }
+                                    className="ml-auto"
+                                >
+                                    {order.status === "DELIVERED"
+                                        ? "Delivered"
+                                        : "Pending"}
+                                </Badge>
                             </div>
                         </CardHeader>
-                        <CardContent className="pb-2 px-3">
-                            <div className="flex items-start gap-3">
+                        <CardContent className="pb-2 px-3 space-y-4">
+                            <div className="flex items-center gap-3">
+                                <Avatar className="h-10 w-10 border">
+                                    <AvatarFallback>
+                                        {order.customerName[0]}
+                                    </AvatarFallback>
+                                </Avatar>
                                 <div>
-                                    <h3 className="font-medium">
+                                    <p className="font-medium">
                                         {order.customerName}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground flex items-start mt-1">
-                                        <MapPin className="h-4 w-4 mr-1 shrink-0 mt-0.5" />
-                                        <span>{order.address.address}</span>
                                     </p>
-                                    <p className="text-sm text-muted-foreground flex items-center mt-1">
-                                        <Clock className="h-4 w-4 mr-1" />
-                                        <span>{format(order.date, "PPP")}</span>
+                                    <p className="text-sm text-muted-foreground">
+                                        {format(order.date, "PPP")}
                                     </p>
-                                    <div className="flex items-center gap-1 mt-2 text-yellow-600">
-                                        <Info className="size-4" />
-                                        <span className="text-xs">
-                                            Upload a photo of the delivered
-                                            order before confirming delivery.
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
-                        </CardContent>
-                        <CardFooter className="flex justify-between pt-2 flex-row-reverse px-3">
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="flex items-center"
-                                    asChild
-                                >
-                                    <Link
-                                        href={`tel:${order.customerPhone}`}
-                                        target="_blank"
-                                    >
-                                        <Phone className="h-4 w-4 mr-1" />
-                                        Call
-                                    </Link>
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="flex items-center"
-                                    asChild
-                                >
-                                    <Link
-                                        href={`https://www.google.com/maps/dir/?api=1&destination=${order.address.lat},${order.address.lng}`}
-                                        target="_blank"
-                                    >
-                                        <MapPin className="h-4 w-4 mr-1" />
-                                        Navigate
-                                    </Link>
-                                </Button>
+
+                            <div className="flex items-start gap-2">
+                                <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                                <p className="text-sm">
+                                    {order.address.address}
+                                </p>
                             </div>
+
+                            <Separator />
+
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="text-sm text-muted-foreground">
+                                        Payment Status
+                                    </p>
+                                    <p className="font-medium">
+                                        {order.fullyPaid
+                                            ? "Paid"
+                                            : `Collect $${order.pendingBalance}`}
+                                    </p>
+                                </div>
+                                <Show>
+                                    <Show.When
+                                        isTrue={order.status !== "DELIVERED"}
+                                    >
+                                        <div className="flex gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                className={`rounded-full ${
+                                                    resource !== undefined
+                                                        ? "bg-green-100 text-green-600 border-green-200 hover:bg-green-100"
+                                                        : ""
+                                                }`}
+                                            >
+                                                {resource !== undefined ? (
+                                                    <Check className="h-4 w-4" />
+                                                ) : (
+                                                    <Upload
+                                                        folder={`${orderType}/${order.orderId}`}
+                                                        setResource={
+                                                            setResource
+                                                        }
+                                                    >
+                                                        <Camera className="h-4 w-4" />
+                                                    </Upload>
+                                                )}
+                                            </Button>
+                                        </div>
+                                    </Show.When>
+                                </Show>
+                            </div>
+                        </CardContent>
+                        <CardFooter className="flex gap-2 pt-0 px-3">
                             <Show>
                                 <Show.When
                                     isTrue={order.status === "DELIVERED"}
@@ -182,6 +155,7 @@ const SortedOrderList = ({
                                             content: "flex items-center gap-1",
                                         }}
                                         size="lg"
+                                        className="flex-1 max-w-full"
                                     >
                                         <BadgeCheck className="h-4 w-4 mr-1" />
                                         Delivered
@@ -191,11 +165,28 @@ const SortedOrderList = ({
                                     <ConfirmDeliveryDrawer
                                         orderId={order._id}
                                         orderType={orderType}
+                                        pendingBalance={order.pendingBalance}
                                         disabled={!resource}
                                         resource={resource}
                                     />
                                 </Show.Else>
                             </Show>
+                            <Button variant="outline" size="icon" asChild>
+                                <Link
+                                    href={`tel:${order.customerPhone}`}
+                                    target="_blank"
+                                >
+                                    <Phone className="h-4 w-4" />
+                                </Link>
+                            </Button>
+                            <Button variant="outline" size="icon" asChild>
+                                <Link
+                                    href={`https://www.google.com/maps/dir/?api=1&destination=${order.address.lat},${order.address.lng}`}
+                                    target="_blank"
+                                >
+                                    <MapPin className="h-4 w-4" />
+                                </Link>
+                            </Button>
                         </CardFooter>
                     </Card>
                 ))}

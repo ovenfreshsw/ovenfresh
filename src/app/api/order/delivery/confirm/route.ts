@@ -6,6 +6,7 @@ import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import DeliveryImage from "@/models/deliveryImageModel";
 import SortedOrders from "@/models/sortedOrdersModel";
+import Tiffin from "@/models/tiffinModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import User from "@/models/userModel";
 import { format } from "date-fns";
@@ -18,6 +19,7 @@ async function patchHandler(req: AuthenticatedRequest) {
         const body = await req.json();
         const orderId = body.orderId;
         const orderType = body.orderType;
+        const collect = body.collect;
 
         // If order is catering
         const resource = {
@@ -39,10 +41,14 @@ async function patchHandler(req: AuthenticatedRequest) {
         if (!zone) return error403();
 
         if (orderType === "tiffin") {
-            await Promise.all([
-                TiffinOrderStatus.findByIdAndUpdate(orderId, {
+            const orderStatus = await TiffinOrderStatus.findByIdAndUpdate(
+                orderId,
+                {
                     status: "DELIVERED",
-                }),
+                },
+                { new: true }
+            );
+            const queries: unknown = [
                 SortedOrders.findOneAndUpdate(
                     {
                         date: format(new Date(), "yyyy-MM-dd"),
@@ -51,9 +57,19 @@ async function patchHandler(req: AuthenticatedRequest) {
                     },
                     { $set: { [`${zone}.tiffin.$.status`]: "DELIVERED" } }
                 ),
-            ]);
+            ];
+            if (collect && orderStatus) {
+                // @ts-expect-error: Type 'Promise<void>[]' is not assignable to type 'Promise<unknown>[]'.
+                queries.push(
+                    Tiffin.findByIdAndUpdate(orderStatus.orderId, {
+                        pendingBalance: 0,
+                        fullyPaid: true,
+                    })
+                );
+            }
+            await Promise.all(queries as []);
         } else {
-            await Promise.all([
+            const queries: unknown = [
                 Catering.findByIdAndUpdate(orderId, {
                     status: "DELIVERED",
                 }),
@@ -77,7 +93,18 @@ async function patchHandler(req: AuthenticatedRequest) {
                     },
                     { upsert: true }
                 ),
-            ]);
+            ];
+
+            if (collect) {
+                // @ts-expect-error: Type 'Promise<void>[]' is not assignable to type 'Promise<unknown>[]'.
+                queries.push(
+                    Catering.findByIdAndUpdate(orderId, {
+                        pendingBalance: 0,
+                        fullyPaid: true,
+                    })
+                );
+            }
+            await Promise.all(queries as []);
         }
 
         return success200({});
