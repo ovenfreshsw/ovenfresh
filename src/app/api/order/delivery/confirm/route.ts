@@ -3,6 +3,8 @@ import { error400, error403, error500, success200 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
+import Catering from "@/models/cateringModel";
+import DeliveryImage from "@/models/deliveryImageModel";
 import SortedOrders from "@/models/sortedOrdersModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import User from "@/models/userModel";
@@ -16,6 +18,12 @@ async function patchHandler(req: AuthenticatedRequest) {
         const body = await req.json();
         const orderId = body.orderId;
         const orderType = body.orderType;
+
+        // If order is catering
+        const resource = {
+            url: body.url,
+            publicId: body.publicId,
+        };
 
         const session = await getServerSession(authOptions);
         const storeId = session?.user?.storeId;
@@ -45,13 +53,37 @@ async function patchHandler(req: AuthenticatedRequest) {
                 ),
             ]);
         } else {
-            // await Promise.all([
-            //     Catering.findByIdAndUpdate()
-            // ])
+            await Promise.all([
+                Catering.findByIdAndUpdate(orderId, {
+                    status: "DELIVERED",
+                }),
+                SortedOrders.findOneAndUpdate(
+                    {
+                        date: format(new Date(), "yyyy-MM-dd"),
+                        store: storeId,
+                        [`${zone}.catering.order`]: orderId,
+                    },
+                    { $set: { [`${zone}.catering.$.status`]: "DELIVERED" } }
+                ),
+                DeliveryImage.findOneAndReplace(
+                    { order: orderId },
+                    {
+                        order: orderId,
+                        store: storeId,
+                        user: session.user.id,
+                        deliveryDate: format(new Date(), "yyyy-MM-dd"),
+                        image: resource.url,
+                        publicId: resource.publicId,
+                    },
+                    { upsert: true }
+                ),
+            ]);
         }
 
         return success200({});
     } catch (error) {
+        console.log(error);
+
         if (error instanceof Error) return error500({ error: error.message });
         return error500({ error: "An unknown error occurred." });
     }

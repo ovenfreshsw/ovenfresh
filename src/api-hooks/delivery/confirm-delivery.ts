@@ -5,20 +5,23 @@ import {
     useMutation,
     useQueryClient,
 } from "@tanstack/react-query";
+import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { toast } from "sonner";
 
 export async function handleConfirm({
     orderType,
     orderId,
+    resource,
 }: {
     orderType: "catering" | "tiffin";
     orderId: string;
+    resource?: string | CloudinaryUploadWidgetInfo | undefined;
 }) {
-    console.log(orderType, orderId);
-
     const { data: result } = await axios.patch("/api/order/delivery/confirm", {
         orderId,
         orderType,
+        url: (resource as CloudinaryUploadWidgetInfo)?.secure_url,
+        publicId: (resource as CloudinaryUploadWidgetInfo)?.public_id,
     });
     return result;
 }

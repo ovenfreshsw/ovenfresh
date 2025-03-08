@@ -8,15 +8,25 @@ import {
     CardHeader,
     CardTitle,
 } from "../ui/card";
-import { BadgeCheck, Check, Clock, Loader2, MapPin, Phone } from "lucide-react";
+import {
+    BadgeCheck,
+    Camera,
+    Check,
+    Clock,
+    Info,
+    Loader2,
+    MapPin,
+    Phone,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Chip } from "@heroui/chip";
 import { ConfirmDeliveryDrawer } from "../drawer/delivery/confirm-delivery-drawer";
 import { Show } from "../show";
-import { DeliveryRes } from "@/lib/types/sorted-order";
+import Upload from "../upload/upload";
+import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 
 const SortedOrderList = ({
     status,
@@ -26,6 +36,9 @@ const SortedOrderList = ({
     orderType: "tiffin" | "catering";
 }) => {
     const { data, isPending } = useDeliveryOrders(orderType);
+    const [resource, setResource] = useState<
+        string | CloudinaryUploadWidgetInfo | undefined
+    >();
 
     const spreadOrders = useMemo(() => {
         return data?.orders.filter((order) => order.status === status);
@@ -52,27 +65,55 @@ const SortedOrderList = ({
                                 <CardTitle className="text-lg">
                                     {order.orderId}
                                 </CardTitle>
-                                <Chip
-                                    variant={order.fullyPaid ? "solid" : "flat"}
-                                    color={
-                                        order.fullyPaid ? "primary" : "success"
-                                    }
-                                    size="sm"
-                                >
-                                    {order.fullyPaid ? (
-                                        <div className="flex items-center gap-1">
-                                            <Check className="h-3 w-3 mr-1" />{" "}
-                                            Paid
-                                        </div>
-                                    ) : (
-                                        <>
-                                            Collect{" "}
-                                            <span className="font-bold">
-                                                ${order.pendingBalance}
+                                <div className="flex items-center gap-1">
+                                    <Show>
+                                        <Show.When
+                                            isTrue={resource !== undefined}
+                                        >
+                                            <span className="flex items-center gap-1 text-success text-xs">
+                                                <Check className="size-3" />{" "}
+                                                Uploaded
                                             </span>
-                                        </>
-                                    )}
-                                </Chip>
+                                        </Show.When>
+                                    </Show>
+                                    <Upload
+                                        folder={`catering-delivery/${order.orderId}`}
+                                        setResource={setResource}
+                                    >
+                                        <Button
+                                            size={"icon"}
+                                            variant={"outline"}
+                                            className="rounded-full"
+                                        >
+                                            <Camera className="size-4" />
+                                        </Button>
+                                    </Upload>
+                                    <Chip
+                                        variant={
+                                            order.fullyPaid ? "solid" : "flat"
+                                        }
+                                        color={
+                                            order.fullyPaid
+                                                ? "primary"
+                                                : "success"
+                                        }
+                                        size="sm"
+                                    >
+                                        {order.fullyPaid ? (
+                                            <div className="flex items-center gap-1">
+                                                <Check className="h-3 w-3 mr-1" />{" "}
+                                                Paid
+                                            </div>
+                                        ) : (
+                                            <>
+                                                Collect{" "}
+                                                <span className="font-bold">
+                                                    ${order.pendingBalance}
+                                                </span>
+                                            </>
+                                        )}
+                                    </Chip>
+                                </div>
                             </div>
                         </CardHeader>
                         <CardContent className="pb-2 px-3">
@@ -89,6 +130,13 @@ const SortedOrderList = ({
                                         <Clock className="h-4 w-4 mr-1" />
                                         <span>{format(order.date, "PPP")}</span>
                                     </p>
+                                    <div className="flex items-center gap-1 mt-2 text-yellow-600">
+                                        <Info className="size-4" />
+                                        <span className="text-xs">
+                                            Upload a photo of the delivered
+                                            order before confirming delivery.
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
@@ -142,7 +190,9 @@ const SortedOrderList = ({
                                 <Show.Else>
                                     <ConfirmDeliveryDrawer
                                         orderId={order._id}
-                                        orderType="tiffin"
+                                        orderType={orderType}
+                                        disabled={!resource}
+                                        resource={resource}
                                     />
                                 </Show.Else>
                             </Show>

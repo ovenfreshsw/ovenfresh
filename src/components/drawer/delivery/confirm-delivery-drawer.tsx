@@ -12,17 +12,22 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 import LoadingButton from "@/components/ui/loading-button";
-import { Camera, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { QueryClient } from "@tanstack/react-query";
 import { useConfirmDelivery } from "@/api-hooks/delivery/confirm-delivery";
+import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 
 export function ConfirmDeliveryDrawer({
     orderType,
     orderId,
+    disabled = false,
+    resource,
 }: {
     orderType: "catering" | "tiffin";
     orderId: string;
+    disabled?: boolean;
+    resource?: string | CloudinaryUploadWidgetInfo | undefined;
 }) {
     const [open, setOpen] = React.useState(false);
 
@@ -39,7 +44,11 @@ export function ConfirmDeliveryDrawer({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <Button size="sm" className="flex items-center">
+                <Button
+                    size="sm"
+                    className="flex items-center"
+                    disabled={disabled}
+                >
                     <CheckCircle className="h-4 w-4 mr-1" />
                     Delivered
                 </Button>
@@ -52,19 +61,11 @@ export function ConfirmDeliveryDrawer({
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter className="pt-2">
-                    <div className="flex items-center justify-between py-7 bg-primary-foreground rounded-xl px-3">
-                        <div className="flex items-center gap-2">
-                            <Camera className="size-4" />
-                            <span className="text-xs">
-                                Take a photo of the delivered order
-                            </span>
-                        </div>
-                        <Button size={"sm"}>Take a photo</Button>
-                    </div>
                     <LoadingButton
-                        disabled
                         isLoading={mutation.isPending}
-                        onClick={() => mutation.mutate({ orderId, orderType })}
+                        onClick={() =>
+                            mutation.mutate({ orderId, orderType, resource })
+                        }
                         className="w-full"
                     >
                         Mark as delivered
