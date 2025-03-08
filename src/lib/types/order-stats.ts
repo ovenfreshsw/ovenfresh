@@ -20,10 +20,10 @@ type StatCardProps = {
     percentage?: string;
 };
 
-type TiffinDeliveryOrderStats = {
+type DeliveryOrderStats = {
     total: number;
     pending: number;
     completed: number;
 };
 
-export type { OrderStatCount, StatCardProps, TiffinDeliveryOrderStats };
+export type { OrderStatCount, StatCardProps, DeliveryOrderStats };

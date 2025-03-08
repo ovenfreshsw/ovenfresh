@@ -42,7 +42,7 @@ async function getHandler(req: AuthenticatedRequest) {
                 order: "tiffin",
                 orderId: item.orderId.orderId,
                 order_type: item.orderId.order_type,
-                status: item.dinner,
+                status: item.status,
             }));
 
         return success200({ orders: cateringData.concat(tiffinData) });

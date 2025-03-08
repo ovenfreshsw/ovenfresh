@@ -27,6 +27,25 @@ export async function addStaffAction(formData: FormData) {
             return { error: "Username already exists!" };
         }
 
+        let zone: undefined | number;
+
+        if (result.data.role === "DELIVERY") {
+            const deliveryStaffs = await User.find({
+                role: "DELIVERY",
+                zone: { $in: [1, 2] },
+                storeId: result.data.store,
+            });
+            if (deliveryStaffs.length === 2) {
+                return {
+                    error: "Delivery staff limit reached for this store!",
+                };
+            }
+            zone = 1;
+            if (deliveryStaffs.length === 1) {
+                zone = deliveryStaffs[0].zone === 1 ? 2 : 1;
+            }
+        }
+
         const hashedPassword = encryptPassword(result.data.password);
         const bcryptPassword = await bcrypt.hash(result.data.password, 10);
 
@@ -37,14 +56,13 @@ export async function addStaffAction(formData: FormData) {
             role: result.data.role,
             storeId: result.data.store,
             iv: hashedPassword.iv,
+            zone,
         });
 
         revalidatePath("/dashboard/staffs");
 
         return { success: true };
     } catch (error) {
-        console.log(error);
-
         if (error instanceof Error) {
             return { error: error.message };
         } else {

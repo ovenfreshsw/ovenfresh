@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
 import { NavUser } from "../nav/user";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const StoreDisplay = async () => {
     const session = await getServerSession(authOptions);
@@ -50,7 +51,23 @@ const StoreDisplay = async () => {
                     name: session.user.username,
                     role: session.user.role.toLowerCase(),
                 }}
-            />
+                triggerClassname="flex flex-row text-primary gap-2 bg-primary-foreground rounded-xl p-1 pe-3"
+            >
+                <Avatar className="h-8 w-8 rounded-xl text-primary">
+                    <AvatarImage src={""} alt={session.user.username} />
+                    <AvatarFallback className="rounded-xl uppercase bg-primary text-primary-foreground">
+                        {session.user.username[0]}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate text-xs capitalize">
+                        Welcome {session.user.role}
+                    </span>
+                    <span className="truncate font-semibold capitalize">
+                        {session.user.username}
+                    </span>
+                </div>
+            </NavUser>
         </>
     );
 };

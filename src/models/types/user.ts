@@ -9,6 +9,7 @@ export interface UserDocument {
     lpp: string;
     storeId: mongoose.Schema.Types.ObjectId | null;
     iv?: string;
+    zone?: number;
 }
 
 export interface UserDocumentPopulate extends Omit<UserDocument, "storeId"> {

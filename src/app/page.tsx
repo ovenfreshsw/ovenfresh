@@ -14,10 +14,9 @@ import Image from "next/image";
 export default async function Home() {
     const session = await getServerSession(authOptions);
 
-    if (session?.user.id && session.user.role === "MANAGER")
-        redirect("/dashboard");
-    else if (session?.user.id && session.user.role === "DELIVERY")
+    if (session?.user.id && session.user.role === "DELIVERY")
         redirect("/delivery");
+    else if (session?.user.id) redirect("/dashboard");
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-white sm:bg-gray-100 lg:py-10">

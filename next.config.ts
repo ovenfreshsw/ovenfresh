@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
                 destination: "/dashboard/order",
                 permanent: true,
             },
+            {
+                source: "/delivery",
+                destination: "/delivery/tiffin",
+                permanent: true,
+            },
         ];
     },
     async headers() {

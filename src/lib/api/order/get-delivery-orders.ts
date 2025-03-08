@@ -1,31 +1,15 @@
 import axios from "@/config/axios.config";
-import { OrderStatus } from "@/lib/types/order-status";
+import { DeliveryOrderStats } from "@/lib/types/order-stats";
+import { DeliveryRes } from "@/lib/types/sorted-order";
 import { headers } from "next/headers";
 
-type TiffinDeliveryRes = {
-    _id: string;
-    orderId: string;
-    customerName: string;
-    customerPhone: string;
-    address: string;
-    lat: number;
-    lng: number;
-    fullyPaid: boolean;
-    pendingBalance: number;
-    totalAmount: number;
-    advancePaid: number;
-    status: OrderStatus;
-};
-
 export async function getDeliveryOrdersServer(
-    storeId: string,
     orderType: "tiffin" | "catering"
 ) {
     const headerSequence = await headers();
     const cookie = headerSequence.get("cookie");
     const { data } = await axios.get("/api/order/delivery", {
         params: {
-            storeId,
             orderType,
         },
         headers: {
@@ -34,8 +18,16 @@ export async function getDeliveryOrdersServer(
     });
 
     if (orderType === "tiffin") {
-        return data.orders as TiffinDeliveryRes[] | null;
+        return data.data as {
+            orders: DeliveryRes[];
+            result: DeliveryOrderStats;
+            haveZone: boolean;
+        } | null;
     } else {
-        return data.orders as any[] | null;
+        return data.data as {
+            orders: [];
+            result: DeliveryOrderStats;
+            haveZone: boolean;
+        } | null;
     }
 }

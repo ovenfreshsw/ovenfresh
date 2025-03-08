@@ -45,7 +45,7 @@ const StoreSelect = ({
                     <SelectValue placeholder="Store" />
                 </>
             </SelectTrigger>
-            <SelectContent className="text-primary">
+            <SelectContent className="text-primary z-[1210] bg-primary-foreground lg:bg-white">
                 {stores.map((store, i) => (
                     <SelectItem value={store.id} key={i}>
                         {store.location}

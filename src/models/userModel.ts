@@ -24,6 +24,7 @@ const UserSchema = new Schema<UserDocument>(
             type: mongoose.Schema.Types.ObjectId || null,
         },
         iv: String,
+        zone: Number,
     },
     { versionKey: false }
 );

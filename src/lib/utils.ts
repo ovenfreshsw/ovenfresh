@@ -7,6 +7,8 @@ import { z } from "zod";
 import { customAlphabet } from "nanoid";
 import { TiffinMenuDocument } from "@/models/types/tiffin-menu";
 import { RolesSet } from "./type";
+import { kmeans } from "ml-kmeans";
+import { ClusteredOrderProps } from "./types/sorted-order";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -129,6 +131,66 @@ function generateOrderId() {
     return `${year}-${uniquePart}`; // Example: "2025-9GHT3X"
 }
 
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Earth radius in km
+    const toRad = (deg: number) => deg * (Math.PI / 180);
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+// K-Means Clustering (Divides Orders into Two Zones)
+function clusterOrders(orders: ClusteredOrderProps[]) {
+    const orderLocations = orders.map((o) => [o.lat, o.lng]);
+    if (orderLocations.length <= 1) return [orders, []];
+
+    // Perform K-Means clustering with k=2
+    const result = kmeans(orderLocations, 2, {
+        initialization: "kmeans++",
+        seed: 42,
+    });
+
+    // Assign clusters to orders
+    orders.forEach((order, index) => {
+        order.zone = result.clusters[index]; // Cluster label (0 or 1)
+    });
+
+    // Separate into two lists
+    const zone1Orders = orders.filter((o) => o.zone === 0);
+    const zone2Orders = orders.filter((o) => o.zone === 1);
+
+    return [zone1Orders, zone2Orders];
+}
+
+function findOptimalRoute(
+    store: { lat: number; lng: number },
+    orders: ClusteredOrderProps[]
+) {
+    const unvisited = [...orders];
+    const route = [];
+    let current = {
+        lat: store.lat,
+        lng: store.lng,
+    };
+
+    while (unvisited.length) {
+        unvisited.sort(
+            (a, b) =>
+                haversine(current.lat, current.lng, a.lat, a.lng) -
+                haversine(current.lat, current.lng, b.lat, b.lng)
+        );
+        const next = unvisited.shift();
+        route.push(next);
+        current = next!;
+    }
+
+    return route as ClusteredOrderProps[];
+}
+
 export {
     cn,
     isRestricted,
@@ -136,4 +198,6 @@ export {
     calculateEndDate,
     calculateTotalAmount,
     generateOrderId,
+    clusterOrders,
+    findOptimalRoute,
 };

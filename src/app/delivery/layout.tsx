@@ -1,3 +1,4 @@
+import BottomNav from "@/components/delivery/bottom-nav";
 import Navbar from "@/components/delivery/navbar";
 import ErrorComponent from "@/components/error";
 import { authOptions } from "@/lib/auth";
@@ -34,6 +35,7 @@ export default async function DashboardLayout({
             {/* Header */}
             <Navbar store={store.location || "Not Found"} />
             {children}
+            <BottomNav />
         </div>
     );
 }
