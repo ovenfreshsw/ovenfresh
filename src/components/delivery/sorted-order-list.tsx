@@ -133,7 +133,7 @@ const SortedOrderList = ({
                                                 size="icon"
                                                 className={`rounded-full ${
                                                     resource !== undefined
-                                                        ? "bg-green-100 text-green-600 border-green-200 hover:bg-green-100"
+                                                        ? "bg-green-100 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-600"
                                                         : ""
                                                 }`}
                                             >

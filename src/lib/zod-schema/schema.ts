@@ -78,3 +78,17 @@ export const ZodTiffinSchema = z.object({
     note: z.string().optional(),
     order_type: z.enum(["pickup", "delivery"]),
 });
+
+export const ZodGrocerySchema = z.object({
+    item: z.string().min(3).max(20),
+    quantity: z.string().min(1),
+    price: z.string(),
+    tax: z.string(),
+    total: z.string(),
+    date: z
+        .string()
+        .refine((val) => !isNaN(Date.parse(val)), {
+            message: "Invalid ISO date format",
+        })
+        .transform((val) => new Date(val)),
+});

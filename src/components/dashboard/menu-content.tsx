@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import LockClockIcon from "@mui/icons-material/LockClock";
 import PeopleIcon from "@mui/icons-material/People";
 import StoreIcon from "@mui/icons-material/Store";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import { useSession } from "next-auth/react";
 
 const mainListItems = [
@@ -41,6 +42,11 @@ const mainListItems = [
         text: "Stores",
         icon: <StoreIcon />,
         href: "/dashboard/stores",
+    },
+    {
+        text: "Groceries",
+        icon: <LocalGroceryStoreIcon />,
+        href: "/dashboard/groceries",
     },
 ];
 
