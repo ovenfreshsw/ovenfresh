@@ -8,6 +8,7 @@ import {
     Check,
     Loader2,
     MapPin,
+    Package,
     Phone,
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -22,6 +23,7 @@ import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import OrderItemsDrawer from "../drawer/delivery/order-items-drawer";
 
 const SortedOrderList = ({
     status,
@@ -89,6 +91,16 @@ const SortedOrderList = ({
                                         {format(order.date, "PPP")}
                                     </p>
                                 </div>
+                                <Show>
+                                    <Show.When
+                                        isTrue={orderType === "catering"}
+                                    >
+                                        <OrderItemsDrawer
+                                            items={order.items || []}
+                                            orderId={order.orderId}
+                                        />
+                                    </Show.When>
+                                </Show>
                             </div>
 
                             <div className="flex items-start gap-2">
