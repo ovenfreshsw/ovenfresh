@@ -40,6 +40,7 @@ async function getSortedTiffinOrderDetails(storeId: string, zone: number) {
             pendingBalance: order.order.orderId.pendingBalance,
             totalPrice: order.order.orderId.totalPrice,
             advancePaid: order.order.orderId.advancePaid,
+            date: format(new Date(order.order.date), "yyyy-MM-dd"),
             address: {
                 address: order.order.orderId.address.address,
                 lat: order.order.orderId.address.lat,

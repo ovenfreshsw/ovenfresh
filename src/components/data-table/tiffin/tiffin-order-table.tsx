@@ -212,7 +212,7 @@ export default function TiffinOrderTable({
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
                             <Link
-                                href={`orders/tiffin-${
+                                href={`/dashboard/orders/tiffin-${
                                     order.orderId
                                 }?mid=${order._id.toString()}`}
                             >

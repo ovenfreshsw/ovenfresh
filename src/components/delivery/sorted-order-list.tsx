@@ -87,7 +87,7 @@ const SortedOrderList = ({
                                         {order.customerName}
                                     </p>
                                     <p className="text-sm text-muted-foreground">
-                                        {format(order.date, "PPP")}
+                                        {format(new Date(order.date), "PPP")}
                                     </p>
                                 </div>
                                 <Show>
