@@ -12,10 +12,7 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 import LoadingButton from "@/components/ui/loading-button";
-import { CheckCircle, Plus } from "lucide-react";
-import { toast } from "sonner";
-import { QueryClient } from "@tanstack/react-query";
-import { useConfirmDelivery } from "@/api-hooks/delivery/confirm-delivery";
+import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export function AddOrderDrawer() {

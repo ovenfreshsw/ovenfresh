@@ -5,10 +5,10 @@ export const Show = (props: PropsWithChildren) => {
     let otherwise = null;
 
     Children.forEach(props.children, (children) => {
-        // @ts-ignore
+        // @ts-expect-error: children.props.isTrue is of type boolean | undefined
         if (children?.props.isTrue === undefined) {
             otherwise = children;
-            // @ts-ignore
+            // @ts-expect-error: children.props.isTrue is of type boolean | undefined
         } else if (!when && children?.props.isTrue === true) {
             when = children;
         }

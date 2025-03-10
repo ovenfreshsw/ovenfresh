@@ -5,12 +5,14 @@ import * as ExcelJS from "exceljs";
 import { Table } from "lucide-react";
 import { Button } from "@heroui/button";
 
-interface MyComponentProps<T extends Record<string, any>> {
+interface MyComponentProps<
+    T extends Record<string, string | number | string[]>
+> {
     filename: string;
     data: T[];
 }
 
-const ExportToExcel = <T extends Record<string, any>>({
+const ExportToExcel = <T extends Record<string, string | number | string[]>>({
     filename,
     data,
 }: MyComponentProps<T>) => {

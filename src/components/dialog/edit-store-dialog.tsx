@@ -9,16 +9,11 @@ import {
 } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import RoleSelect from "../select/role-select";
 import LoadingButton from "../ui/loading-button";
-import {
-    ZodStoreSchema,
-    ZodUserSchemaWithPassword,
-} from "@/lib/zod-schema/schema";
+import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import { toast } from "sonner";
 import { useState } from "react";
 import { StoreDocument } from "@/models/types/store";
-import { editStaffAction } from "@/actions/edit-staff-action";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useSearchAddress } from "@/api-hooks/use-search-address";
 import AddressAutocomplete from "../address-autocomplete";

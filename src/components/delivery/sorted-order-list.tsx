@@ -8,7 +8,6 @@ import {
     Check,
     Loader2,
     MapPin,
-    Package,
     Phone,
 } from "lucide-react";
 import { Button } from "../ui/button";

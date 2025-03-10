@@ -10,7 +10,7 @@ import {
     TableCell,
 } from "@heroui/table";
 import { Input } from "@heroui/input";
-import { ListFilter, Loader2, Trash2 } from "lucide-react";
+import { ListFilter, Loader2 } from "lucide-react";
 import { useStaffs } from "@/api-hooks/staffs/get-staffs";
 import { UserDocumentPopulate } from "@/models/types/user";
 import AddStaffDialog from "../dialog/add-staff-dialog";
@@ -69,7 +69,7 @@ export default function StaffsTable() {
                     return cellValue;
             }
         },
-        []
+        [stores]
     );
 
     const onSearchChange = React.useCallback((value?: string) => {
@@ -119,7 +119,7 @@ export default function StaffsTable() {
                 </div>
             </div>
         );
-    }, [filterValue, onSearchChange, staffs?.length, onClear]);
+    }, [filterValue, onSearchChange, staffs?.length, onClear, stores]);
 
     return (
         <Table

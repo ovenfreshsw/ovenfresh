@@ -5,11 +5,7 @@ import SortedOrders from "@/models/sortedOrdersModel";
 import Tiffin from "@/models/tiffinModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import { CateringDocumentPopulate } from "@/models/types/catering";
-import { TiffinDocumentPopulate } from "@/models/types/tiffin";
-import {
-    TiffinOrderStatusDocument,
-    TiffinOrderStatusDocumentPopulate,
-} from "@/models/types/tiffin-order-status";
+import { TiffinOrderStatusDocumentPopulate } from "@/models/types/tiffin-order-status";
 import { format } from "date-fns";
 
 async function getSortedTiffinOrderDetails(storeId: string, zone: number) {

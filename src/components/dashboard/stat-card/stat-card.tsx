@@ -44,7 +44,7 @@ function AreaGradient({ color, id }: { color: string; id: string }) {
 }
 
 export default function StatCard({ type }: { type: "tiffin" | "catering" }) {
-    const { data, isPending, error } = useLastMonthStats(type);
+    const { data, isPending } = useLastMonthStats(type);
 
     const theme = useTheme();
 

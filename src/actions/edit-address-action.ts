@@ -32,8 +32,6 @@ export async function editAddressAction(formData: FormData) {
             address,
             placeId,
             customerId,
-            lat,
-            lng,
             deliveryDate,
             startDate,
             endDate,

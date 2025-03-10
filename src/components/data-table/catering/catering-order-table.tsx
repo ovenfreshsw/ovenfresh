@@ -282,29 +282,29 @@ export default function CateringOrderTable({
         setPage(1);
     }, []);
 
-    const excelData =
-        userRole === "SUPERADMIN" || userRole === "ADMIN"
-            ? React.useMemo(() => {
-                  return orders.map((order) => ({
-                      orderId: order.orderId,
-                      customerName: order.customerName,
-                      phone: order.customerPhone,
-                      address: order.address.address,
-                      deliveryDate: format(new Date(order.deliveryDate), "PPP"),
-                      orderType: order.order_type,
-                      items: order.items.map((item) => item.itemId.name),
-                      paymentMethod: order.paymentMethod,
-                      deliveryCharge: order.deliveryCharge,
-                      totalAmount: order.totalPrice - order.tax,
-                      tax: order.tax,
-                      fullyPaid: order.fullyPaid ? "Yes" : "No",
-                      status: order.status,
-                      note: order.note,
-                      orderPlaced: format(new Date(order.createdAt), "PPP"),
-                      store: order.store.location,
-                  }));
-              }, [orders])
-            : [];
+    const excelData = React.useMemo(() => {
+        if (userRole === "SUPERADMIN" || userRole === "ADMIN") {
+            return orders.map((order) => ({
+                orderId: order.orderId,
+                customerName: order.customerName,
+                phone: order.customerPhone,
+                address: order.address.address,
+                deliveryDate: format(new Date(order.deliveryDate), "PPP"),
+                orderType: order.order_type,
+                items: order.items.map((item) => item.itemId.name),
+                paymentMethod: order.paymentMethod,
+                deliveryCharge: order.deliveryCharge,
+                totalAmount: order.totalPrice - order.tax,
+                tax: order.tax,
+                fullyPaid: order.fullyPaid ? "Yes" : "No",
+                status: order.status,
+                note: order.note,
+                orderPlaced: format(new Date(order.createdAt), "PPP"),
+                store: order.store.location,
+            }));
+        }
+        return [];
+    }, [orders, userRole]);
 
     const topContent = React.useMemo(() => {
         return (
@@ -448,7 +448,8 @@ export default function CateringOrderTable({
         onSearchChange,
         onRowsPerPageChange,
         orders?.length,
-        // hasSearchFilter,
+        excelData,
+        userRole,
         onClear,
     ]);
 
