@@ -290,25 +290,6 @@ export default function CateringForm({
                                             }}
                                         />
                                     </AddressAutocomplete>
-                                    {/* <Input
-                                        placeholder="address"
-                                        type="text"
-                                        {...field}
-                                        value={
-                                            orderDetail.customerDetails.address
-                                        }
-                                        onChange={(e) => {
-                                            dispatch(
-                                                setCustomerDetails({
-                                                    address: e.target.value,
-                                                })
-                                            );
-                                            form.setValue(
-                                                "customerDetails.address",
-                                                e.target.value
-                                            );
-                                        }}
-                                    /> */}
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

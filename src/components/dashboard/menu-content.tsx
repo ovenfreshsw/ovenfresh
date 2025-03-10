@@ -14,6 +14,7 @@ import LockClockIcon from "@mui/icons-material/LockClock";
 import PeopleIcon from "@mui/icons-material/People";
 import StoreIcon from "@mui/icons-material/Store";
 import { useSession } from "next-auth/react";
+import PaidIcon from "@mui/icons-material/Paid";
 
 const mainListItems = [
     { text: "Dashboard", icon: <HomeRoundedIcon />, href: "/dashboard" },
@@ -42,10 +43,15 @@ const mainListItems = [
         icon: <StoreIcon />,
         href: "/dashboard/stores",
     },
+    {
+        text: "Finance & Expenses",
+        icon: <PaidIcon />,
+        href: "/dashboard/finance-expenses",
+    },
 ];
 
 // List of items that should be visible only to admins
-const adminOnlyItems = ["Staffs", "Stores"];
+const adminOnlyItems = ["Staffs", "Stores", "Finance & Expenses"];
 
 export default function MenuContent() {
     const [selected, setSelected] = React.useState(0);
@@ -76,7 +82,9 @@ export default function MenuContent() {
                     >
                         <Link href={item.href}>
                             <ListItemButton selected={index === selected}>
-                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                <ListItemIcon className="!min-w-fit mr-6">
+                                    {item.icon}
+                                </ListItemIcon>
                                 <ListItemText primary={item.text} />
                             </ListItemButton>
                         </Link>

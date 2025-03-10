@@ -191,6 +191,28 @@ function findOptimalRoute(
     return route as ClusteredOrderProps[];
 }
 
+const getMonthsUpToCurrent = (): { value: string; name: string }[] => {
+    const currentMonth = new Date().getMonth(); // Get the current month (0-based index)
+    const months = [
+        { value: "all", name: "All Months" },
+        { value: "jan", name: "January" },
+        { value: "feb", name: "February" },
+        { value: "mar", name: "March" },
+        { value: "apr", name: "April" },
+        { value: "may", name: "May" },
+        { value: "jun", name: "June" },
+        { value: "jul", name: "July" },
+        { value: "aug", name: "August" },
+        { value: "sep", name: "September" },
+        { value: "oct", name: "October" },
+        { value: "nov", name: "November" },
+        { value: "dec", name: "December" },
+    ];
+
+    // Slice the months array to include up to the current month
+    return months.slice(0, currentMonth + 2); // Add 2 to include "All Months" and current month
+};
+
 export {
     cn,
     isRestricted,
@@ -200,4 +222,5 @@ export {
     generateOrderId,
     clusterOrders,
     findOptimalRoute,
+    getMonthsUpToCurrent,
 };
