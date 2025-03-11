@@ -7,9 +7,11 @@ import { Filter } from "lucide-react";
 const DateFilter = ({
     date,
     onSelect,
+    footer,
 }: {
     date: Date;
     onSelect: (date: Date) => void;
+    footer?: string;
 }) => {
     return (
         <Popover>
@@ -33,8 +35,9 @@ const DateFilter = ({
                     onSelect={(date) => onSelect(date as Date)}
                     footer={
                         <span className="text-xs text-muted-foreground">
-                            Scheduled orders for{" "}
-                            {format(date || new Date(), "yyyy-MM-dd")}
+                            {footer +
+                                " " +
+                                format(date || new Date(), "yyyy-MM-dd")}
                         </span>
                     }
                 />

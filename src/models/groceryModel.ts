@@ -16,6 +16,10 @@ const GrocerySchema = new Schema<GroceryDocument>(
             type: Number,
             required: true,
         },
+        unit: {
+            type: String,
+            required: true,
+        },
         price: {
             type: Number,
             required: true,

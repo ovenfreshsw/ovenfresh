@@ -140,7 +140,10 @@ export default function CateringOrderTable({
                     order.customerName
                         .toLowerCase()
                         .includes(filterValue.toLowerCase()) ||
-                    order.customerPhone.includes(filterValue)
+                    order.customerPhone.includes(filterValue) ||
+                    order.orderId
+                        .toLowerCase()
+                        .includes(filterValue.toLowerCase())
             );
         }
         if (
@@ -317,7 +320,7 @@ export default function CateringOrderTable({
                             inputWrapper: "rounded-md bg-white border h-9",
                         }}
                         size="sm"
-                        placeholder="Search by name or phone number..."
+                        placeholder="Search by name or phone or order ID..."
                         startContent={
                             <ListFilter
                                 size={16}

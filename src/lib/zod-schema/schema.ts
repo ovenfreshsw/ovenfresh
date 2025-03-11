@@ -83,6 +83,7 @@ export const ZodTiffinSchema = z.object({
 export const ZodGrocerySchema = z.object({
     item: z.string().min(3).max(20),
     quantity: z.string().min(1),
+    unit: z.enum(["L", "Kg", "g", "lbs"]),
     price: z.string(),
     tax: z.string(),
     total: z.string(),

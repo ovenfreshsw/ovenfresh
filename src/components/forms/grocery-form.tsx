@@ -6,6 +6,13 @@ import { ZodGrocerySchema } from "@/lib/zod-schema/schema";
 import { toast } from "sonner";
 import { addGroceryAction } from "@/actions/add-grocery-action";
 import { CalendarDate } from "@internationalized/date";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 const GroceryForm = ({
     setLoading,
@@ -57,8 +64,19 @@ const GroceryForm = ({
                 <Input
                     placeholder="Quantity"
                     name="quantity"
-                    className="col-span-3"
+                    className="col-span-2"
                 />
+                <Select name="unit">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                    <SelectContent className="z-[1550]">
+                        <SelectItem value="L">L</SelectItem>
+                        <SelectItem value="Kg">Kg</SelectItem>
+                        <SelectItem value="g">g</SelectItem>
+                        <SelectItem value="lbs">lbs</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <div className="grid grid-cols-4 gap-2 items-center">
                 <Label htmlFor="price" className="text-right">
