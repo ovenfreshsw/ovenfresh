@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import React, { useEffect, useRef } from "react";
+import ReactPDF, {
+    Document,
+    Page,
+    Text,
+    View,
+    StyleSheet,
+} from "@react-pdf/renderer";
 import { format } from "date-fns";
 
 type Order = {
@@ -32,8 +38,10 @@ const styles = StyleSheet.create({
     },
     sticker: {
         width: "50%",
-        height: "25%",
+        height: "12.5%",
         padding: 8,
+        borderBottom: "1px dashed #000",
+        borderRight: "1px dashed #000",
         boxSizing: "border-box",
     },
     orderHeader: {
@@ -78,46 +86,71 @@ const KitchenOrderSticker = ({ order }: { order: Order }) => {
     );
 };
 
-// PDF Document component
-export default function KitchenStickers({ orders }: { orders: Order[] }) {
-    const [PDFViewer, setPDFViewer] = useState<React.ComponentType | null>(
-        null
-    );
+const MyDocument = ({ orders }: { orders: Order[] }) => (
+    <Document>
+        <Page size="A4" style={styles.page}>
+            <View
+                style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                }}
+            >
+                <Text style={styles.title}>Tiffin Order Stickers</Text>
+                <Text style={styles.subtitle}>
+                    Printed on: {format(new Date(), "MMMM d, yyyy HH:mm:ss")}
+                </Text>
+            </View>
+            {orders.map((order, index) => (
+                <KitchenOrderSticker key={index} order={order} />
+            ))}
+        </Page>
+    </Document>
+);
+
+const PDFWithAutoPrint = ({ orders }: { orders: Order[] }) => {
+    const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
     useEffect(() => {
-        import("@react-pdf/renderer").then((mod) => {
-            setPDFViewer(() => mod.PDFViewer);
-        });
+        // Create PDF Blob asynchronously
+        const generateAndLoadPDF = async () => {
+            try {
+                const pdfBlob = await ReactPDF.pdf(
+                    <MyDocument orders={orders} />
+                ).toBlob(); // Wait for the Blob to be generated
+                if (pdfBlob) {
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+                    // Ensure the iframe has been loaded
+                    if (iframeRef.current) {
+                        iframeRef.current.src = pdfUrl;
+
+                        // Trigger the print dialog after the PDF is loaded into the iframe
+                        iframeRef.current.onload = () => {
+                            if (iframeRef.current?.contentWindow) {
+                                iframeRef.current.contentWindow.print();
+                            }
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error("Error generating PDF:", error);
+            }
+        };
+
+        generateAndLoadPDF(); // Call the async function to generate and load the PDF
     }, []);
 
-    return PDFViewer ? (
-        // @ts-expect-error: PDFViewer is not defined
-        <PDFViewer width="100%" height={800}>
-            <Document>
-                <Page size="A4" style={styles.page}>
-                    <View
-                        style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <Text style={styles.title}>Tiffin Order Stickers</Text>
-                        <Text style={styles.subtitle}>
-                            Printed on:{" "}
-                            {format(new Date(), "MMMM d, yyyy HH:mm:ss")}
-                        </Text>
-                    </View>
-                    {orders.map((order, index) => (
-                        <KitchenOrderSticker key={index} order={order} />
-                    ))}
-                </Page>
-            </Document>
-        </PDFViewer>
-    ) : (
-        <div className="h-screen flex justify-center items-center">
-            <p>Loading PDF Viewer...</p>
+    return (
+        <div>
+            <iframe
+                ref={iframeRef}
+                style={{ width: "100%", height: "100vh", border: "none" }}
+                title="PDF Viewer"
+            ></iframe>
         </div>
     );
-}
+};
+
+export default PDFWithAutoPrint;

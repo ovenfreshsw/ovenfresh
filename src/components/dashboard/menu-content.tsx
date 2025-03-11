@@ -15,9 +15,14 @@ import PeopleIcon from "@mui/icons-material/People";
 import StoreIcon from "@mui/icons-material/Store";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import { useSession } from "next-auth/react";
+// import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 const mainListItems = [
-    { text: "Dashboard", icon: <HomeRoundedIcon />, href: "/dashboard" },
+    {
+        text: "Dashboard",
+        icon: <HomeRoundedIcon />,
+        href: "/dashboard",
+    },
     {
         text: "Booking",
         icon: <EditNoteRoundedIcon />,
@@ -48,6 +53,11 @@ const mainListItems = [
         icon: <LocalGroceryStoreIcon />,
         href: "/dashboard/groceries",
     },
+    // {
+    //     text: "Menus",
+    //     icon: <MenuBookIcon />,
+    //     href: "/dashboard/menus",
+    // },
 ];
 
 // List of items that should be visible only to admins
@@ -82,8 +92,13 @@ export default function MenuContent() {
                     >
                         <Link href={item.href}>
                             <ListItemButton selected={index === selected}>
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
+                                <ListItemIcon className="!min-w-fit mr-3 [&>svg]:text-primary">
+                                    {item.icon}
+                                </ListItemIcon>
+                                <ListItemText
+                                    className="[&>span]:text-[15px]"
+                                    primary={item.text}
+                                />
                             </ListItemButton>
                         </Link>
                     </ListItem>

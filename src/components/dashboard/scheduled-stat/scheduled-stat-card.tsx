@@ -36,7 +36,7 @@ const ScheduledStatCard = () => {
                         <div className="p-2 bg-primary/10 rounded-full">
                             <KitchenIcon className="size-5 text-primary" />
                         </div>
-                        <div className="w-full">
+                        <div className="w-full space-y-0.5">
                             <p className="font-medium text-lg">Tiffin Orders</p>
                             <p className="leading-tight flex justify-between text-sm">
                                 Total:{" "}
@@ -70,7 +70,7 @@ const ScheduledStatCard = () => {
                         <div className="p-2 bg-primary/10 rounded-full">
                             <TakeoutDiningIcon className="size-5 text-primary" />
                         </div>
-                        <div className="w-full">
+                        <div className="w-full space-y-0.5">
                             <p className="font-medium text-lg">
                                 Catering Orders
                             </p>
