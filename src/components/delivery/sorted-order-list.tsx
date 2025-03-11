@@ -124,7 +124,10 @@ const SortedOrderList = ({
                                 </div>
                                 <Show>
                                     <Show.When
-                                        isTrue={order.status !== "DELIVERED"}
+                                        isTrue={
+                                            order.status !== "DELIVERED" &&
+                                            orderType === "catering"
+                                        }
                                     >
                                         <div className="flex gap-2">
                                             <Button
@@ -177,7 +180,11 @@ const SortedOrderList = ({
                                         orderId={order._id}
                                         orderType={orderType}
                                         pendingBalance={order.pendingBalance}
-                                        disabled={!resource}
+                                        disabled={
+                                            orderType === "catering"
+                                                ? !resource
+                                                : false
+                                        }
                                         resource={resource}
                                     />
                                 </Show.Else>
