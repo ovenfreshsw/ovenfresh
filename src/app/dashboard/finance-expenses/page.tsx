@@ -1,14 +1,6 @@
 import Header from "@/components/dashboard/header";
 import { Box, Stack, Typography } from "@mui/material";
 import React, { Suspense } from "react";
-import {
-    dehydrate,
-    HydrationBoundary,
-    QueryClient,
-} from "@tanstack/react-query";
-import { getStaffsServer } from "@/lib/api/staffs/get-staffs";
-import StaffsTable from "@/components/data-table/staffs-table";
-import { getStoresServer } from "@/lib/api/stores/get-stores";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevenueMetrics } from "@/components/finance-expense/revenue-metrics";
 import { RevenueExpenseCharts } from "@/components/charts/revenue-expense-chart";

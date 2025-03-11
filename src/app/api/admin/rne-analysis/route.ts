@@ -9,8 +9,6 @@ import {
     generateStoreColors,
     getStoreServiceMap,
 } from "./helper";
-import Tiffin from "@/models/tiffinModel";
-import Catering from "@/models/cateringModel";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {

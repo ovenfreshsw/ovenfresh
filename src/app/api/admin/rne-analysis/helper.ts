@@ -1,3 +1,4 @@
+import { MonthlyRevenueData } from "@/lib/types/finance";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
 import { StoreDocument } from "@/models/types/store";
@@ -60,10 +61,6 @@ const generateStoreColors = (
     return result;
 };
 
-interface MonthlyData {
-    name: string;
-    [key: string]: number | string;
-}
 const currentYear = new Date().getFullYear();
 const months = [
     "Jan",
@@ -82,7 +79,7 @@ const months = [
 
 async function formatRevenueData(stores: StoreDocument[]) {
     // Initialize the result array
-    const result: MonthlyData[] = [];
+    const result: MonthlyRevenueData[] = [];
     const currentMonth = new Date().getMonth();
 
     // Loop through each month of the current year
@@ -90,7 +87,7 @@ async function formatRevenueData(stores: StoreDocument[]) {
         // Example: Looping for Jan, Feb, Mar
         const monthName = months[monthIndex];
 
-        const monthData: MonthlyData = { name: monthName };
+        const monthData: MonthlyRevenueData = { name: monthName };
 
         // Loop over stores to gather month-specific data
         for (const store of stores) {

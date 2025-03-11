@@ -15,7 +15,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Bar,
     BarChart,
@@ -29,6 +28,7 @@ import {
 import { useRevenueExpenseAnalysis } from "@/api-hooks/admin/get-rne-analysis";
 import { Frown } from "lucide-react";
 import { getMonthsUpToCurrent } from "@/lib/utils";
+import { MonthlyRevenueData } from "@/lib/types/finance";
 
 // Define the types for store and service filters
 type Store = "store1" | "store2" | "all";
@@ -42,33 +42,8 @@ export function RevenueExpenseCharts() {
     // useQuery
     const { data, isPending } = useRevenueExpenseAnalysis();
 
-    // Expense data for different stores
-    const expenseData = [
-        {
-            name: "Jan",
-            "Scarborough Tiffin": 22000,
-            "Scarborough Catering": 6000,
-            "Oshawa Tiffin": 18000,
-            "Oshawa Catering": 4000,
-        },
-        {
-            name: "Feb",
-            "Scarborough Tiffin": 24000,
-            "Scarborough Catering": 6500,
-            "Oshawa Tiffin": 19000,
-            "Oshawa Catering": 5000,
-        },
-        {
-            name: "Mar",
-            "Scarborough Tiffin": 26000,
-            "Scarborough Catering": 7000,
-            "Oshawa Tiffin": 21000,
-            "Oshawa Catering": 6000,
-        },
-    ];
-
     // Filter data based on selected filters
-    const getFilteredData = (data: any[]) => {
+    const getFilteredData = (data: MonthlyRevenueData[]) => {
         let filteredData = [...data];
 
         if (monthFilter !== "all") {
@@ -104,7 +79,6 @@ export function RevenueExpenseCharts() {
 
     const visibleKeys = getVisibleKeys();
     const filteredRevenueData = getFilteredData(data?.revenueData || []);
-    const filteredExpenseData = getFilteredData(expenseData);
 
     if (isPending) return <div>Loading...</div>;
     if (!data)

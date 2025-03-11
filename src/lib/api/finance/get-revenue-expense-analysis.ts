@@ -1,4 +1,5 @@
 import axios from "@/config/axios.config";
+import { RNEAnalysisProps } from "@/lib/types/finance";
 import { headers } from "next/headers";
 
 export async function getRevenueExpenseAnalysisServer() {
@@ -10,5 +11,5 @@ export async function getRevenueExpenseAnalysisServer() {
         },
     });
 
-    return data.result as any | null;
+    return data.result as RNEAnalysisProps | null;
 }

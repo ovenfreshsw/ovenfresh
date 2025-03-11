@@ -140,7 +140,7 @@ const PDFWithAutoPrint = ({ orders }: { orders: Order[] }) => {
         };
 
         generateAndLoadPDF(); // Call the async function to generate and load the PDF
-    }, []);
+    }, [orders]);
 
     return (
         <div>

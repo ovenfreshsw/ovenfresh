@@ -1,5 +1,4 @@
 import React from "react";
-import KitchenStickers from "./pdf-sticker-generator";
 import { endOfDay, isValid, startOfDay } from "date-fns";
 import connectDB from "@/lib/mongodb";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
