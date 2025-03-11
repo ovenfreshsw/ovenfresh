@@ -2,12 +2,13 @@ import {
     dehydrate,
     HydrationBoundary,
     QueryClient,
+    QueryFunction,
 } from "@tanstack/react-query";
 
 type ServerWrapperProps = {
     children: React.ReactNode;
     queryKey: string[];
-    queryFn: () => Promise<any>;
+    queryFn: QueryFunction<unknown, string[], never> | undefined;
 };
 
 const ServerWrapper = async ({

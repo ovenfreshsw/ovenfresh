@@ -4,6 +4,7 @@ import { endOfDay, isValid, startOfDay } from "date-fns";
 import connectDB from "@/lib/mongodb";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import Tiffin from "@/models/tiffinModel";
+import PDFWithAutoPrint from "./pdf-sticker-generator";
 
 const StickerPage = async ({
     searchParams,
@@ -34,7 +35,7 @@ const StickerPage = async ({
 
     return (
         <>
-            <KitchenStickers
+            <PDFWithAutoPrint
                 orders={orders.map((order) => ({
                     orderId: order.orderId.orderId,
                     deliveryDate: order.date,

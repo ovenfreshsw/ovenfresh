@@ -1,5 +1,3 @@
-import { OrderStatus } from "./order-status";
-
 export type ClusteredOrderProps = {
     id: string;
     orderId: string;
@@ -25,6 +23,10 @@ export type DeliveryRes = {
         lng: number;
     };
     date: Date;
+    items?: {
+        name: string;
+        quantity: number;
+    }[];
     // };
     // status: string;
     // _id: string;

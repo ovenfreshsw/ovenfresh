@@ -49,12 +49,12 @@ async function getHandler(req: AuthenticatedRequest) {
             }),
             countDocuments(Catering, {
                 store: storeObjectId,
-                date: today,
+                deliveryDate: today,
                 status: "PENDING",
             }),
             countDocuments(Catering, {
                 store: storeObjectId,
-                date: today,
+                deliveryDate: today,
                 status: "DELIVERED",
             }),
         ]);

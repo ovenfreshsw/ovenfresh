@@ -94,7 +94,9 @@ const RecentTiffinOrderTable = () => {
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <Link href={`orders/tiffin-${order.orderId}`}>
+                            <Link
+                                href={`/dashboard/orders/tiffin-${order.orderId}?mid=${order._id}`}
+                            >
                                 <Eye
                                     size={18}
                                     className="stroke-2 text-muted-foreground"

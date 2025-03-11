@@ -11,65 +11,74 @@ import {
 } from "@heroui/table";
 import { Input } from "@heroui/input";
 import { ListFilter, Loader2 } from "lucide-react";
-import { useStaffs } from "@/api-hooks/staffs/get-staffs";
-import { UserDocumentPopulate } from "@/models/types/user";
-import AddStaffDialog from "../dialog/add-staff-dialog";
-import EditStaffDialog from "../dialog/edit-staff-dialog";
-import { useStores } from "@/api-hooks/stores/get-stores";
-import DeleteStaffDialog from "../dialog/delete-staff-dialog";
+import { useCateringMenu } from "@/api-hooks/catering/get-catering-menu";
+import { CateringMenuDocument } from "@/models/types/catering-menu";
+import Image from "next/image";
+import { Chip } from "@heroui/chip";
+// import AddCateringMenuDialog from "@/components/dialog/add-catering-menu-dialog";
 
 export const columns = [
     { name: "ID", uid: "_id", sortable: true },
-    { name: "USERNAME", uid: "username" },
-    { name: "ROLE", uid: "role" },
-    { name: "STORE", uid: "storeId", sortable: true },
-    { name: "PASSWORD", uid: "password" },
+    { name: "IMAGE", uid: "image" },
+    { name: "NAME", uid: "name" },
+    { name: "PRICE", uid: "price" },
+    { name: "DESCRIPTION", uid: "description" },
+    { name: "DISABLED", uid: "disabled" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
-export default function StaffsTable() {
+export default function CateringMenuTable() {
     const [filterValue, setFilterValue] = React.useState("");
 
-    const { data: staffs, isPending } = useStaffs();
-    const { data: stores } = useStores();
+    const { data: menus, isPending } = useCateringMenu();
 
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredStaffs = staffs ? [...staffs] : [];
+        let filteredMenus = menus ? [...menus] : [];
 
         if (hasSearchFilter) {
-            filteredStaffs = filteredStaffs.filter((order) =>
-                order.username.toLowerCase().includes(filterValue.toLowerCase())
+            filteredMenus = filteredMenus.filter((grocery) =>
+                grocery.name.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
 
-        return filteredStaffs;
-    }, [staffs, filterValue, hasSearchFilter]);
+        return filteredMenus;
+    }, [menus, filterValue, hasSearchFilter]);
 
     const renderCell = React.useCallback(
-        (staff: UserDocumentPopulate, columnKey: React.Key) => {
-            const cellValue = staff[columnKey as keyof UserDocumentPopulate];
+        (menu: CateringMenuDocument, columnKey: React.Key) => {
+            const cellValue = menu[columnKey as keyof CateringMenuDocument];
 
             switch (columnKey) {
-                case "storeId":
-                    // @ts-expect-error: cellValue is of type StoreDocument
-                    return cellValue?.location;
+                case "image":
+                    return (
+                        <Image
+                            src={cellValue as string}
+                            alt="menu"
+                            width={40}
+                            height={40}
+                            className="rounded-md"
+                        />
+                    );
+                case "disabled":
+                    return (
+                        <Chip size="sm" color={"primary"}>
+                            {cellValue ? "Yes" : "No"}
+                        </Chip>
+                    );
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <EditStaffDialog
-                                stores={stores || []}
-                                staff={staff}
-                            />
-                            <DeleteStaffDialog id={staff._id} />
+                            {/* <EditGroceryDialog grocery={grocery} />
+                            <DeleteGroceryDialog id={grocery._id} /> */}
                         </div>
                     );
                 default:
                     return cellValue;
             }
         },
-        [stores]
+        []
     );
 
     const onSearchChange = React.useCallback((value?: string) => {
@@ -95,7 +104,7 @@ export default function StaffsTable() {
                             inputWrapper: "rounded-md bg-white border h-9",
                         }}
                         size="sm"
-                        placeholder="Search by username"
+                        placeholder="Search by menu items"
                         startContent={
                             <ListFilter
                                 size={16}
@@ -109,17 +118,17 @@ export default function StaffsTable() {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex-1 flex justify-end gap-2">
-                        <AddStaffDialog stores={stores || []} />
+                        {/* <AddCateringMenuDialog /> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {staffs?.length} staffs
+                        Total {menus?.length} menu items
                     </span>
                 </div>
             </div>
         );
-    }, [filterValue, onSearchChange, staffs?.length, onClear, stores]);
+    }, [filterValue, onSearchChange, menus?.length, onClear]);
 
     return (
         <Table
@@ -153,7 +162,7 @@ export default function StaffsTable() {
                 isLoading={isPending}
                 loadingContent={<Loader2 className="animate-spin" />}
             >
-                {(item: UserDocumentPopulate) => (
+                {(item: CateringMenuDocument) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
                             <TableCell>{renderCell(item, columnKey)}</TableCell>

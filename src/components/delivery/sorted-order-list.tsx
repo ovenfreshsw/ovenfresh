@@ -22,6 +22,7 @@ import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import OrderItemsDrawer from "../drawer/delivery/order-items-drawer";
 
 const SortedOrderList = ({
     status,
@@ -86,9 +87,19 @@ const SortedOrderList = ({
                                         {order.customerName}
                                     </p>
                                     <p className="text-sm text-muted-foreground">
-                                        {format(order.date, "PPP")}
+                                        {format(new Date(order.date), "PPP")}
                                     </p>
                                 </div>
+                                <Show>
+                                    <Show.When
+                                        isTrue={orderType === "catering"}
+                                    >
+                                        <OrderItemsDrawer
+                                            items={order.items || []}
+                                            orderId={order.orderId}
+                                        />
+                                    </Show.When>
+                                </Show>
                             </div>
 
                             <div className="flex items-start gap-2">
@@ -113,7 +124,10 @@ const SortedOrderList = ({
                                 </div>
                                 <Show>
                                     <Show.When
-                                        isTrue={order.status !== "DELIVERED"}
+                                        isTrue={
+                                            order.status !== "DELIVERED" &&
+                                            orderType === "catering"
+                                        }
                                     >
                                         <div className="flex gap-2">
                                             <Button
@@ -121,7 +135,7 @@ const SortedOrderList = ({
                                                 size="icon"
                                                 className={`rounded-full ${
                                                     resource !== undefined
-                                                        ? "bg-green-100 text-green-600 border-green-200 hover:bg-green-100"
+                                                        ? "bg-green-100 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-600"
                                                         : ""
                                                 }`}
                                             >
@@ -166,7 +180,11 @@ const SortedOrderList = ({
                                         orderId={order._id}
                                         orderType={orderType}
                                         pendingBalance={order.pendingBalance}
-                                        disabled={!resource}
+                                        disabled={
+                                            orderType === "catering"
+                                                ? !resource
+                                                : false
+                                        }
                                         resource={resource}
                                     />
                                 </Show.Else>

@@ -11,65 +11,62 @@ import {
 } from "@heroui/table";
 import { Input } from "@heroui/input";
 import { ListFilter, Loader2 } from "lucide-react";
-import { useStaffs } from "@/api-hooks/staffs/get-staffs";
-import { UserDocumentPopulate } from "@/models/types/user";
-import AddStaffDialog from "../dialog/add-staff-dialog";
-import EditStaffDialog from "../dialog/edit-staff-dialog";
-import { useStores } from "@/api-hooks/stores/get-stores";
-import DeleteStaffDialog from "../dialog/delete-staff-dialog";
+import { GroceryDocument } from "@/models/types/grocery";
+import { useGroceries } from "@/api-hooks/grocery/get-groceries";
+import AddGroceryDialog from "../dialog/add-grocery-dialog";
+import { format } from "date-fns";
+import EditGroceryDialog from "../dialog/edit-grocery-dialog";
+import DeleteGroceryDialog from "../dialog/delete-grocery-dialog";
 
 export const columns = [
     { name: "ID", uid: "_id", sortable: true },
-    { name: "USERNAME", uid: "username" },
-    { name: "ROLE", uid: "role" },
-    { name: "STORE", uid: "storeId", sortable: true },
-    { name: "PASSWORD", uid: "password" },
+    { name: "ITEM", uid: "item" },
+    { name: "QUANTITY", uid: "quantity" },
+    { name: "PRICE", uid: "price" },
+    { name: "TAX", uid: "tax" },
+    { name: "TOTAL", uid: "total" },
+    { name: "DATE", uid: "date" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
-export default function StaffsTable() {
+export default function GroceriesTable() {
     const [filterValue, setFilterValue] = React.useState("");
 
-    const { data: staffs, isPending } = useStaffs();
-    const { data: stores } = useStores();
+    const { data: groceries, isPending } = useGroceries();
 
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredStaffs = staffs ? [...staffs] : [];
+        let filteredGroceries = groceries ? [...groceries] : [];
 
         if (hasSearchFilter) {
-            filteredStaffs = filteredStaffs.filter((order) =>
-                order.username.toLowerCase().includes(filterValue.toLowerCase())
+            filteredGroceries = filteredGroceries.filter((grocery) =>
+                grocery.item.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
 
-        return filteredStaffs;
-    }, [staffs, filterValue, hasSearchFilter]);
+        return filteredGroceries;
+    }, [groceries, filterValue, hasSearchFilter]);
 
     const renderCell = React.useCallback(
-        (staff: UserDocumentPopulate, columnKey: React.Key) => {
-            const cellValue = staff[columnKey as keyof UserDocumentPopulate];
+        (grocery: GroceryDocument, columnKey: React.Key) => {
+            const cellValue = grocery[columnKey as keyof GroceryDocument];
 
             switch (columnKey) {
-                case "storeId":
-                    // @ts-expect-error: cellValue is of type StoreDocument
-                    return cellValue?.location;
+                case "date":
+                    return format(cellValue as Date, "PPP");
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <EditStaffDialog
-                                stores={stores || []}
-                                staff={staff}
-                            />
-                            <DeleteStaffDialog id={staff._id} />
+                            <EditGroceryDialog grocery={grocery} />
+                            <DeleteGroceryDialog id={grocery._id} />
                         </div>
                     );
                 default:
                     return cellValue;
             }
         },
-        [stores]
+        []
     );
 
     const onSearchChange = React.useCallback((value?: string) => {
@@ -95,7 +92,7 @@ export default function StaffsTable() {
                             inputWrapper: "rounded-md bg-white border h-9",
                         }}
                         size="sm"
-                        placeholder="Search by username"
+                        placeholder="Search by items"
                         startContent={
                             <ListFilter
                                 size={16}
@@ -109,17 +106,17 @@ export default function StaffsTable() {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex-1 flex justify-end gap-2">
-                        <AddStaffDialog stores={stores || []} />
+                        <AddGroceryDialog />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {staffs?.length} staffs
+                        Total {groceries?.length} grocery items
                     </span>
                 </div>
             </div>
         );
-    }, [filterValue, onSearchChange, staffs?.length, onClear, stores]);
+    }, [filterValue, onSearchChange, groceries?.length, onClear]);
 
     return (
         <Table
@@ -153,9 +150,10 @@ export default function StaffsTable() {
                 isLoading={isPending}
                 loadingContent={<Loader2 className="animate-spin" />}
             >
-                {(item: UserDocumentPopulate) => (
+                {(item: GroceryDocument) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
+                            // @ts-expect-error: columnKey is of type keyof GroceryDocument
                             <TableCell>{renderCell(item, columnKey)}</TableCell>
                         )}
                     </TableRow>

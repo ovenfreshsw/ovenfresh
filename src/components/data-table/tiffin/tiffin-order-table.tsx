@@ -212,7 +212,7 @@ export default function TiffinOrderTable({
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
                             <Link
-                                href={`orders/tiffin-${
+                                href={`/dashboard/orders/tiffin-${
                                     order.orderId
                                 }?mid=${order._id.toString()}`}
                             >
@@ -268,29 +268,29 @@ export default function TiffinOrderTable({
         setPage(1);
     }, []);
 
-    const excelData =
-        userRole === "SUPERADMIN" || userRole === "ADMIN"
-            ? React.useMemo(() => {
-                  return orders.map((order) => ({
-                      orderId: order.orderId,
-                      customerName: order.customerName,
-                      phone: order.customerPhone,
-                      address: order.address.address,
-                      startDate: format(new Date(order.startDate), "PPP"),
-                      endDate: format(new Date(order.endDate), "PPP"),
-                      numberOfWeeks: order.numberOfWeeks,
-                      orderType: order.order_type,
-                      paymentMethod: order.paymentMethod,
-                      totalAmount: order.totalPrice - order.tax,
-                      tax: order.tax,
-                      fullyPaid: order.fullyPaid ? "Yes" : "No",
-                      status: order.status,
-                      note: order.note,
-                      orderPlaced: format(new Date(order.createdAt), "PPP"),
-                      store: order.store.location,
-                  }));
-              }, [orders])
-            : [];
+    const excelData = React.useMemo(() => {
+        if (userRole === "SUPERADMIN" || userRole === "ADMIN") {
+            return orders.map((order) => ({
+                orderId: order.orderId,
+                customerName: order.customerName,
+                phone: order.customerPhone,
+                address: order.address.address,
+                startDate: format(new Date(order.startDate), "PPP"),
+                endDate: format(new Date(order.endDate), "PPP"),
+                numberOfWeeks: order.numberOfWeeks,
+                orderType: order.order_type,
+                paymentMethod: order.paymentMethod,
+                totalAmount: order.totalPrice - order.tax,
+                tax: order.tax,
+                fullyPaid: order.fullyPaid ? "Yes" : "No",
+                status: order.status,
+                note: order.note,
+                orderPlaced: format(new Date(order.createdAt), "PPP"),
+                store: order.store.location,
+            }));
+        }
+        return [];
+    }, [orders, userRole]); // Added userRole in the dependency array to re-run when it changes
 
     const topContent = React.useMemo(() => {
         return (
@@ -434,7 +434,8 @@ export default function TiffinOrderTable({
         onSearchChange,
         onRowsPerPageChange,
         orders?.length,
-        // hasSearchFilter,
+        excelData,
+        userRole,
         onClear,
     ]);
 
