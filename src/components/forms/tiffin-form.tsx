@@ -73,6 +73,7 @@ export default function TiffinForm() {
                 firstName: "",
                 lastName: "",
                 phone: "",
+                aptSuiteUnit: "",
                 lat: 0,
                 lng: 0,
             },
@@ -182,6 +183,10 @@ export default function TiffinForm() {
         );
         form.setValue("customerDetails.lat", customer.address.lat);
         form.setValue("customerDetails.lng", customer.address.lng);
+        form.setValue(
+            "customerDetails.aptSuiteUnit",
+            customer.address.aptSuiteUnit || ""
+        );
         setAddressInput({ address: customer.address.address || "", key: 0 });
         setAddress({
             address: customer.address.address || "",
@@ -270,46 +275,42 @@ export default function TiffinForm() {
                         />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="customerDetails.firstName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>First name</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="first name"
-                                                type="text"
-                                                {...field}
-                                            />
-                                        </FormControl>
+                        <FormField
+                            control={form.control}
+                            name="customerDetails.firstName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>First name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="first name"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="customerDetails.lastName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Last name</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="last name"
-                                                type="text"
-                                                {...field}
-                                            />
-                                        </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="customerDetails.lastName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Last name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="last name"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
                     <FormField
@@ -317,7 +318,7 @@ export default function TiffinForm() {
                         name="customerDetails.address"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Address</FormLabel>
+                                <FormLabel>Street Address</FormLabel>
                                 <FormControl>
                                     <AddressAutocomplete
                                         addresses={addressPredictions ?? []}
@@ -337,6 +338,25 @@ export default function TiffinForm() {
                                         />
                                     </AddressAutocomplete>
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="customerDetails.aptSuiteUnit"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Apt, suite or unit</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Apt, suite or unit"
+                                        type="text"
+                                        {...field}
+                                    />
+                                </FormControl>
+
                                 <FormMessage />
                             </FormItem>
                         )}

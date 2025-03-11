@@ -12,6 +12,26 @@ const AddressSchema = new Schema<AddressDocument>(
             type: String,
             required: true,
         },
+        aptSuiteUnit: {
+            type: String,
+            required: true,
+        },
+        street: {
+            type: String,
+            required: true,
+        },
+        city: {
+            type: String,
+            required: true,
+        },
+        province: {
+            type: String,
+            required: true,
+        },
+        zipCode: {
+            type: String,
+            required: true,
+        },
         placeId: {
             type: String,
             required: true,

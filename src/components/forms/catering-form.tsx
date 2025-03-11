@@ -290,26 +290,42 @@ export default function CateringForm({
                                             }}
                                         />
                                     </AddressAutocomplete>
-                                    {/* <Input
-                                        placeholder="address"
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="customerDetails.aptSuiteUnit"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Apt, suite or unit</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Apt, suite or unit"
                                         type="text"
                                         {...field}
                                         value={
-                                            orderDetail.customerDetails.address
+                                            orderDetail.customerDetails
+                                                .aptSuiteUnit
                                         }
                                         onChange={(e) => {
                                             dispatch(
                                                 setCustomerDetails({
-                                                    address: e.target.value,
+                                                    aptSuiteUnit:
+                                                        e.target.value,
                                                 })
                                             );
                                             form.setValue(
-                                                "customerDetails.address",
+                                                "customerDetails.aptSuiteUnit",
                                                 e.target.value
                                             );
                                         }}
-                                    /> */}
+                                    />
                                 </FormControl>
+
                                 <FormMessage />
                             </FormItem>
                         )}

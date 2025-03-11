@@ -1,6 +1,6 @@
 "use server";
 
-import { getCoordinates } from "@/lib/google";
+import { getPlaceDetails } from "@/lib/google";
 import connectDB from "@/lib/mongodb";
 import {
     ZodCateringSchema,
@@ -17,6 +17,7 @@ type ValidatedDataType = {
     address: string;
     lat: number;
     lng: number;
+    aptSuiteUnit: string;
     deliveryDate: Date;
     start_date: Date;
     end_date: Date;
@@ -35,6 +36,7 @@ export async function editAddressAction(formData: FormData) {
             deliveryDate,
             startDate,
             endDate,
+            aptSuiteUnit,
         } = Object.fromEntries(formData.entries());
 
         if (!orderId || !orderType) {
@@ -53,10 +55,12 @@ export async function editAddressAction(formData: FormData) {
             orderType === "catering"
                 ? ZodCustomerSchema.merge(ZodCateringSchema).pick({
                       address: true,
+                      aptSuiteUnit: true,
                       deliveryDate: true,
                   })
                 : ZodCustomerSchema.merge(ZodTiffinSchema).pick({
                       address: true,
+                      aptSuiteUnit: true,
                       start_date: true,
                       end_date: true,
                   });
@@ -64,6 +68,7 @@ export async function editAddressAction(formData: FormData) {
         const validated = validationSchema.safeParse({
             address,
             deliveryDate,
+            aptSuiteUnit,
             start_date: startDate,
             end_date: endDate,
         });
@@ -75,7 +80,9 @@ export async function editAddressAction(formData: FormData) {
         const validatedData = validated.data as ValidatedDataType;
 
         // Check if address details have changed
-        const isAddressSame = currentAddress.address === validatedData.address;
+        const isAddressSame =
+            currentAddress.address === validatedData.address &&
+            currentAddress.aptSuiteUnit === validatedData.aptSuiteUnit;
 
         if (isAddressSame) {
             // Only update order details if the address is unchanged
@@ -90,16 +97,23 @@ export async function editAddressAction(formData: FormData) {
                 Tiffin.findOne({ address: addressId, _id: { $ne: orderId } }),
             ]);
 
-            const location = await getCoordinates(placeId.toString());
+            const places = await getPlaceDetails(placeId.toString());
 
             let newAddressId = addressId as string;
+
+            console.log(isAddressInUse);
 
             if (isAddressInUse.some((order) => order)) {
                 // Create a new address if it's used by another order
                 const newAddress = await Address.create({
                     address: validatedData.address,
-                    lat: location?.lat,
-                    lng: location?.lng,
+                    lat: places?.lat,
+                    lng: places?.lng,
+                    street: places?.street,
+                    city: places?.city,
+                    province: places?.province,
+                    zipCode: places?.zipCode,
+                    aptSuiteUnit: validatedData.aptSuiteUnit,
                     placeId: placeId,
                     customerId,
                 });
@@ -112,8 +126,13 @@ export async function editAddressAction(formData: FormData) {
                     {
                         $set: {
                             address: validatedData.address,
-                            lat: location?.lat,
-                            lng: location?.lng,
+                            aptSuiteUnit: validatedData.aptSuiteUnit,
+                            lat: places?.lat,
+                            lng: places?.lng,
+                            street: places?.street,
+                            city: places?.city,
+                            province: places?.province,
+                            zipCode: places?.zipCode,
                         },
                     }
                 );
