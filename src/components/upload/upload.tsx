@@ -6,19 +6,21 @@ const Upload = ({
     setResource,
     folder,
     children,
+    defaultSource = "camera",
 }: {
     setResource: React.Dispatch<
         React.SetStateAction<string | CloudinaryUploadWidgetInfo | undefined>
     >;
     folder: string;
     children: React.ReactNode;
+    defaultSource?: string;
 }) => {
     return (
         <CldUploadWidget
             uploadPreset="restaurant_ca"
             options={{
                 folder,
-                defaultSource: "camera",
+                defaultSource,
                 sources: ["camera", "local"],
             }}
             onSuccess={(result) => {

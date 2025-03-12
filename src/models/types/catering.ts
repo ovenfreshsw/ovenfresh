@@ -17,6 +17,7 @@ export interface CateringDocument {
         itemId: string;
         priceAtOrder: number;
         quantity: number;
+        size: string;
     }[];
     advancePaid: number;
     pendingBalance: number;

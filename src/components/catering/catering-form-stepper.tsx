@@ -90,6 +90,7 @@ export default function CateringFormStepper() {
                 itemId: item._id,
                 quantity: item.quantity,
                 priceAtOrder: item.priceAtOrder,
+                size: item.size,
             })),
         };
         const result = ZodCateringSchema.safeParse(data);

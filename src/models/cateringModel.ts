@@ -52,6 +52,11 @@ const CateringSchema = new Schema<CateringDocument>(
                         type: Number,
                         required: true,
                     },
+                    size: {
+                        type: String,
+                        enum: ["small", "medium", "large"],
+                        required: true,
+                    },
                 },
             ],
             required: true,

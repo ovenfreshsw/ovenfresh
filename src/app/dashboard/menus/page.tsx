@@ -35,6 +35,7 @@ const MenusPage = () => {
                     <Tabs defaultValue="catering">
                         <TabsList>
                             <TabsTrigger value="catering">Catering</TabsTrigger>
+                            <TabsTrigger value="category">Category</TabsTrigger>
                             <TabsTrigger value="tiffin">Tiffin</TabsTrigger>
                         </TabsList>
                         <div className="pt-3">
@@ -50,6 +51,16 @@ const MenusPage = () => {
                                 </ServerWrapper>
                             </Suspense>
                         </TabsContent>
+                        {/* <TabsContent value="category">
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ServerWrapper
+                                    queryFn={getCateringCategoryMServer}
+                                    queryKey={["menu", "category"]}
+                                >
+                                    <CateringCategoryTable />
+                                </ServerWrapper>
+                            </Suspense>
+                        </TabsContent> */}
                         <TabsContent value="tiffin">
                             Change your password here.
                         </TabsContent>

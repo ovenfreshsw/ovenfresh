@@ -12,7 +12,15 @@ function ItemCardSummary({ item }: { item: CateringItemsState }) {
                 className="rounded size-14"
             />
             <div className="flex flex-col flex-1">
-                <span className="font-medium">{item.name}</span>
+                <div className="flex items-center gap-1">
+                    <span className="font-medium">{item.name}</span>
+                    <span className="text-muted-foreground text-xs">
+                        - {item.variant}
+                    </span>
+                </div>
+                <span className="text-xs text-muted-foreground capitalize">
+                    {item.size}
+                </span>
                 <span className="text-xs text-muted-foreground">
                     x{item.quantity}
                 </span>

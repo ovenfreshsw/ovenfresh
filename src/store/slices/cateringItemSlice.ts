@@ -12,7 +12,9 @@ export const cateringItemSlice = createSlice({
             action: PayloadAction<CateringItemsState>
         ) => {
             const existingItem = state.find(
-                (item) => item._id === action.payload._id
+                (item) =>
+                    item._id === action.payload._id &&
+                    item.size === action.payload.size
             );
 
             if (existingItem) {
@@ -26,20 +28,31 @@ export const cateringItemSlice = createSlice({
             action: PayloadAction<CateringItemsState>
         ) => {
             const existingItem = state.find(
-                (item) => item._id === action.payload._id
+                (item) =>
+                    item._id === action.payload._id &&
+                    item.size === action.payload.size
             );
 
             if (existingItem) {
                 if (existingItem.quantity === 1) {
                     return state.filter(
-                        (item) => item._id !== action.payload._id
+                        (item) =>
+                            item._id !== action.payload._id ||
+                            item.size !== action.payload.size
                     );
                 }
                 existingItem.quantity = (existingItem.quantity || 0) - 1;
             }
         },
-        removeItem: (state, action: PayloadAction<string>) => {
-            return state.filter((item) => item._id !== action.payload);
+        removeItem: (
+            state,
+            action: PayloadAction<{ _id: string; size: string }>
+        ) => {
+            return state.filter(
+                (item) =>
+                    item._id !== action.payload._id ||
+                    item.size !== action.payload.size
+            );
         },
         clearState: () => {
             return initialState;

@@ -24,8 +24,11 @@ export interface CateringOrderState {
 
 export interface CateringItemsState {
     _id: string;
+    category: string;
     name: string;
+    size: string;
     image: string;
     quantity: number;
     priceAtOrder: number;
+    variant?: string;
 }

@@ -3,15 +3,42 @@ import { CateringMenuDocument } from "./types/catering-menu";
 
 const CateringMenuSchema = new Schema<CateringMenuDocument>(
     {
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "CateringCategory",
+            required: true,
+        },
         name: {
             type: String,
             required: true,
         },
-        price: {
+        smallPrice: {
             type: Number,
-            required: true,
+            default: null,
         },
-        description: String,
+        smallServingSize: {
+            type: String,
+            default: null,
+        },
+        mediumPrice: {
+            type: Number,
+            default: null,
+        },
+        mediumServingSize: {
+            type: String,
+            default: null,
+        },
+        largePrice: {
+            type: Number,
+            default: null,
+        },
+        largeServingSize: {
+            type: String,
+            default: null,
+        },
+        variant: {
+            type: String,
+        },
         image: {
             type: mongoose.Schema.Types.Mixed,
             default: null,

@@ -1,7 +1,24 @@
 import { CircleAlert, Loader2 } from "lucide-react";
-import ItemCard from "./item-card";
-import SummaryCard from "./summary-card";
 import { CateringMenuDocument } from "@/models/types/catering-menu";
+import { VisualMenuSelector } from "./visual-menu-selector";
+import { SelectedItemsList } from "./selected-items-list";
+import { useEffect, useState } from "react";
+import { getMenuItems } from "./action";
+import { toast } from "sonner";
+
+type MenuItem = {
+    _id: string;
+    category: string;
+    name: string;
+    variant?: string;
+    smallPrice?: number;
+    mediumPrice?: number;
+    largePrice?: number;
+    smallServingSize?: string;
+    mediumServingSize?: string;
+    largeServingSize?: string;
+    image?: string;
+};
 
 const SelectItems = ({
     data,
@@ -10,6 +27,28 @@ const SelectItems = ({
     data?: CateringMenuDocument[] | null;
     isPending: boolean;
 }) => {
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadMenuItems() {
+            try {
+                const items = await getMenuItems();
+                setMenuItems(items);
+            } catch (error) {
+                toast.error("Failed to load menu items.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadMenuItems();
+    }, []);
+
+    if (loading) {
+        return <div className="text-center py-10">Loading menu items...</div>;
+    }
+
     if (isPending)
         return (
             <div className="flex justify-center flex-col items-center gap-2">
@@ -28,17 +67,13 @@ const SelectItems = ({
 
     return (
         <div className="flex flex-col lg:flex-row gap-2">
-            {/* Items Container */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 flex-grow h-fit gap-2">
-                {data?.map((item) => (
-                    <ItemCard key={item._id} menu={item} />
-                ))}
-            </div>
-
-            <div className="w-full h-36 lg:hidden col-span-3"></div>
-            {/* Summary Container - Fixed Width */}
-            <div className="w-full lg:w-[30%] flex-shrink-0">
-                <SummaryCard />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-14 lg:pb-0 w-full">
+                <div className="lg:col-span-2">
+                    <VisualMenuSelector menuItems={menuItems} />
+                </div>
+                <div>
+                    <SelectedItemsList />
+                </div>
             </div>
         </div>
     );

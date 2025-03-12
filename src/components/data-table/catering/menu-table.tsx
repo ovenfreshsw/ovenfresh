@@ -10,19 +10,22 @@ import {
     TableCell,
 } from "@heroui/table";
 import { Input } from "@heroui/input";
-import { ListFilter, Loader2 } from "lucide-react";
+import { ListFilter, Loader2, Pencil, Plus } from "lucide-react";
 import { useCateringMenu } from "@/api-hooks/catering/get-catering-menu";
 import { CateringMenuDocument } from "@/models/types/catering-menu";
 import Image from "next/image";
 import { Chip } from "@heroui/chip";
-// import AddCateringMenuDialog from "@/components/dialog/add-catering-menu-dialog";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import DeleteCateringMenuDialog from "@/components/dialog/delete-catering-menu-dialog";
 
 export const columns = [
-    { name: "ID", uid: "_id", sortable: true },
     { name: "IMAGE", uid: "image" },
     { name: "NAME", uid: "name" },
-    { name: "PRICE", uid: "price" },
-    { name: "DESCRIPTION", uid: "description" },
+    { name: "CATEGORY", uid: "category" },
+    { name: "SMALL", uid: "smallPrice" },
+    { name: "MEDIUM", uid: "mediumPrice" },
+    { name: "LARGE", uid: "largePrice" },
     { name: "DISABLED", uid: "disabled" },
     { name: "ACTIONS", uid: "actions" },
 ];
@@ -51,10 +54,23 @@ export default function CateringMenuTable() {
             const cellValue = menu[columnKey as keyof CateringMenuDocument];
 
             switch (columnKey) {
+                case "category":
+                    // @ts-expect-error: cellValue is of type CateringCategoryDocument
+                    return cellValue?.name;
+                case "name":
+                    return `${cellValue} (${menu.variant})`;
+                case "smallPrice":
+                    return `$${cellValue} (${menu.smallServingSize})`;
+                case "mediumPrice":
+                    return `$${cellValue} (${menu.mediumServingSize})`;
+                case "largePrice":
+                    return `$${cellValue} (${menu.largeServingSize})`;
                 case "image":
                     return (
                         <Image
-                            src={cellValue as string}
+                            src={
+                                (cellValue as string) || "/fsr-placeholder.webp"
+                            }
                             alt="menu"
                             width={40}
                             height={40}
@@ -70,8 +86,14 @@ export default function CateringMenuTable() {
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            {/* <EditGroceryDialog grocery={grocery} />
-                            <DeleteGroceryDialog id={grocery._id} /> */}
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link
+                                    href={`/dashboard/menus/edit?id=${menu._id}`}
+                                >
+                                    <Pencil size={15} />
+                                </Link>
+                            </Button>
+                            <DeleteCateringMenuDialog id={menu._id} />
                         </div>
                     );
                 default:
@@ -118,7 +140,16 @@ export default function CateringMenuTable() {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex-1 flex justify-end gap-2">
-                        {/* <AddCateringMenuDialog /> */}
+                        <Button
+                            size={"sm"}
+                            className="flex items-center gap-2"
+                            asChild
+                        >
+                            <Link href={"/dashboard/menus/add"}>
+                                <Plus />
+                                Add catering menu
+                            </Link>
+                        </Button>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

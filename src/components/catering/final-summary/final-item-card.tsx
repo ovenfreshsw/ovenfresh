@@ -1,3 +1,4 @@
+import { Show } from "@/components/show";
 import { Button } from "@/components/ui/button";
 import { CateringItemsState } from "@/lib/types/catering/catering-order-state";
 import { removeItem } from "@/store/slices/cateringItemSlice";
@@ -9,8 +10,8 @@ import { useDispatch } from "react-redux";
 const FinalItemCard = ({ item }: { item: CateringItemsState }) => {
     const dispatch = useDispatch();
 
-    function handleRemoveItem(itemId: string) {
-        dispatch(removeItem(itemId));
+    function handleRemoveItem(itemId: string, size: string) {
+        dispatch(removeItem({ _id: itemId, size }));
         dispatch(setAdvancePaid(0));
     }
 
@@ -21,10 +22,22 @@ const FinalItemCard = ({ item }: { item: CateringItemsState }) => {
                 alt={item.name}
                 width={70}
                 height={70}
-                className="rounded-md"
+                className="rounded-md shadow"
             />
             <div className="flex-1">
-                <h3 className="font-medium">{item.name}</h3>
+                <h3 className="font-medium flex items-center gap-1">
+                    {item.name}{" "}
+                    <Show>
+                        <Show.When isTrue={item.variant !== undefined}>
+                            <span className="text-muted-foreground text-xs font-normal">
+                                &#040;{item.variant}&#041;
+                            </span>
+                        </Show.When>
+                    </Show>
+                </h3>
+                <p className="text-xs text-gray-500 capitalize">
+                    Size: {item.size}
+                </p>
                 <p className="text-xs text-gray-500">
                     Quantity: {item.quantity}
                 </p>
@@ -34,7 +47,7 @@ const FinalItemCard = ({ item }: { item: CateringItemsState }) => {
                 <Button
                     className="text-red-500 hover:bg-red-200 bg-transparent"
                     size={"icon"}
-                    onClick={() => handleRemoveItem(item._id)}
+                    onClick={() => handleRemoveItem(item._id, item.size)}
                 >
                     <Trash2 size={17} />
                 </Button>

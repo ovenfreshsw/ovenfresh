@@ -26,13 +26,13 @@ const Booking = async () => {
     ]);
 
     return (
-        <Box component="main" className="flex-grow overflow-auto">
+        <Box component="main" className="flex-grow">
             <Header />
             <Stack
                 spacing={2}
                 sx={{
                     alignItems: "center",
-                    mx: 3,
+                    mx: { xs: 1, md: 3 },
                     pb: 5,
                     pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },

@@ -59,10 +59,16 @@ export const ZodCateringSchema = z.object({
 });
 
 export const ZodCateringMenuSchema = z.object({
-    name: z.string().min(3).max(20),
-    price: z.number(),
-    description: z.string().optional(),
+    category: z.string().min(1, "Category is required"),
+    name: z.string().min(1, "Item name is required"),
     image: z.string().optional(),
+    variant: z.string().optional(),
+    smallPrice: z.string().optional(),
+    mediumPrice: z.string().optional(),
+    largePrice: z.string().optional(),
+    smallServingSize: z.string().optional(),
+    mediumServingSize: z.string().optional(),
+    largeServingSize: z.string().optional(),
 });
 
 export const ZodTiffinSchema = z.object({
