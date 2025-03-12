@@ -4,7 +4,7 @@ import connectDB from "@/lib/mongodb";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import { revalidatePath } from "next/cache";
 import Store from "@/models/storeModel";
-import { getCoordinates } from "@/lib/google";
+import { getPlaceDetails } from "@/lib/google";
 
 export async function addStoreAction(formData: FormData) {
     try {
@@ -18,12 +18,13 @@ export async function addStoreAction(formData: FormData) {
             return { error: "Invalid data format." };
         }
 
-        const location = await getCoordinates(result.data.placeId);
+        const location = await getPlaceDetails(result.data.placeId);
         if (!location) return { error: "Unable to get coordinates." };
 
         await Store.create({
             ...result.data,
-            ...location,
+            lat: location.lat,
+            lng: location.lng,
         });
 
         revalidatePath("/dashboard/stores");

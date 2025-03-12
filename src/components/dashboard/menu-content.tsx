@@ -16,7 +16,7 @@ import StoreIcon from "@mui/icons-material/Store";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import { useSession } from "next-auth/react";
 import PaidIcon from "@mui/icons-material/Paid";
-// import MenuBookIcon from "@mui/icons-material/MenuBook";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 const mainListItems = [
     {
@@ -59,11 +59,11 @@ const mainListItems = [
         icon: <LocalGroceryStoreIcon />,
         href: "/dashboard/groceries",
     },
-    // {
-    //     text: "Menus",
-    //     icon: <MenuBookIcon />,
-    //     href: "/dashboard/menus",
-    // },
+    {
+        text: "Menus",
+        icon: <MenuBookIcon />,
+        href: "/dashboard/menus",
+    },
 ];
 
 // List of items that should be visible only to admins

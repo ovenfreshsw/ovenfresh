@@ -19,7 +19,7 @@ import { useStores } from "@/api-hooks/stores/get-stores";
 import DeleteStaffDialog from "../dialog/delete-staff-dialog";
 
 export const columns = [
-    { name: "ID", uid: "_id", sortable: true },
+    // { name: "ID", uid: "_id", sortable: true },
     { name: "USERNAME", uid: "username" },
     { name: "ROLE", uid: "role" },
     { name: "STORE", uid: "storeId", sortable: true },

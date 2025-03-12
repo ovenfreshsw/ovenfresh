@@ -18,7 +18,7 @@ import DeleteStoreDialog from "../dialog/delete-store-dialog";
 import EditStoreDialog from "../dialog/edit-store-dialog";
 
 export const columns = [
-    { name: "ID", uid: "_id" },
+    // { name: "ID", uid: "_id" },
     { name: "NAME", uid: "name" },
     { name: "ADDRESS", uid: "address" },
     { name: "PHONE", uid: "phone" },
