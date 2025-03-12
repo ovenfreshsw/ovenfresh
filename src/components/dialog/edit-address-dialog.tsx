@@ -26,23 +26,24 @@ import AddressAutocomplete from "../address-autocomplete";
 import { useSearchAddress } from "@/api-hooks/use-search-address";
 import { useDebounce } from "@/hooks/use-debounce";
 import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
+import { Textarea } from "../ui/textarea";
 
 function isGapInWeeks(
     startDate: Date,
     endDate: Date,
     numberOfWeeks: number
 ): boolean {
-    // Convert the number of weeks to milliseconds
-    const millisecondsInWeek = 7 * 24 * 60 * 60 * 1000;
-    const expectedGapInMilliseconds =
-        Number(numberOfWeeks) * millisecondsInWeek;
-
-    // Calculate the actual gap in milliseconds
+    // Calculate the difference in milliseconds
+    const millisecondsInDay = 24 * 60 * 60 * 1000;
     const actualGapInMilliseconds =
-        new Date(endDate).getTime() - new Date(startDate).getTime();
+        new Date(format(endDate, "yyyy-MM-dd")).getTime() -
+        new Date(format(startDate, "yyyy-MM-dd")).getTime();
 
-    // Check if the actual gap is equal to the expected gap
-    return actualGapInMilliseconds === expectedGapInMilliseconds;
+    // Calculate the actual number of days between the two dates
+    const actualGapInDays = actualGapInMilliseconds / millisecondsInDay;
+
+    // Check if the gap in days is exactly the expected number of weeks (numberOfWeeks * 7 days)
+    return actualGapInDays === numberOfWeeks * 7 - 1;
 }
 
 const EditAddressDialog = ({
@@ -140,16 +141,14 @@ const EditAddressDialog = ({
                     action={handleSubmit}
                     className="grid gap-4 py-4"
                 >
-                    <div className="flex items-center gap-4">
-                        <Label htmlFor="address" className="text-right">
-                            Address
-                        </Label>
+                    <div className="grid grid-cols-4 gap-2">
+                        <Label htmlFor="address">Address</Label>
                         <AddressAutocomplete
                             addresses={addressPredictions || []}
                             setSelectedAddress={setSelectedAddress}
-                            className="w-full"
+                            className="col-span-3"
                         >
-                            <Input
+                            <Textarea
                                 id="address"
                                 name="address"
                                 value={addressInput.address}
@@ -163,15 +162,25 @@ const EditAddressDialog = ({
                         </AddressAutocomplete>
                     </div>
                     <input name="placeId" hidden readOnly value={placeId} />
+                    <div className="grid grid-cols-4 gap-2">
+                        <Label htmlFor="aptSuiteUnit">Apt, suite or unit</Label>
+                        <Input
+                            placeholder="Apt, suite or unit"
+                            id="aptSuiteUnit"
+                            name="aptSuiteUnit"
+                            defaultValue={address.aptSuiteUnit}
+                            className="col-span-3"
+                        />
+                    </div>
                     {orderType === "catering" ? (
-                        <div className="flex items-center gap-4">
+                        <div className="grid grid-cols-4 gap-2">
                             <Label htmlFor="deliveryDate">Delivery Date</Label>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <ShadButton
                                         variant={"outline"}
                                         className={cn(
-                                            "pl-3 text-left font-normal w-full",
+                                            "pl-3 text-left font-normal w-full col-span-3",
                                             !dDate && "text-muted-foreground"
                                         )}
                                         type="button"
@@ -201,14 +210,14 @@ const EditAddressDialog = ({
                         </div>
                     ) : (
                         <>
-                            <div className="flex items-center gap-4">
+                            <div className="grid grid-cols-4 gap-2">
                                 <Label htmlFor="startDate">Start Date</Label>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <ShadButton
                                             variant={"outline"}
                                             className={cn(
-                                                "pl-3 text-left font-normal w-full",
+                                                "pl-3 text-left font-normal w-full col-span-3",
                                                 !sDate &&
                                                     "text-muted-foreground"
                                             )}
@@ -239,14 +248,14 @@ const EditAddressDialog = ({
                                     </PopoverContent>
                                 </Popover>
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="grid grid-cols-4 gap-2">
                                 <Label htmlFor="endDate">End Date</Label>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <ShadButton
                                             variant={"outline"}
                                             className={cn(
-                                                "pl-3 text-left font-normal w-full",
+                                                "pl-3 text-left font-normal w-full col-span-3",
                                                 !eDate &&
                                                     "text-muted-foreground"
                                             )}
@@ -269,21 +278,33 @@ const EditAddressDialog = ({
                                             id="endDate"
                                             selected={
                                                 new Date(
-                                                    eDate?.getFullYear() ||
+                                                    new Date(
+                                                        eDate || ""
+                                                    )?.getFullYear() ||
                                                         new Date().getFullYear(),
-                                                    eDate?.getMonth() ||
+                                                    new Date(
+                                                        eDate || ""
+                                                    )?.getMonth() ||
                                                         new Date().getMonth(),
-                                                    eDate?.getDate() ||
+                                                    new Date(
+                                                        eDate || ""
+                                                    )?.getDate() ||
                                                         new Date().getDate()
                                                 )
                                             }
                                             defaultMonth={
                                                 new Date(
-                                                    eDate?.getFullYear() ||
+                                                    new Date(
+                                                        eDate || ""
+                                                    )?.getFullYear() ||
                                                         new Date().getFullYear(),
-                                                    eDate?.getMonth() ||
+                                                    new Date(
+                                                        eDate || ""
+                                                    )?.getMonth() ||
                                                         new Date().getMonth(),
-                                                    eDate?.getDate() ||
+                                                    new Date(
+                                                        eDate || ""
+                                                    )?.getDate() ||
                                                         new Date().getDate()
                                                 )
                                             }
@@ -298,23 +319,13 @@ const EditAddressDialog = ({
                                                     )}
                                                 </p>
                                             }
-                                            // selected={
-                                            //     new Date(
-                                            //         "2025-03-12T00:00:00.000Z"
-                                            //     )
-                                            // }
-                                            // disabled={{ before: new Date() }}
-                                            // onSelect={(e) =>
-                                            //     setEDate(e as Date)
-                                            // }
-                                            // initialFocus
                                         />
                                     </PopoverContent>
                                 </Popover>
                             </div>
                             {!isGapInWeeks(
-                                sDate!,
-                                eDate!,
+                                new Date(sDate || ""),
+                                new Date(eDate || ""),
                                 numberOfWeeks || 0
                             ) && (
                                 <Alert severity="error">
@@ -339,8 +350,8 @@ const EditAddressDialog = ({
                             loading ||
                             (orderType === "tiffin" &&
                                 !isGapInWeeks(
-                                    sDate!,
-                                    eDate!,
+                                    new Date(sDate || ""),
+                                    new Date(eDate || ""),
                                     numberOfWeeks || 0
                                 ))
                         }

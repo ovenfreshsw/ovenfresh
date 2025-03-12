@@ -12,6 +12,7 @@ const initialState: CateringOrderState = {
         phone: "",
         address: { address: "", key: 0 },
         placeId: "",
+        aptSuiteUnit: "",
         lat: "",
         lng: "",
     },

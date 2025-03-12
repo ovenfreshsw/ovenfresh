@@ -18,6 +18,13 @@ import { GroceryDocument } from "@/models/types/grocery";
 import { DateInput } from "@heroui/date-input";
 import { format } from "date-fns";
 import { editGroceryAction } from "@/actions/edit-grocery-action";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "../ui/select";
 
 const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
     const [loading, setLoading] = useState(false);
@@ -87,12 +94,23 @@ const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
                         <Input
                             placeholder="Quantity"
                             name="quantity"
-                            className="col-span-3"
+                            className="col-span-2"
                             type="number"
                             min="0"
                             step="0.01"
                             defaultValue={grocery.quantity}
                         />
+                        <Select name="unit" defaultValue={grocery.unit}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Unit" />
+                            </SelectTrigger>
+                            <SelectContent className="z-[1550]">
+                                <SelectItem value="L">L</SelectItem>
+                                <SelectItem value="Kg">Kg</SelectItem>
+                                <SelectItem value="g">g</SelectItem>
+                                <SelectItem value="lbs">lbs</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div className="grid grid-cols-4 gap-2 items-center">
                         <Label htmlFor="price" className="text-right">

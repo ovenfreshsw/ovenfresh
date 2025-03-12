@@ -1,5 +1,5 @@
 import { authOptions } from "@/lib/auth";
-import { getCoordinates } from "@/lib/google";
+import { getPlaceDetails } from "@/lib/google";
 import {
     error400,
     error403,
@@ -73,18 +73,28 @@ async function postHandler(req: AuthenticatedRequest) {
                 note,
             } = result.data;
 
-            let lat = customerDetails.lat;
-            let lng = customerDetails.lng;
+            let placeData: {
+                lat: number;
+                lng: number;
+                street?: string;
+                city?: string;
+                province?: string;
+                zipCode?: string;
+            } = {
+                lat: customerDetails.lat,
+                lng: customerDetails.lng,
+            };
 
             // Get lat and lng of the address
-            if (!lat || !lng) {
-                const coordinates = await getCoordinates(
-                    data.googleAddress.placeId
-                );
-                if (!coordinates)
-                    return error400("Unable to get coordinates.", {});
-                lat = coordinates.lat;
-                lng = coordinates.lng;
+            if (!placeData.lat || !placeData.lng) {
+                const place = await getPlaceDetails(data.googleAddress.placeId);
+                if (!place) return error400("Unable to get coordinates.", {});
+                placeData.lat = place.lat;
+                placeData.lng = place.lng;
+                placeData.street = place.street;
+                placeData.city = place.city;
+                placeData.province = place.province;
+                placeData.zipCode = place.zipCode;
             }
 
             // 1️⃣ Find or Create Customer (Atomic)
@@ -104,7 +114,15 @@ async function postHandler(req: AuthenticatedRequest) {
                     address: data.googleAddress.address.trim(),
                     placeId: data.googleAddress.placeId,
                 }, // Match customer and address
-                { lat: lat, lng: lng }, // Update lat/lng if needed
+                {
+                    lat: placeData.lat,
+                    lng: placeData.lng,
+                    street: placeData.street,
+                    city: placeData.city,
+                    province: placeData.province,
+                    zipCode: placeData.zipCode,
+                    aptSuiteUnit: customerDetails.aptSuiteUnit,
+                },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
             );
 

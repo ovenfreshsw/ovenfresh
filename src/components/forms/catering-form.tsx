@@ -298,6 +298,41 @@ export default function CateringForm({
 
                     <FormField
                         control={form.control}
+                        name="customerDetails.aptSuiteUnit"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Apt, suite or unit</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Apt, suite or unit"
+                                        type="text"
+                                        {...field}
+                                        value={
+                                            orderDetail.customerDetails
+                                                .aptSuiteUnit
+                                        }
+                                        onChange={(e) => {
+                                            dispatch(
+                                                setCustomerDetails({
+                                                    aptSuiteUnit:
+                                                        e.target.value,
+                                                })
+                                            );
+                                            form.setValue(
+                                                "customerDetails.aptSuiteUnit",
+                                                e.target.value
+                                            );
+                                        }}
+                                    />
+                                </FormControl>
+
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
                         name="deliveryDate"
                         render={({ field }) => (
                             <FormItem className="flex flex-col h-full justify-between">

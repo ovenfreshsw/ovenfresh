@@ -7,6 +7,7 @@ export interface CateringOrderState {
         phone: string;
         address: { address: string; key: number };
         placeId: string;
+        aptSuiteUnit: string;
         lat: string;
         lng: string;
     };

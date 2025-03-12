@@ -21,6 +21,7 @@ export async function editGroceryAction(formData: FormData) {
             $set: {
                 item: result.data.item,
                 quantity: result.data.quantity,
+                unit: result.data.unit,
                 price: result.data.price,
                 tax: result.data.tax,
                 total: result.data.total,

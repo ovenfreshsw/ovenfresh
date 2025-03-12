@@ -26,6 +26,7 @@ export async function addGroceryAction(formData: FormData) {
             store: storeId,
             item: result.data.item,
             quantity: result.data.quantity,
+            unit: result.data.unit,
             price: result.data.price,
             tax: result.data.tax,
             total: result.data.total,

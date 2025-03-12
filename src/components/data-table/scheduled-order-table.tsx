@@ -315,7 +315,11 @@ export default function ScheduledOrderTable({
                             </DropdownMenu>
                         </Dropdown>
                         {/* Date Filter */}
-                        <DateFilter date={date} onSelect={onDateChange} />
+                        <DateFilter
+                            date={date}
+                            onSelect={onDateChange}
+                            footer="Scheduled orders for"
+                        />
                     </div>
                     <div className="flex-1 flex justify-end gap-2">
                         <Button
@@ -340,15 +344,6 @@ export default function ScheduledOrderTable({
                                 "Print Report"
                             )}
                         </Button>
-                        {/* <Button
-                            size="sm"
-                            radius="sm"
-                            startContent={<Printer className="size-4" />}
-                            variant="solid"
-                            className="bg-white shadow hover:bg-gray-100"
-                        >
-                            Print Stickers
-                        </Button> */}
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

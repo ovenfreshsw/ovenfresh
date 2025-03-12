@@ -42,6 +42,7 @@ export default function CateringFormStepper() {
                 lastName: "",
                 phone: "",
                 address: "",
+                aptSuiteUnit: "",
             },
         },
     });
@@ -83,6 +84,7 @@ export default function CateringFormStepper() {
                 address: order.customerDetails.address.address,
                 lat: Number(order.customerDetails.lat || 0),
                 lng: Number(order.customerDetails.lng || 0),
+                aptSuiteUnit: order.customerDetails.aptSuiteUnit,
             },
             items: orderItems.map((item) => ({
                 itemId: item._id,

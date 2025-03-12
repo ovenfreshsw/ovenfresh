@@ -10,29 +10,31 @@ import {
     TableCell,
 } from "@heroui/table";
 import { Input } from "@heroui/input";
-import { ListFilter, Loader2 } from "lucide-react";
+import { ListFilter, Loader2, X } from "lucide-react";
 import { GroceryDocument } from "@/models/types/grocery";
 import { useGroceries } from "@/api-hooks/grocery/get-groceries";
 import AddGroceryDialog from "../dialog/add-grocery-dialog";
 import { format } from "date-fns";
 import EditGroceryDialog from "../dialog/edit-grocery-dialog";
 import DeleteGroceryDialog from "../dialog/delete-grocery-dialog";
+import DateFilter from "../scheduled-orders/date-filter";
+import { Button } from "../ui/button";
 
 export const columns = [
-    { name: "ID", uid: "_id", sortable: true },
+    { name: "DATE", uid: "date" },
     { name: "ITEM", uid: "item" },
     { name: "QUANTITY", uid: "quantity" },
     { name: "PRICE", uid: "price" },
     { name: "TAX", uid: "tax" },
     { name: "TOTAL", uid: "total" },
-    { name: "DATE", uid: "date" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
 export default function GroceriesTable() {
     const [filterValue, setFilterValue] = React.useState("");
+    const [selectedDate, setSelectedDate] = React.useState<Date | "all">("all");
 
-    const { data: groceries, isPending } = useGroceries();
+    const { data: groceries, isPending } = useGroceries(selectedDate);
 
     const hasSearchFilter = Boolean(filterValue);
 
@@ -55,6 +57,8 @@ export default function GroceriesTable() {
             switch (columnKey) {
                 case "date":
                     return format(cellValue as Date, "PPP");
+                case "quantity":
+                    return `${cellValue} ${grocery.unit}`;
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
@@ -105,6 +109,24 @@ export default function GroceriesTable() {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
+                    {/* Date Filter */}
+                    <DateFilter
+                        date={
+                            selectedDate === "all" ? new Date() : selectedDate
+                        }
+                        onSelect={setSelectedDate}
+                        footer="Groceries bought on"
+                    />
+                    {selectedDate !== "all" && (
+                        <Button
+                            size={"icon"}
+                            className="rounded-full"
+                            variant={"outline"}
+                            onClick={() => setSelectedDate("all")}
+                        >
+                            <X size={15} />
+                        </Button>
+                    )}
                     <div className="flex-1 flex justify-end gap-2">
                         <AddGroceryDialog />
                     </div>
