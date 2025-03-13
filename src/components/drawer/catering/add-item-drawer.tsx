@@ -48,6 +48,9 @@ export function AddItemDrawer({
         revalidateOrder(`/dashboard/orders/catering-${orderId}`);
     }
 
+    console.log(menu);
+    console.log(existingItems);
+
     const mutation = useAddItems(onSuccess);
 
     React.useEffect(() => {

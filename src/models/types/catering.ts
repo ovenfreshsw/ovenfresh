@@ -41,6 +41,7 @@ export interface CateringDocumentPopulate
         itemId: CateringMenuDocument;
         priceAtOrder: number;
         quantity: number;
+        size: string;
     }[];
     createdAt: Date;
     updatedAt: Date;

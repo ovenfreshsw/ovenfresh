@@ -2,9 +2,11 @@ import Header from "@/components/dashboard/header";
 import CateringCategoryTable from "@/components/data-table/categories-table";
 import CateringMenuTable from "@/components/data-table/catering/menu-table";
 import ServerWrapper from "@/components/delivery/server-wrapper";
+import TiffinMenuList from "@/components/tiffin/menu-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCateringCategoryServer } from "@/lib/api/category/get-catering-category";
 import { getCateringMenuServer } from "@/lib/api/menu/get-catering-menu";
+import { getTiffinMenuServer } from "@/lib/api/menu/get-tiffin-menu";
 import { Box, Divider, Stack } from "@mui/material";
 import { Suspense } from "react";
 
@@ -22,7 +24,7 @@ const MenusPage = () => {
             <Stack
                 spacing={2}
                 sx={{
-                    mx: 3,
+                    mx: { xs: 1.5, md: 3 },
                     pb: 5,
                     pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
@@ -46,7 +48,9 @@ const MenusPage = () => {
                         <TabsContent value="catering">
                             <Suspense fallback={<div>Loading...</div>}>
                                 <ServerWrapper
-                                    queryFn={getCateringMenuServer}
+                                    queryFn={() =>
+                                        getCateringMenuServer("false")
+                                    }
                                     queryKey={["menu", "catering"]}
                                 >
                                     <CateringMenuTable />
@@ -64,7 +68,14 @@ const MenusPage = () => {
                             </Suspense>
                         </TabsContent>
                         <TabsContent value="tiffin">
-                            Change your password here.
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ServerWrapper
+                                    queryFn={getTiffinMenuServer}
+                                    queryKey={["menu", "tiffin"]}
+                                >
+                                    <TiffinMenuList />
+                                </ServerWrapper>
+                            </Suspense>
                         </TabsContent>
                     </Tabs>
                 </Box>

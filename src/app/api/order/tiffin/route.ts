@@ -50,6 +50,11 @@ async function postHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
+        const session = await getServerSession(authOptions);
+        const storeId = session?.user.storeId;
+
+        if (!storeId) return error403();
+
         const data = await req.json();
         if (!data) {
             return error400("Invalid data format.", {});
@@ -69,7 +74,6 @@ async function postHandler(req: AuthenticatedRequest) {
                 totalAmount,
                 tax,
                 order_type,
-                store,
                 note,
             } = result.data;
 
@@ -134,7 +138,7 @@ async function postHandler(req: AuthenticatedRequest) {
                 Tiffin.create({
                     _id: tiffinId,
                     orderId: generateOrderId(),
-                    store,
+                    store: storeId,
                     startDate: formatDate(new Date(start_date), "yyyy-MM-dd"),
                     endDate: formatDate(new Date(end_date), "yyyy-MM-dd"),
                     numberOfWeeks: number_of_weeks,
@@ -155,7 +159,7 @@ async function postHandler(req: AuthenticatedRequest) {
                     tiffinId,
                     formatDate(new Date(start_date), "yyyy-MM-dd"),
                     formatDate(new Date(end_date), "yyyy-MM-dd"),
-                    store
+                    storeId
                 ),
             ]);
 

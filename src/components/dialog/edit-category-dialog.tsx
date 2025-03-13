@@ -40,7 +40,7 @@ const EditCategoryDialog = ({ id, name }: { id: string; name: string }) => {
 
         toast.promise(promise, {
             loading: "Updating category...",
-            success: () => "Updating created successfully.",
+            success: () => "Category updated successfully.",
             error: ({ error }) =>
                 error ? error : "Failed to update category.",
         });

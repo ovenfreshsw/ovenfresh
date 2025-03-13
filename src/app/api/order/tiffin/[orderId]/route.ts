@@ -63,14 +63,10 @@ async function getHandler(
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
         const { orderId } = await params;
-        const storeId = req.nextUrl.searchParams.get("storeId");
         const mid = req.nextUrl.searchParams.get("mid");
 
-        // Build the query object dynamically based on the presence of storeId
-        const query = storeId ? { store: storeId } : {};
-
         const [orders, status] = await Promise.all([
-            Tiffin.findOne({ ...query, orderId })
+            Tiffin.findOne({ orderId })
                 .populate({ path: "address", model: Address })
                 .populate({ path: "customer", model: Customer })
                 .populate({ path: "store", model: Store }),

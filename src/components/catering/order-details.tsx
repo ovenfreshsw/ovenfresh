@@ -46,6 +46,8 @@ import { updateOrderItemsAction } from "@/actions/update-order-items-action";
 import { AddItemDrawer } from "../drawer/catering/add-item-drawer";
 import Image from "next/image";
 import { ORDER_STATUSES, OrderStatus } from "@/lib/types/order-status";
+import { Show } from "../show";
+import SizeSelect from "../select/size-select";
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -128,10 +130,10 @@ export default function CateringOrderDetails({
         updateOrderStatus(newStatus as OrderStatus);
     };
 
-    function decreaseQuantity(itemId: string) {
+    function decreaseQuantity(itemId: string, size: string) {
         setOrderItems((prev) =>
             prev.map((i) =>
-                i.itemId._id === itemId
+                i.itemId._id === itemId && i.size === size
                     ? {
                           ...i,
                           quantity: i.quantity - 1 <= 1 ? 1 : i.quantity - 1,
@@ -141,10 +143,10 @@ export default function CateringOrderDetails({
         );
     }
 
-    function increaseQuantity(itemId: string) {
+    function increaseQuantity(itemId: string, size: string) {
         setOrderItems((prev) =>
             prev.map((i) =>
-                i.itemId._id === itemId
+                i.itemId._id === itemId && i.size === size
                     ? {
                           ...i,
                           quantity: i.quantity + 1,
@@ -173,9 +175,11 @@ export default function CateringOrderDetails({
                         itemId: item.itemId._id,
                         quantity: item.quantity,
                         priceAtOrder: item.priceAtOrder,
+                        size: item.size,
                     })),
                     orderData.advancePaid,
-                    orderData.tax
+                    orderData.tax,
+                    orderData.deliveryCharge
                 );
                 if (result.success) resolve(result);
                 else reject(result);
@@ -300,6 +304,9 @@ export default function CateringOrderDetails({
                                     <TableHead className="text-center">
                                         Qty
                                     </TableHead>
+                                    <TableHead className="text-center">
+                                        Size
+                                    </TableHead>
                                     <TableHead className="text-right">
                                         Price at Order
                                     </TableHead>
@@ -323,16 +330,10 @@ export default function CateringOrderDetails({
                                                     height={48}
                                                     className="rounded-lg"
                                                 />
-                                                <div>
-                                                    <div className="font-medium">
-                                                        {item.itemId.name}
-                                                    </div>
-                                                    <div className="text-sm text-muted-foreground hidden md:block">
-                                                        {
-                                                            item.itemId
-                                                                .description
-                                                        }
-                                                    </div>
+                                                <div className="font-medium">
+                                                    {item.itemId.name} &#040;
+                                                    {item.itemId.variant}
+                                                    &#041;
                                                 </div>
                                             </div>
                                         </TableCell>
@@ -348,7 +349,8 @@ export default function CateringOrderDetails({
                                                     )}
                                                     onClick={() =>
                                                         decreaseQuantity(
-                                                            item.itemId._id
+                                                            item.itemId._id,
+                                                            item.size
                                                         )
                                                     }
                                                 >
@@ -365,7 +367,8 @@ export default function CateringOrderDetails({
                                                     )}
                                                     onClick={() =>
                                                         increaseQuantity(
-                                                            item.itemId._id
+                                                            item.itemId._id,
+                                                            item.size
                                                         )
                                                     }
                                                 >
@@ -373,19 +376,51 @@ export default function CateringOrderDetails({
                                                 </button>
                                             </div>
                                         </TableCell>
+                                        <TableCell className="text-right capitalize">
+                                            <Show>
+                                                <Show.When isTrue={editItems}>
+                                                    <SizeSelect
+                                                        defaultSize={item.size}
+                                                        itemId={item.itemId._id}
+                                                        setOrderItems={
+                                                            setOrderItems
+                                                        }
+                                                        menu={item.itemId}
+                                                    />
+                                                </Show.When>
+                                                <Show.Else>
+                                                    {item?.size} &#040;
+                                                    {
+                                                        item.itemId[
+                                                            `${
+                                                                item?.size as "small"
+                                                            }ServingSize`
+                                                        ]
+                                                    }
+                                                    &#041;
+                                                </Show.Else>
+                                            </Show>
+                                        </TableCell>
                                         <TableCell className="text-right">
                                             ${item?.priceAtOrder.toFixed(2)}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            ${item.itemId.price}
-                                            {item.itemId.price !==
-                                                item?.priceAtOrder && (
+                                            $
+                                            {
+                                                item.itemId[
+                                                    `${item?.size}Price` as "smallPrice"
+                                                ]
+                                            }
+                                            {item.itemId[
+                                                `${item?.size}Price` as "smallPrice"
+                                            ] !== item?.priceAtOrder && (
                                                 <Badge
                                                     variant="outline"
                                                     className="ml-2"
                                                 >
-                                                    {item.itemId.price >
-                                                    item?.priceAtOrder
+                                                    {item.itemId[
+                                                        `${item?.size}Price` as "smallPrice"
+                                                    ] || 0 > item?.priceAtOrder
                                                         ? "Increased"
                                                         : "Decreased"}
                                                 </Badge>

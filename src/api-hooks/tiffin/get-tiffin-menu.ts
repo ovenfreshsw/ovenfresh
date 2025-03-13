@@ -12,5 +12,6 @@ export function useTiffinMenu() {
     return useQuery({
         queryKey: ["menu", "tiffin"],
         queryFn: getTiffinMenu,
+        staleTime: Infinity,
     });
 }

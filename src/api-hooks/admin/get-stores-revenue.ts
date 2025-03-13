@@ -13,5 +13,6 @@ export function useStoresRevenue() {
     return useQuery({
         queryKey: ["stores-revenue"],
         queryFn: getStoresRevenue,
+        staleTime: 10 * 60 * 1000, // Cache remains fresh for 10 minutes
     });
 }

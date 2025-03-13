@@ -9,7 +9,8 @@ export async function updateOrderItemsAction(
     orderId: string,
     items: CateringDocument["items"],
     advancePaid: number,
-    prevTax: number
+    prevTax: number,
+    deliveryCharge: number
 ) {
     try {
         await connectDB();
@@ -23,7 +24,10 @@ export async function updateOrderItemsAction(
         );
         const tax =
             (subtotal * Number(process.env.NEXT_PUBLIC_TAX_AMOUNT || 0)) / 100;
-        const total = prevTax > 0 ? subtotal + tax : subtotal;
+        const total =
+            prevTax > 0
+                ? subtotal + tax + deliveryCharge
+                : subtotal + deliveryCharge;
         const pendingBalance = total - advancePaid;
 
         const result = await Catering.updateOne(

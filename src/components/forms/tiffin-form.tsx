@@ -45,10 +45,6 @@ import { useSearchAddress } from "@/api-hooks/use-search-address";
 import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
 import AddressAutocomplete from "../address-autocomplete";
 
-function getStoreId() {
-    return "676cee708588c68c668d3aa7";
-}
-
 export default function TiffinForm() {
     const [confirmOrderOpen, setConfirmOrderOpen] = useState(false);
     const clickOutsidePhoneRef = useRef(null);
@@ -61,7 +57,6 @@ export default function TiffinForm() {
     const form = useForm<z.infer<typeof ZodTiffinSchema>>({
         resolver: zodResolver(ZodTiffinSchema),
         defaultValues: {
-            store: getStoreId(),
             start_date: new Date().toDateString(),
             payment_method: "cash",
             number_of_weeks: "2",
@@ -148,7 +143,6 @@ export default function TiffinForm() {
             form,
             setEndDateText
         );
-        form.setValue("store", getStoreId());
         const { total } = calculateTotalAmount(form, tiffinMenu);
         form.setValue("totalAmount", total.toString());
         setPhone("");

@@ -13,7 +13,11 @@ import { getCateringMenuServer } from "@/lib/api/menu/get-catering-menu";
 import { getTiffinMenuServer } from "@/lib/api/menu/get-tiffin-menu";
 
 const Booking = async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: { staleTime: Infinity },
+        },
+    });
     await Promise.all([
         queryClient.prefetchQuery({
             queryKey: ["menu", "catering"],

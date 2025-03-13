@@ -18,5 +18,6 @@ export function useCateringMenu(disabled?: "true" | "false") {
     return useQuery({
         queryKey: ["menu", "catering"],
         queryFn: () => getCateringMenu(disabled),
+        staleTime: 10 * 60 * 1000, // Cache remains fresh for 10 minutes
     });
 }

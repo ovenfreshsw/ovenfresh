@@ -74,7 +74,6 @@ export const ZodCateringMenuSchema = z.object({
 });
 
 export const ZodTiffinSchema = z.object({
-    store: z.string().length(24),
     customerDetails: ZodCustomerSchema,
     start_date: z.string(),
     end_date: z.string(),

@@ -13,5 +13,6 @@ export function useStaffs() {
     return useQuery({
         queryKey: ["staffs"],
         queryFn: getStaffs,
+        staleTime: Infinity,
     });
 }

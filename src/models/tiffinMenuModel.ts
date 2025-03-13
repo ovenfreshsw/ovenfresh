@@ -1,14 +1,14 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import { TiffinMenuDocument } from "./types/tiffin-menu";
 
 const TiffinMenuSchema = new Schema<TiffinMenuDocument>(
     {
-        store: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Store",
-            required: true,
-            unique: true,
-        },
+        // store: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Store",
+        //     required: true,
+        //     unique: true,
+        // },
         pickup: {
             "2_weeks": Number,
             "3_weeks": Number,

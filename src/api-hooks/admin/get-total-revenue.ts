@@ -12,5 +12,6 @@ export function useTotalRevenue() {
     return useQuery({
         queryKey: ["total-revenue"],
         queryFn: getTotalRevenue,
+        staleTime: 5 * 60 * 1000,
     });
 }

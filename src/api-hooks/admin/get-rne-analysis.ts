@@ -12,5 +12,6 @@ export function useRevenueExpenseAnalysis() {
     return useQuery({
         queryKey: ["rne-analysis"],
         queryFn: getRneAnalysis,
+        staleTime: 10 * 60 * 1000, // Cache remains fresh for 10 minutes
     });
 }

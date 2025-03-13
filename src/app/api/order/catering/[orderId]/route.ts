@@ -59,13 +59,8 @@ async function getHandler(
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
         const { orderId } = await params;
-        const storeId = req.nextUrl.searchParams.get("storeId");
-
-        // Build the query object dynamically based on the presence of storeId
-        const query = storeId ? { store: storeId } : {};
 
         const orders = await Catering.findOne({
-            ...query,
             orderId,
         })
             .populate({ path: "address", model: Address })
@@ -104,7 +99,7 @@ async function patchHandler(
         if (!orderId) return error404("Order not found.");
         if (!items || items.length === 0) return error404("Items not found.");
 
-        const order = await Catering.findById(orderId);
+        const order = await Catering.findOne({ orderId });
         if (!order) return error404("Order not found in database.");
 
         const { totalPrice, tax, advancePaid, deliveryCharge } = order;
