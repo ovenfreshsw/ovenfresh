@@ -9,6 +9,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import Upload from "@/components/upload/upload";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
+import { Switch } from "@mui/material";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import Image from "next/image";
 import { UseFormReturn } from "react-hook-form";
@@ -44,10 +46,20 @@ const MenuFormContent = ({
 }) => {
     return (
         <Card className="max-w-3xl mx-auto">
-            <CardHeader>
+            <CardHeader className="flex-row justify-between items-center">
                 <CardTitle className="text-lg">
                     {action} new catering menu
                 </CardTitle>
+                <div>
+                    <Label htmlFor="disable">Disable</Label>
+                    <Switch
+                        id="disable"
+                        checked={form.watch("disabled")}
+                        onChange={(e) =>
+                            form.setValue("disabled", e.target.checked)
+                        }
+                    />
+                </div>
             </CardHeader>
             <CardContent>
                 <Form {...form}>

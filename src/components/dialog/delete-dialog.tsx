@@ -13,9 +13,31 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import LoadingButton from "../ui/loading-button";
-import { deleteGroceryAction } from "@/actions/delete-grocery-action";
 
-const DeleteGroceryDialog = ({ id }: { id: string }) => {
+const DeleteDialog = ({
+    id,
+    action,
+    loadingMsg,
+    successMsg,
+    errorMsg,
+    title,
+}: {
+    id: string;
+    action: (id: string) => Promise<
+        | {
+              error: string;
+              success?: undefined;
+          }
+        | {
+              success: boolean;
+              error?: undefined;
+          }
+    >;
+    loadingMsg: string;
+    successMsg: string;
+    errorMsg: string;
+    title: string;
+}) => {
     const [loading, setLoading] = useState(false);
 
     function handleSubmit() {
@@ -23,16 +45,16 @@ const DeleteGroceryDialog = ({ id }: { id: string }) => {
 
         const promise = () =>
             new Promise(async (resolve, reject) => {
-                const result = await deleteGroceryAction(id);
+                const result = await action(id);
                 setLoading(false);
                 if (result.success) resolve(result);
                 else reject(result);
             });
 
         toast.promise(promise, {
-            loading: "Deleting item...",
-            success: () => "Grocery item deleted successfully.",
-            error: ({ error }) => (error ? error : "Failed to delete item."),
+            loading: loadingMsg,
+            success: () => successMsg,
+            error: ({ error }) => (error ? error : errorMsg),
         });
     }
     return (
@@ -47,7 +69,7 @@ const DeleteGroceryDialog = ({ id }: { id: string }) => {
                     <DialogTitle>Are you absolutely sure?</DialogTitle>
                     <DialogDescription className="text-sm">
                         This action cannot be undone. This will permanently
-                        delete this grocery item from the server.
+                        delete this {title} from the server.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
@@ -68,4 +90,4 @@ const DeleteGroceryDialog = ({ id }: { id: string }) => {
     );
 };
 
-export default DeleteGroceryDialog;
+export default DeleteDialog;

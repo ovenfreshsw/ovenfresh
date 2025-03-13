@@ -8,34 +8,21 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MenuItemCard from "./menu-item-card";
 import React from "react";
-
-type MenuItem = {
-    _id: string;
-    category: string;
-    name: string;
-    variant?: string;
-    smallPrice?: number;
-    mediumPrice?: number;
-    largePrice?: number;
-    smallServingSize?: string;
-    mediumServingSize?: string;
-    largeServingSize?: string;
-    image?: string;
-};
+import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 
 type VisualMenuSelectorProps = {
-    menuItems: MenuItem[];
+    menuItems: CateringMenuDocumentPopulate[];
 };
 
 export function VisualMenuSelector({ menuItems }: VisualMenuSelectorProps) {
     // Get unique categories
     const categories = Array.from(
-        new Set(menuItems.map((item) => item.category))
+        new Set(menuItems.map((item) => item.category.name))
     );
 
     // Get category-specific items
     const getItemsByCategory = (category: string) => {
-        return menuItems.filter((item) => item.category === category);
+        return menuItems.filter((item) => item.category.name === category);
     };
 
     return (

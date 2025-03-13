@@ -17,7 +17,7 @@ const Booking = async () => {
     await Promise.all([
         queryClient.prefetchQuery({
             queryKey: ["menu", "catering"],
-            queryFn: getCateringMenuServer,
+            queryFn: () => getCateringMenuServer("false"),
         }),
         queryClient.prefetchQuery({
             queryKey: ["menu", "tiffin"], // Unique key for tiffin menu

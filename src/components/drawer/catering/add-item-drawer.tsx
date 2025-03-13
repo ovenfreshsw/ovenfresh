@@ -17,12 +17,11 @@ import {
 import { useCateringMenu } from "@/api-hooks/catering/get-catering-menu";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import ItemCard from "@/components/catering/select-items/item-card";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { clearState } from "@/store/slices/cateringItemSlice";
 import { useAddItems } from "@/api-hooks/catering/add-items";
-import { CateringMenuDocument } from "@/models/types/catering-menu";
+import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 import { revalidateOrder } from "@/actions/revalidate-order";
 
 export function AddItemDrawer({
@@ -34,7 +33,7 @@ export function AddItemDrawer({
 }) {
     const [open, setOpen] = React.useState(false);
     const [filterMenu, setFilterMenu] = React.useState<
-        CateringMenuDocument[] | null
+        CateringMenuDocumentPopulate[] | null
     >();
 
     const menuItems = useSelector((state: RootState) => state.cateringItem);
@@ -77,9 +76,10 @@ export function AddItemDrawer({
                                     Fetching menu...
                                 </div>
                             ) : filterMenu && filterMenu.length > 0 ? (
-                                filterMenu.map((item) => (
-                                    <ItemCard key={item._id} menu={item} />
-                                ))
+                                // filterMenu.map((item) => (
+                                //     <ItemCard key={item._id} menu={item} />
+                                // ))
+                                <></>
                             ) : (
                                 <div className="text-center py-10 col-span-3">
                                     No items found.

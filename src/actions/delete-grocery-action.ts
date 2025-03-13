@@ -8,9 +8,9 @@ export async function deleteGroceryAction(id: string) {
     try {
         await connectDB();
 
-        const deletedUser = await Grocery.deleteOne({ _id: id });
+        const deleted = await Grocery.deleteOne({ _id: id });
 
-        if (!deletedUser.acknowledged) {
+        if (!deleted.acknowledged) {
             return { error: "Failed to delete grocery item." };
         }
 

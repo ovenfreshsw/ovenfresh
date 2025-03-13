@@ -1,7 +1,7 @@
 import Header from "@/components/dashboard/header";
 import { Box, Stack } from "@mui/material";
-import MenuForm from "./menu-form";
 import CateringCategory from "@/models/cateringCategoryModel";
+import MenuForm from "@/components/forms/add-menu-form";
 
 const AddMenuPage = async () => {
     const categories = await CateringCategory.find({});

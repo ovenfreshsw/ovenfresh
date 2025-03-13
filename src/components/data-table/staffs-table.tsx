@@ -16,7 +16,8 @@ import { UserDocumentPopulate } from "@/models/types/user";
 import AddStaffDialog from "../dialog/add-staff-dialog";
 import EditStaffDialog from "../dialog/edit-staff-dialog";
 import { useStores } from "@/api-hooks/stores/get-stores";
-import DeleteStaffDialog from "../dialog/delete-staff-dialog";
+import DeleteDialog from "../dialog/delete-dialog";
+import { deleteStaffAction } from "@/actions/delete-staff-action";
 
 export const columns = [
     // { name: "ID", uid: "_id", sortable: true },
@@ -62,7 +63,14 @@ export default function StaffsTable() {
                                 stores={stores || []}
                                 staff={staff}
                             />
-                            <DeleteStaffDialog id={staff._id} />
+                            <DeleteDialog
+                                id={staff._id}
+                                action={deleteStaffAction}
+                                errorMsg="Failed to delete staff."
+                                loadingMsg="Deleting staff..."
+                                successMsg="Staff deleted successfully."
+                                title="staff"
+                            />
                         </div>
                     );
                 default:

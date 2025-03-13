@@ -1,5 +1,6 @@
 "use server";
 
+import { deleteFile } from "@/config/cloudinary.config";
 import connectDB from "@/lib/mongodb";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import CateringMenu from "@/models/cateringMenuModel";
@@ -24,6 +25,10 @@ export async function editCateringMenuAction(
         if (resource) {
             image = (resource as CloudinaryUploadWidgetInfo).secure_url;
             publicId = (resource as CloudinaryUploadWidgetInfo).public_id;
+        }
+
+        if (oldPublicId && publicId !== oldPublicId) {
+            await deleteFile(oldPublicId);
         }
 
         if (!result.success) {

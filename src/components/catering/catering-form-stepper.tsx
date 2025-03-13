@@ -62,7 +62,7 @@ export default function CateringFormStepper() {
 
     // React queries
     const mutation = useCreateCateringOrder(onSuccess);
-    const { data: menu, isPending } = useCateringMenu();
+    const { data: menu, isPending } = useCateringMenu("false");
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);

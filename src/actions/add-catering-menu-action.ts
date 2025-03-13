@@ -16,7 +16,7 @@ export async function addCateringMenuAction(
         const result = ZodCateringMenuSchema.safeParse(values);
         const image = resource
             ? (resource as CloudinaryUploadWidgetInfo).secure_url
-            : null;
+            : process.env.PLACEHOLDER_IMAGE;
         const publicId = resource
             ? (resource as CloudinaryUploadWidgetInfo).public_id
             : null;

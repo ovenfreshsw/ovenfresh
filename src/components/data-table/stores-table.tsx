@@ -14,8 +14,9 @@ import { ListFilter, Loader2 } from "lucide-react";
 import { useStores } from "@/api-hooks/stores/get-stores";
 import { StoreDocument } from "@/models/types/store";
 import AddStoreDialog from "../dialog/add-store-dialog";
-import DeleteStoreDialog from "../dialog/delete-store-dialog";
 import EditStoreDialog from "../dialog/edit-store-dialog";
+import { deleteStoreAction } from "@/actions/delete-store-action";
+import DeleteDialog from "../dialog/delete-dialog";
 
 export const columns = [
     // { name: "ID", uid: "_id" },
@@ -54,7 +55,14 @@ export default function StoresTable() {
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
                             <EditStoreDialog store={store} />
-                            <DeleteStoreDialog id={store._id} />
+                            <DeleteDialog
+                                id={store._id}
+                                action={deleteStoreAction}
+                                errorMsg="Failed to delete store."
+                                loadingMsg="Deleting store..."
+                                successMsg="Store deleted successfully."
+                                title="store"
+                            />
                         </div>
                     );
                 default:

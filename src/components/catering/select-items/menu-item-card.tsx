@@ -14,22 +14,11 @@ import {
     decrementQuantity,
     incrementQuantity,
 } from "@/store/slices/cateringItemSlice";
+import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 
 type Size = "small" | "medium" | "large";
 type MenuItemCardProps = {
-    item: {
-        _id: string;
-        name: string;
-        category: string;
-        variant?: string;
-        smallPrice?: number;
-        mediumPrice?: number;
-        largePrice?: number;
-        smallServingSize?: string;
-        mediumServingSize?: string;
-        largeServingSize?: string;
-        image?: string;
-    };
+    item: CateringMenuDocumentPopulate;
 };
 
 const MenuItemCard = ({ item }: MenuItemCardProps) => {
@@ -43,8 +32,8 @@ const MenuItemCard = ({ item }: MenuItemCardProps) => {
             incrementQuantity({
                 _id: item._id,
                 name: item.name,
-                category: item.category,
-                variant: item.variant,
+                category: item.category.name,
+                variant: item.variant || undefined,
                 image: item.image || "/fsr-placeholder.webp",
                 size: size,
                 priceAtOrder: item[`${size}Price`] || 0,
@@ -58,8 +47,8 @@ const MenuItemCard = ({ item }: MenuItemCardProps) => {
             decrementQuantity({
                 _id: item._id,
                 name: item.name,
-                category: item.category,
-                variant: item.variant,
+                category: item.category.name,
+                variant: item.variant || undefined,
                 image: item.image || "/fsr-placeholder.webp",
                 size: size,
                 priceAtOrder: item[`${size}Price`] || 0,

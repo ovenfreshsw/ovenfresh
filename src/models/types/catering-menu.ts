@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CateringCategoryDocument } from "./catering-category";
 
 export interface CateringMenuDocument {
     _id: string;
@@ -14,4 +15,9 @@ export interface CateringMenuDocument {
     image: string | null;
     publicId: string | null;
     disabled: boolean;
+}
+
+export interface CateringMenuDocumentPopulate
+    extends Omit<CateringMenuDocument, "category"> {
+    category: CateringCategoryDocument;
 }

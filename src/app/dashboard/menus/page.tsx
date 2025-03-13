@@ -1,7 +1,9 @@
 import Header from "@/components/dashboard/header";
+import CateringCategoryTable from "@/components/data-table/categories-table";
 import CateringMenuTable from "@/components/data-table/catering/menu-table";
 import ServerWrapper from "@/components/delivery/server-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getCateringCategoryServer } from "@/lib/api/category/get-catering-category";
 import { getCateringMenuServer } from "@/lib/api/menu/get-catering-menu";
 import { Box, Divider, Stack } from "@mui/material";
 import { Suspense } from "react";
@@ -51,16 +53,16 @@ const MenusPage = () => {
                                 </ServerWrapper>
                             </Suspense>
                         </TabsContent>
-                        {/* <TabsContent value="category">
+                        <TabsContent value="category">
                             <Suspense fallback={<div>Loading...</div>}>
                                 <ServerWrapper
-                                    queryFn={getCateringCategoryMServer}
+                                    queryFn={getCateringCategoryServer}
                                     queryKey={["menu", "category"]}
                                 >
                                     <CateringCategoryTable />
                                 </ServerWrapper>
                             </Suspense>
-                        </TabsContent> */}
+                        </TabsContent>
                         <TabsContent value="tiffin">
                             Change your password here.
                         </TabsContent>

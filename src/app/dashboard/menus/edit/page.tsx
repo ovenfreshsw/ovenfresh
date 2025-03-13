@@ -1,9 +1,9 @@
 import Header from "@/components/dashboard/header";
 import { Box, Stack } from "@mui/material";
-import MenuForm from "./menu-form";
 import CateringCategory from "@/models/cateringCategoryModel";
 import CateringMenu from "@/models/cateringMenuModel";
 import { notFound } from "next/navigation";
+import MenuForm from "@/components/forms/edit-menu-form";
 
 const EditMenuPage = async ({
     searchParams,

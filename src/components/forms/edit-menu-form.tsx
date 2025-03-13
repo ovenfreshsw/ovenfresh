@@ -7,7 +7,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
-import MenuFormContent from "../menu-form-content";
+import MenuFormContent from "../menu/menu-form-content";
 import { CateringMenuDocument } from "@/models/types/catering-menu";
 import { editCateringMenuAction } from "@/actions/edit-catering-menu-action";
 
@@ -35,6 +35,7 @@ export default function MenuForm({
             smallServingSize: menu.smallServingSize || "",
             mediumServingSize: menu.mediumServingSize || "",
             largeServingSize: menu.largeServingSize || "",
+            disabled: menu.disabled || false,
         },
     });
 

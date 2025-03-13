@@ -10,67 +10,59 @@ import {
     TableCell,
 } from "@heroui/table";
 import { Input } from "@heroui/input";
-import { ListFilter, Loader2, X } from "lucide-react";
-import { GroceryDocument } from "@/models/types/grocery";
-import { useGroceries } from "@/api-hooks/grocery/get-groceries";
-import AddGroceryDialog from "../dialog/add-grocery-dialog";
-import { format } from "date-fns";
-import EditGroceryDialog from "../dialog/edit-grocery-dialog";
-import DateFilter from "../scheduled-orders/date-filter";
-import { Button } from "../ui/button";
+import { ListFilter, Loader2 } from "lucide-react";
+import { CateringCategoryDocument } from "@/models/types/catering-category";
+import { useCategories } from "@/api-hooks/get-catering-categories";
+import AddCategoryDialog from "../dialog/add-category-dialog";
+import EditCategoryDialog from "../dialog/edit-category-dialog";
 import DeleteDialog from "../dialog/delete-dialog";
-import { deleteGroceryAction } from "@/actions/delete-grocery-action";
+import { deleteCategoryAction } from "@/actions/delete-category-action";
 
 export const columns = [
-    { name: "DATE", uid: "date" },
-    { name: "ITEM", uid: "item" },
-    { name: "QUANTITY", uid: "quantity" },
-    { name: "PRICE", uid: "price" },
-    { name: "TAX", uid: "tax" },
-    { name: "TOTAL", uid: "total" },
+    { name: "ID", uid: "_id" },
+    { name: "NAME", uid: "name" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
-export default function GroceriesTable() {
+export default function CateringCategoryTable() {
     const [filterValue, setFilterValue] = React.useState("");
-    const [selectedDate, setSelectedDate] = React.useState<Date | "all">("all");
 
-    const { data: groceries, isPending } = useGroceries(selectedDate);
+    const { data: categories, isPending } = useCategories();
 
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredGroceries = groceries ? [...groceries] : [];
+        let filteredCategories = categories ? [...categories] : [];
 
         if (hasSearchFilter) {
-            filteredGroceries = filteredGroceries.filter((grocery) =>
-                grocery.item.toLowerCase().includes(filterValue.toLowerCase())
+            filteredCategories = filteredCategories.filter((category) =>
+                category.name.toLowerCase().includes(filterValue.toLowerCase())
             );
         }
 
-        return filteredGroceries;
-    }, [groceries, filterValue, hasSearchFilter]);
+        return filteredCategories;
+    }, [categories, filterValue, hasSearchFilter]);
 
     const renderCell = React.useCallback(
-        (grocery: GroceryDocument, columnKey: React.Key) => {
-            const cellValue = grocery[columnKey as keyof GroceryDocument];
+        (category: CateringCategoryDocument, columnKey: React.Key) => {
+            const cellValue =
+                category[columnKey as keyof CateringCategoryDocument];
 
             switch (columnKey) {
-                case "date":
-                    return format(cellValue as Date, "PPP");
-                case "quantity":
-                    return `${cellValue} ${grocery.unit}`;
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <EditGroceryDialog grocery={grocery} />
+                            <EditCategoryDialog
+                                id={category._id}
+                                name={category.name}
+                            />
                             <DeleteDialog
-                                id={grocery._id}
-                                action={deleteGroceryAction}
-                                errorMsg="Failed to delete item."
+                                id={category._id}
+                                action={deleteCategoryAction}
+                                errorMsg="Failed to delete category."
                                 loadingMsg="Deleting category..."
-                                successMsg="Grocery item deleted successfully."
-                                title="grocery item"
+                                successMsg="Category deleted successfully."
+                                title="category"
                             />
                         </div>
                     );
@@ -117,36 +109,18 @@ export default function GroceriesTable() {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    {/* Date Filter */}
-                    <DateFilter
-                        date={
-                            selectedDate === "all" ? new Date() : selectedDate
-                        }
-                        onSelect={setSelectedDate}
-                        footer="Groceries bought on"
-                    />
-                    {selectedDate !== "all" && (
-                        <Button
-                            size={"icon"}
-                            className="rounded-full"
-                            variant={"outline"}
-                            onClick={() => setSelectedDate("all")}
-                        >
-                            <X size={15} />
-                        </Button>
-                    )}
                     <div className="flex-1 flex justify-end gap-2">
-                        <AddGroceryDialog />
+                        <AddCategoryDialog />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">
-                        Total {groceries?.length} grocery items
+                        Total {categories?.length} categories
                     </span>
                 </div>
             </div>
         );
-    }, [filterValue, onSearchChange, groceries?.length, onClear]);
+    }, [filterValue, onSearchChange, categories?.length, onClear]);
 
     return (
         <Table
@@ -180,10 +154,9 @@ export default function GroceriesTable() {
                 isLoading={isPending}
                 loadingContent={<Loader2 className="animate-spin" />}
             >
-                {(item: GroceryDocument) => (
+                {(item: CateringCategoryDocument) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
-                            // @ts-expect-error: columnKey is of type keyof GroceryDocument
                             <TableCell>{renderCell(item, columnKey)}</TableCell>
                         )}
                     </TableRow>

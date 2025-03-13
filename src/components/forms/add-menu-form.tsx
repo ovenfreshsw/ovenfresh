@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { addCateringMenuAction } from "@/actions/add-catering-menu-action";
-import MenuFormContent from "../menu-form-content";
+import MenuFormContent from "../menu/menu-form-content";
 
 export default function MenuForm({
     categories,
@@ -32,6 +32,7 @@ export default function MenuForm({
             smallServingSize: "",
             mediumServingSize: "",
             largeServingSize: "",
+            disabled: false,
         },
     });
 
@@ -46,6 +47,7 @@ export default function MenuForm({
                     );
                     setIsSubmitting(false);
                     form.reset();
+                    setResource(undefined);
                     if (result.success) resolve(result);
                     else reject(result);
                 });

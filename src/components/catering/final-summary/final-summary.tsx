@@ -111,8 +111,8 @@ export default function FinalSummary({
                             </div>
                         ) : (
                             <div className="max-h-52 overflow-y-scroll scrollbar-thin">
-                                {orderItems.map((item) => (
-                                    <FinalItemCard item={item} key={item._id} />
+                                {orderItems.map((item, i) => (
+                                    <FinalItemCard item={item} key={i} />
                                 ))}
                             </div>
                         )}

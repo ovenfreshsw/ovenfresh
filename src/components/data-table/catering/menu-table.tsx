@@ -12,12 +12,13 @@ import {
 import { Input } from "@heroui/input";
 import { ListFilter, Loader2, Pencil, Plus } from "lucide-react";
 import { useCateringMenu } from "@/api-hooks/catering/get-catering-menu";
-import { CateringMenuDocument } from "@/models/types/catering-menu";
+import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 import Image from "next/image";
 import { Chip } from "@heroui/chip";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import DeleteCateringMenuDialog from "@/components/dialog/delete-catering-menu-dialog";
+import DeleteDialog from "@/components/dialog/delete-dialog";
+import { deleteCateringMenuAction } from "@/actions/delete-catering-menu-action";
 
 export const columns = [
     { name: "IMAGE", uid: "image" },
@@ -50,21 +51,28 @@ export default function CateringMenuTable() {
     }, [menus, filterValue, hasSearchFilter]);
 
     const renderCell = React.useCallback(
-        (menu: CateringMenuDocument, columnKey: React.Key) => {
-            const cellValue = menu[columnKey as keyof CateringMenuDocument];
+        (menu: CateringMenuDocumentPopulate, columnKey: React.Key) => {
+            const cellValue =
+                menu[columnKey as keyof CateringMenuDocumentPopulate];
 
             switch (columnKey) {
                 case "category":
-                    // @ts-expect-error: cellValue is of type CateringCategoryDocument
+                    // @ts-expect-error: cellValue is of type CateringMenuDocumentPopulate
                     return cellValue?.name;
                 case "name":
                     return `${cellValue} (${menu.variant})`;
                 case "smallPrice":
-                    return `$${cellValue} (${menu.smallServingSize})`;
+                    return cellValue
+                        ? `$${cellValue} (${menu.smallServingSize})`
+                        : "--";
                 case "mediumPrice":
-                    return `$${cellValue} (${menu.mediumServingSize})`;
+                    return cellValue
+                        ? `$${cellValue} (${menu.mediumServingSize})`
+                        : "--";
                 case "largePrice":
-                    return `$${cellValue} (${menu.largeServingSize})`;
+                    return cellValue
+                        ? `$${cellValue} (${menu.largeServingSize})`
+                        : "--";
                 case "image":
                     return (
                         <Image
@@ -79,7 +87,10 @@ export default function CateringMenuTable() {
                     );
                 case "disabled":
                     return (
-                        <Chip size="sm" color={"primary"}>
+                        <Chip
+                            size="sm"
+                            color={cellValue ? "primary" : "secondary"}
+                        >
                             {cellValue ? "Yes" : "No"}
                         </Chip>
                     );
@@ -93,7 +104,14 @@ export default function CateringMenuTable() {
                                     <Pencil size={15} />
                                 </Link>
                             </Button>
-                            <DeleteCateringMenuDialog id={menu._id} />
+                            <DeleteDialog
+                                id={menu._id}
+                                action={deleteCateringMenuAction}
+                                loadingMsg="Deleting item..."
+                                errorMsg="Failed to delete item."
+                                successMsg="Menu item deleted successfully."
+                                title="menu item"
+                            />
                         </div>
                     );
                 default:
@@ -193,7 +211,7 @@ export default function CateringMenuTable() {
                 isLoading={isPending}
                 loadingContent={<Loader2 className="animate-spin" />}
             >
-                {(item: CateringMenuDocument) => (
+                {(item: CateringMenuDocumentPopulate) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
                             <TableCell>{renderCell(item, columnKey)}</TableCell>

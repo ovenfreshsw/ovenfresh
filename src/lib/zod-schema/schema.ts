@@ -44,6 +44,7 @@ export const ZodCateringSchema = z.object({
                 itemId: z.string().length(24),
                 quantity: z.number().min(1),
                 priceAtOrder: z.number(),
+                size: z.string(),
             })
         )
         .min(1),
@@ -69,6 +70,7 @@ export const ZodCateringMenuSchema = z.object({
     smallServingSize: z.string().optional(),
     mediumServingSize: z.string().optional(),
     largeServingSize: z.string().optional(),
+    disabled: z.boolean().optional(),
 });
 
 export const ZodTiffinSchema = z.object({

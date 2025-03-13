@@ -1,11 +1,4 @@
-import { extractPublicId } from "@/config/cloudinary.config";
-import {
-    error400,
-    error403,
-    error500,
-    success200,
-    success201,
-} from "@/lib/response";
+import { error403, error500, success200 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
@@ -16,7 +9,10 @@ async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN", "MANAGER"])) return error403();
 
-        const menus = await CateringMenu.find().populate({
+        const disabled = req.nextUrl.searchParams.get("disabled") || "true";
+        const query = disabled === "true" ? {} : { disabled: false };
+
+        const menus = await CateringMenu.find(query).populate({
             path: "category",
             model: CateringCategory,
         });

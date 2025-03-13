@@ -1,17 +1,22 @@
 import axios from "@/config/axios.config";
-import { CateringMenuDocument } from "@/models/types/catering-menu";
+import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 import { useQuery } from "@tanstack/react-query";
 
-export async function getCateringMenu() {
-    const { data } = await axios.get("/api/menu/catering");
+export async function getCateringMenu(disabled?: "true" | "false") {
+    const { data } = await axios.get("/api/menu/catering", {
+        params: {
+            disabled,
+        },
+    });
+
     if (data && data.result)
-        return data.result as CateringMenuDocument[] | null;
+        return data.result as CateringMenuDocumentPopulate[] | null;
     return null;
 }
 
-export function useCateringMenu() {
+export function useCateringMenu(disabled?: "true" | "false") {
     return useQuery({
         queryKey: ["menu", "catering"],
-        queryFn: getCateringMenu,
+        queryFn: () => getCateringMenu(disabled),
     });
 }

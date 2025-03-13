@@ -67,7 +67,7 @@ const mainListItems = [
 ];
 
 // List of items that should be visible only to admins
-const adminOnlyItems = ["Staffs", "Stores", "Finance & Expenses"];
+const adminOnlyItems = ["Staffs", "Stores", "Finance & Expenses", "Menus"];
 
 export default function MenuContent() {
     const [selected, setSelected] = React.useState(0);
