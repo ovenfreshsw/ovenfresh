@@ -22,6 +22,7 @@ export async function handleCreate({
                 itemId: item._id,
                 priceAtOrder: item.priceAtOrder,
                 quantity: item.quantity,
+                size: item.size,
             })),
         }
     );
@@ -34,11 +35,9 @@ export function useAddItems(onSuccess: (queryClient: QueryClient) => void) {
         mutationFn: handleCreate,
         onSuccess: () => onSuccess(queryClient),
         onError: (error: OnErrorType) => {
-            if (error.response.status === 403)
-                toast.error(
-                    error.response.data.message || "Error in updating order!"
-                );
-            else toast.error("Error in updating order!");
+            toast.error(
+                error.response.data.message || "Error in updating order!"
+            );
         },
     });
 }

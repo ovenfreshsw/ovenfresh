@@ -213,6 +213,16 @@ const getMonthsUpToCurrent = (): { value: string; name: string }[] => {
     return months.slice(0, currentMonth + 2); // Add 2 to include "All Months" and current month
 };
 
+function appendBracket(str1: string, str2?: string | null, isMoney = false) {
+    if (str2 && str2.length > 0) {
+        if (isMoney) {
+            return "$" + str1 + " (" + str2 + ")";
+        }
+        return str1 + " (" + str2 + ")";
+    }
+    return isMoney ? "$" + str1 : str1;
+}
+
 export {
     cn,
     isRestricted,
@@ -223,4 +233,5 @@ export {
     clusterOrders,
     findOptimalRoute,
     getMonthsUpToCurrent,
+    appendBracket,
 };

@@ -8,6 +8,7 @@ import { getCateringCategoryServer } from "@/lib/api/category/get-catering-categ
 import { getCateringMenuServer } from "@/lib/api/menu/get-catering-menu";
 import { getTiffinMenuServer } from "@/lib/api/menu/get-tiffin-menu";
 import { Box, Divider, Stack } from "@mui/material";
+import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
 
 const MenusPage = () => {
@@ -46,11 +47,16 @@ const MenusPage = () => {
                             <Divider />
                         </div>
                         <TabsContent value="catering">
-                            <Suspense fallback={<div>Loading...</div>}>
+                            <Suspense
+                                fallback={
+                                    <div className="flex justify-center items-center gap-1 py-10">
+                                        <Loader2 className="animate-spin" />{" "}
+                                        Loading...
+                                    </div>
+                                }
+                            >
                                 <ServerWrapper
-                                    queryFn={() =>
-                                        getCateringMenuServer("false")
-                                    }
+                                    queryFn={() => getCateringMenuServer()}
                                     queryKey={["menu", "catering"]}
                                 >
                                     <CateringMenuTable />

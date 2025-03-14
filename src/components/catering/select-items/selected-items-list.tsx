@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { removeItem } from "@/store/slices/cateringItemSlice";
 import { PaymentDetailsDrawer } from "@/components/drawer/catering/payment-details-drawer";
 import { OrderListDrawer } from "@/components/drawer/catering/order-list-drawer";
+import Image from "next/image";
 
 export function SelectedItemsList() {
     const cateringOrder = useSelector((state: RootState) => state.cateringItem);
@@ -57,8 +58,9 @@ export function SelectedItemsList() {
                                     key={index}
                                 >
                                     <div className="flex items-start mb-1 gap-2">
-                                        <img
-                                            src="/fsr-placeholder.webp"
+                                        <Image
+                                            src={item.image}
+                                            alt={item.name}
                                             className="rounded-md"
                                             width={56}
                                             height={56}

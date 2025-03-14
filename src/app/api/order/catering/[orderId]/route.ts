@@ -93,13 +93,14 @@ async function patchHandler(
                 itemId: string;
                 priceAtOrder: number;
                 quantity: number;
+                size: string;
             }[];
         } = await req.json();
 
         if (!orderId) return error404("Order not found.");
         if (!items || items.length === 0) return error404("Items not found.");
 
-        const order = await Catering.findOne({ orderId });
+        const order = await Catering.findById({ _id: orderId });
         if (!order) return error404("Order not found in database.");
 
         const { totalPrice, tax, advancePaid, deliveryCharge } = order;

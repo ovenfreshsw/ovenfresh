@@ -37,7 +37,7 @@ import { updateOrderStatusAction } from "@/actions/update-order-status-action";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 import OrderSettlementDialog from "../dialog/order-settlement-dialog";
-import { cn } from "@/lib/utils";
+import { appendBracket, cn } from "@/lib/utils";
 import CustomerCard from "../order/customer-card";
 import AddressCard from "../order/address-card";
 import StoreCard from "../order/store-card";
@@ -161,8 +161,10 @@ export default function CateringOrderDetails({
         setOrderItems(orderData?.items);
     }
 
-    function removeItem(itemId: string) {
-        setOrderItems((prev) => prev.filter((i) => i.itemId._id !== itemId));
+    function removeItem(itemId: string, size: string) {
+        setOrderItems((prev) =>
+            prev.filter((i) => !(i.itemId._id === itemId && i.size === size))
+        );
     }
 
     function saveOrderItems() {
@@ -316,8 +318,8 @@ export default function CateringOrderDetails({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {orderItems.map((item, index) => (
-                                    <TableRow key={index}>
+                                {orderItems.map((item) => (
+                                    <TableRow key={item.itemId._id + item.size}>
                                         <TableCell>
                                             <div className="flex items-center gap-3">
                                                 <Image
@@ -331,9 +333,10 @@ export default function CateringOrderDetails({
                                                     className="rounded-lg"
                                                 />
                                                 <div className="font-medium">
-                                                    {item.itemId.name} &#040;
-                                                    {item.itemId.variant}
-                                                    &#041;
+                                                    {appendBracket(
+                                                        item.itemId.name,
+                                                        item.itemId.variant
+                                                    )}
                                                 </div>
                                             </div>
                                         </TableCell>
@@ -389,15 +392,14 @@ export default function CateringOrderDetails({
                                                     />
                                                 </Show.When>
                                                 <Show.Else>
-                                                    {item?.size} &#040;
-                                                    {
+                                                    {appendBracket(
+                                                        item?.size,
                                                         item.itemId[
                                                             `${
                                                                 item?.size as "small"
                                                             }ServingSize`
                                                         ]
-                                                    }
-                                                    &#041;
+                                                    )}
                                                 </Show.Else>
                                             </Show>
                                         </TableCell>
@@ -432,7 +434,10 @@ export default function CateringOrderDetails({
                                                 variant="ghost"
                                                 disabled={!editItems}
                                                 onClick={() =>
-                                                    removeItem(item.itemId._id)
+                                                    removeItem(
+                                                        item.itemId._id,
+                                                        item.size
+                                                    )
                                                 }
                                             >
                                                 <Trash2 size={16} />

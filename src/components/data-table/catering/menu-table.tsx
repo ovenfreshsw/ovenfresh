@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DeleteDialog from "@/components/dialog/delete-dialog";
 import { deleteCateringMenuAction } from "@/actions/delete-catering-menu-action";
+import { appendBracket } from "@/lib/utils";
 
 export const columns = [
     { name: "IMAGE", uid: "image" },
@@ -60,18 +61,30 @@ export default function CateringMenuTable() {
                     // @ts-expect-error: cellValue is of type CateringMenuDocumentPopulate
                     return cellValue?.name;
                 case "name":
-                    return `${cellValue} (${menu.variant})`;
+                    return appendBracket(cellValue as string, menu.variant);
                 case "smallPrice":
                     return cellValue
-                        ? `$${cellValue} (${menu.smallServingSize})`
+                        ? appendBracket(
+                              cellValue as string,
+                              menu.smallServingSize,
+                              true
+                          )
                         : "--";
                 case "mediumPrice":
                     return cellValue
-                        ? `$${cellValue} (${menu.mediumServingSize})`
+                        ? appendBracket(
+                              cellValue as string,
+                              menu.mediumServingSize,
+                              true
+                          )
                         : "--";
                 case "largePrice":
                     return cellValue
-                        ? `$${cellValue} (${menu.largeServingSize})`
+                        ? appendBracket(
+                              cellValue as string,
+                              menu.largeServingSize,
+                              true
+                          )
                         : "--";
                 case "image":
                     return (

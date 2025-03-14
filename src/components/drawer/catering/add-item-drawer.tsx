@@ -23,6 +23,7 @@ import { clearState } from "@/store/slices/cateringItemSlice";
 import { useAddItems } from "@/api-hooks/catering/add-items";
 import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 import { revalidateOrder } from "@/actions/revalidate-order";
+import MenuItemCard from "@/components/catering/select-items/menu-item-card";
 
 export function AddItemDrawer({
     orderId,
@@ -48,9 +49,6 @@ export function AddItemDrawer({
         revalidateOrder(`/dashboard/orders/catering-${orderId}`);
     }
 
-    console.log(menu);
-    console.log(existingItems);
-
     const mutation = useAddItems(onSuccess);
 
     React.useEffect(() => {
@@ -59,8 +57,13 @@ export function AddItemDrawer({
         );
     }, [menu, existingItems]);
 
+    function handelClose(value: boolean) {
+        dispatch(clearState());
+        setOpen(value);
+    }
+
     return (
-        <Drawer open={open} onOpenChange={setOpen}>
+        <Drawer open={open} onOpenChange={handelClose}>
             <DrawerTrigger asChild>
                 <HeroButton isIconOnly variant="flat" radius="full" size="sm">
                     <Plus size={15} />
@@ -79,10 +82,9 @@ export function AddItemDrawer({
                                     Fetching menu...
                                 </div>
                             ) : filterMenu && filterMenu.length > 0 ? (
-                                // filterMenu.map((item) => (
-                                //     <ItemCard key={item._id} menu={item} />
-                                // ))
-                                <></>
+                                filterMenu.map((item, i) => (
+                                    <MenuItemCard item={item} key={i} />
+                                ))
                             ) : (
                                 <div className="text-center py-10 col-span-3">
                                     No items found.

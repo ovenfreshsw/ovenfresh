@@ -2,6 +2,7 @@
 
 import connectDB from "@/lib/mongodb";
 import CateringCategory from "@/models/cateringCategoryModel";
+import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
 export async function addCategoryAction(formData: FormData) {
@@ -12,10 +13,14 @@ export async function addCategoryAction(formData: FormData) {
         if (!name) {
             return { error: "Invalid data format." };
         }
+        let _id = id as string;
+        if (!_id) {
+            _id = new mongoose.Types.ObjectId().toString();
+        }
 
         await CateringCategory.findByIdAndUpdate(
-            id,
-            { name },
+            _id,
+            { name: (name as string).charAt(0).toUpperCase() + name.slice(1) },
             { upsert: true }
         );
 
