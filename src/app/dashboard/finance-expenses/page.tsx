@@ -6,21 +6,13 @@ import { RevenueMetrics } from "@/components/finance-expense/revenue-metrics";
 import { RevenueExpenseCharts } from "@/components/charts/revenue-expense-chart";
 import ServerWrapper from "@/components/finance-expense/server-wrapper";
 import { getRevenueExpenseAnalysisServer } from "@/lib/api/finance/get-revenue-expense-analysis";
+import PendingPayments from "@/components/finance-expense/pending-payment";
+import ExpenseTracking from "@/components/finance-expense/expense-tracking";
+import ProfitMetrics from "@/components/finance-expense/profit-metrics";
+import { format } from "date-fns";
+import { getProfitDetailsServer } from "@/lib/api/finance/get-profit-details-server";
 
 const FinanceAndExpensesPage = async () => {
-    // const queryClient = new QueryClient({
-    //     defaultOptions: { queries: { staleTime: Infinity } },
-    // });
-    // await Promise.all([
-    //     queryClient.prefetchQuery({
-    //         queryKey: ["staffs"],
-    //         queryFn: getStaffsServer,
-    //     }),
-    //     queryClient.prefetchQuery({
-    //         queryKey: ["stores"],
-    //         queryFn: getStoresServer,
-    //     }),
-    // ]);
     return (
         <Box component="main" className="flex-grow overflow-auto">
             <Header />
@@ -64,23 +56,31 @@ const FinanceAndExpensesPage = async () => {
                                     <RevenueExpenseCharts />
                                 </ServerWrapper>
                             </Suspense>
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ServerWrapper
+                                    queryFn={getProfitDetailsServer}
+                                    queryKey={[
+                                        "profit-details",
+                                        format(new Date(), "MMM").toLowerCase(),
+                                    ]}
+                                >
+                                    <ProfitMetrics />
+                                </ServerWrapper>
+                            </Suspense>
                         </TabsContent>
 
                         <TabsContent value="revenue" className="space-y-4">
-                            {/* <RevenueMetrics detailed /> */}
+                            <RevenueMetrics detailed />
                         </TabsContent>
 
                         <TabsContent value="pending" className="space-y-4">
-                            {/* <PendingPayments /> */}
+                            <PendingPayments />
                         </TabsContent>
 
                         <TabsContent value="expenses" className="space-y-4">
-                            {/* <ExpenseTracking /> */}
+                            <ExpenseTracking />
                         </TabsContent>
                     </Tabs>
-                    {/* <HydrationBoundary state={dehydrate(queryClient)}>
-                      <StaffsTable />
-                  </HydrationBoundary> */}
                 </Box>
             </Stack>
         </Box>

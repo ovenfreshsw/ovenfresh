@@ -24,8 +24,6 @@ const SizeSelect = ({
     setOrderItems,
     menu,
 }: SizeSelectProps) => {
-    console.log(defaultSize, "DEFAULT SIZE");
-
     function handleValue(value: string) {
         setOrderItems((prevItems) => {
             // Step 1: Update the size and price of the item

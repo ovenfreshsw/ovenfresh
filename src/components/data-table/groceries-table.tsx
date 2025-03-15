@@ -59,7 +59,15 @@ export default function GroceriesTable() {
                 case "date":
                     return format(cellValue as Date, "PPP");
                 case "quantity":
-                    return `${cellValue} ${grocery.unit}`;
+                    return `${cellValue ?? ""} ${
+                        grocery.unit === "none" ? "" : grocery.unit
+                    }`;
+                case "price":
+                    return `$${cellValue}`;
+                case "tax":
+                    return `$${cellValue}`;
+                case "total":
+                    return `$${cellValue}`;
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">

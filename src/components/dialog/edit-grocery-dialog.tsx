@@ -25,12 +25,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
+import { Checkbox } from "@heroui/checkbox";
 
 const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
     const [loading, setLoading] = useState(false);
+    const [mixed, setMixed] = useState(grocery.unit === "Mixed" ? true : false);
 
     function handleSubmit(formData: FormData) {
         setLoading(true);
+
+        if (mixed) {
+            formData.set("mixed", "true");
+            formData.set("quantity", "0");
+            formData.set("unit", "none");
+        }
 
         const data = Object.fromEntries(formData);
 
@@ -94,13 +102,18 @@ const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
                         <Input
                             placeholder="Quantity"
                             name="quantity"
-                            className="col-span-2"
+                            className="col-span-1"
                             type="number"
                             min="0"
                             step="0.01"
+                            disabled={mixed}
                             defaultValue={grocery.quantity}
                         />
-                        <Select name="unit" defaultValue={grocery.unit}>
+                        <Select
+                            name="unit"
+                            defaultValue={grocery.unit}
+                            disabled={mixed}
+                        >
                             <SelectTrigger>
                                 <SelectValue placeholder="Unit" />
                             </SelectTrigger>
@@ -109,8 +122,16 @@ const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
                                 <SelectItem value="Kg">Kg</SelectItem>
                                 <SelectItem value="g">g</SelectItem>
                                 <SelectItem value="lbs">lbs</SelectItem>
+                                <SelectItem value="none">none</SelectItem>
                             </SelectContent>
                         </Select>
+                        <Checkbox
+                            size="sm"
+                            isSelected={mixed}
+                            onValueChange={setMixed}
+                        >
+                            Mixed
+                        </Checkbox>
                     </div>
                     <div className="grid grid-cols-4 gap-2 items-center">
                         <Label htmlFor="price" className="text-right">

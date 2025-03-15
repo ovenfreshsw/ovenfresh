@@ -27,8 +27,8 @@ import {
 } from "recharts";
 import { useRevenueExpenseAnalysis } from "@/api-hooks/admin/get-rne-analysis";
 import { Frown } from "lucide-react";
-import { getMonthsUpToCurrent } from "@/lib/utils";
 import { MonthlyRevenueData } from "@/lib/types/finance";
+import MonthSelect from "../select/month-select";
 
 // Define the types for store and service filters
 type Store = "store1" | "store2" | "all";
@@ -97,7 +97,9 @@ export function RevenueExpenseCharts() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         {/* <CardTitle>Revenue & Expense Analysis</CardTitle> */}
-                        <CardTitle>Revenue Analysis</CardTitle>
+                        <CardTitle className="text-lg">
+                            Revenue Analysis
+                        </CardTitle>
                         <CardDescription>
                             Monthly performance by store and service
                         </CardDescription>
@@ -143,24 +145,10 @@ export function RevenueExpenseCharts() {
                             </SelectContent>
                         </Select>
 
-                        <Select
-                            value={monthFilter}
-                            onValueChange={setMonthFilter}
-                        >
-                            <SelectTrigger className="w-[140px]">
-                                <SelectValue placeholder="Month Filter" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {getMonthsUpToCurrent().map((month) => (
-                                    <SelectItem
-                                        key={month.value}
-                                        value={month.value}
-                                    >
-                                        {month.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <MonthSelect
+                            monthFilter={monthFilter}
+                            setMonthFilter={setMonthFilter}
+                        />
                     </div>
                 </div>
             </CardHeader>

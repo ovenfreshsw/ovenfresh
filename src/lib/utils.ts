@@ -191,7 +191,9 @@ function findOptimalRoute(
     return route as ClusteredOrderProps[];
 }
 
-const getMonthsUpToCurrent = (): { value: string; name: string }[] => {
+const getMonthsUpToCurrent = (
+    removeAllMonth = false
+): { value: string; name: string }[] => {
     const currentMonth = new Date().getMonth(); // Get the current month (0-based index)
     const months = [
         { value: "all", name: "All Months" },
@@ -210,6 +212,9 @@ const getMonthsUpToCurrent = (): { value: string; name: string }[] => {
     ];
 
     // Slice the months array to include up to the current month
+    if (removeAllMonth) {
+        return months.slice(1, currentMonth + 2);
+    }
     return months.slice(0, currentMonth + 2); // Add 2 to include "All Months" and current month
 };
 
@@ -223,6 +228,30 @@ function appendBracket(str1: string, str2?: string | null, isMoney = false) {
     return isMoney ? "$" + str1 : str1;
 }
 
+// Helper function to calculate percentage change
+const calculatePercentageChange = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0; // if previous month was 0, handle it as a 100% change if current > 0
+    return ((current - previous) / previous) * 100;
+};
+
+function getMonthInNumber(month: string) {
+    const monthMap: Record<string, number> = {
+        jan: 1,
+        feb: 2,
+        mar: 3,
+        apr: 4,
+        may: 5,
+        jun: 6,
+        jul: 7,
+        aug: 8,
+        sep: 9,
+        oct: 10,
+        nov: 11,
+        dec: 12,
+    };
+    return monthMap[month];
+}
+
 export {
     cn,
     isRestricted,
@@ -234,4 +263,6 @@ export {
     findOptimalRoute,
     getMonthsUpToCurrent,
     appendBracket,
+    calculatePercentageChange,
+    getMonthInNumber,
 };

@@ -1,11 +1,8 @@
-import {
-    getScheduledCateringOrders,
-    getScheduledTiffinOrders,
-} from "@/lib/mongo-query/get-scheduled-orders";
 import { error400, error403, error500, success200 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
+import { getScheduledCateringOrders, getScheduledTiffinOrders } from "./helper";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {

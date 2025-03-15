@@ -13,14 +13,23 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@heroui/checkbox";
+import { useState } from "react";
 
 const GroceryForm = ({
     setLoading,
 }: {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+    const [mixed, setMixed] = useState(false);
     function handleSubmit(formData: FormData) {
         setLoading(true);
+
+        if (mixed) {
+            formData.set("mixed", "true");
+            formData.set("quantity", "0");
+            formData.set("unit", "none");
+        }
 
         const data = Object.fromEntries(formData);
         const result = ZodGrocerySchema.safeParse(data);
@@ -64,9 +73,10 @@ const GroceryForm = ({
                 <Input
                     placeholder="Quantity"
                     name="quantity"
-                    className="col-span-2"
+                    disabled={mixed}
+                    className="col-span-1"
                 />
-                <Select name="unit">
+                <Select name="unit" disabled={mixed}>
                     <SelectTrigger>
                         <SelectValue placeholder="Unit" />
                     </SelectTrigger>
@@ -75,8 +85,12 @@ const GroceryForm = ({
                         <SelectItem value="Kg">Kg</SelectItem>
                         <SelectItem value="g">g</SelectItem>
                         <SelectItem value="lbs">lbs</SelectItem>
+                        <SelectItem value="none">none</SelectItem>
                     </SelectContent>
                 </Select>
+                <Checkbox size="sm" checked={mixed} onValueChange={setMixed}>
+                    Mixed
+                </Checkbox>
             </div>
             <div className="grid grid-cols-4 gap-2 items-center">
                 <Label htmlFor="price" className="text-right">

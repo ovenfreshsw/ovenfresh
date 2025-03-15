@@ -17,11 +17,13 @@ export async function editGroceryAction(formData: FormData) {
             return { error: "Invalid data format." };
         }
 
+        const mixed = formData.get("mixed") === "true" ? true : false;
+
         await Grocery.findByIdAndUpdate(formData.get("id"), {
             $set: {
                 item: result.data.item,
-                quantity: result.data.quantity,
-                unit: result.data.unit,
+                quantity: mixed ? null : result.data.quantity,
+                unit: mixed ? "Mixed" : result.data.unit,
                 price: result.data.price,
                 tax: result.data.tax,
                 total: result.data.total,
