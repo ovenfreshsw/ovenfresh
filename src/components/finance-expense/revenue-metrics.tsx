@@ -1,4 +1,3 @@
-import ServerWrapper from "./server-wrapper";
 import { Suspense } from "react";
 import { getTotalRevenueServer } from "@/lib/api/finance/get-total-revenue";
 import RevenueStatCardSkeleton from "../skeleton/revenue-stat-card-skeleton";
@@ -8,6 +7,7 @@ import { getStoresRevenueServer } from "@/lib/api/finance/get-stores-revenue";
 import RevenueBreakdown from "./revenue-breakdown";
 import { getRevenueBreakdownServer } from "@/lib/api/finance/get-revenue-breakdown-server";
 import { format } from "date-fns";
+import ServerWrapper from "../server-wrapper";
 
 interface RevenueMetricsProps {
     detailed?: boolean;

@@ -7,6 +7,7 @@ const Upload = ({
     folder,
     children,
     defaultSource = "camera",
+    extraOptions,
 }: {
     setResource: React.Dispatch<
         React.SetStateAction<string | CloudinaryUploadWidgetInfo | undefined>
@@ -14,6 +15,7 @@ const Upload = ({
     folder: string;
     children: React.ReactNode;
     defaultSource?: string;
+    extraOptions?: Partial<CloudinaryUploadWidgetInfo>;
 }) => {
     return (
         <CldUploadWidget
@@ -22,6 +24,7 @@ const Upload = ({
                 folder,
                 defaultSource,
                 sources: ["camera", "local"],
+                ...extraOptions,
             }}
             onSuccess={(result) => {
                 setResource(result?.info); // { public_id, secure_url, etc }

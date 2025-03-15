@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import ServerWrapper from "./server-wrapper";
 import RevenueStatCardSkeleton from "../skeleton/revenue-stat-card-skeleton";
 import TotalPending from "./total-pending";
 import { getTotalPendingServer } from "@/lib/api/finance/get-total-pending";
@@ -7,6 +6,7 @@ import { getStoresPendingServer } from "@/lib/api/finance/get-stores-pending";
 import StoresPending from "./stores-pending";
 import { getPendingDetailsServer } from "@/lib/api/finance/get-pending-details-server";
 import PendingDetails from "./pending-details";
+import ServerWrapper from "../server-wrapper";
 
 const PendingPayments = () => {
     return (

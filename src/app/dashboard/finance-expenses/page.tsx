@@ -4,13 +4,13 @@ import React, { Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RevenueMetrics } from "@/components/finance-expense/revenue-metrics";
 import { RevenueExpenseCharts } from "@/components/charts/revenue-expense-chart";
-import ServerWrapper from "@/components/finance-expense/server-wrapper";
 import { getRevenueExpenseAnalysisServer } from "@/lib/api/finance/get-revenue-expense-analysis";
 import PendingPayments from "@/components/finance-expense/pending-payment";
 import ExpenseTracking from "@/components/finance-expense/expense-tracking";
 import ProfitMetrics from "@/components/finance-expense/profit-metrics";
 import { format } from "date-fns";
 import { getProfitDetailsServer } from "@/lib/api/finance/get-profit-details-server";
+import ServerWrapper from "@/components/server-wrapper";
 
 const FinanceAndExpensesPage = async () => {
     return (

@@ -10,7 +10,7 @@ import {
     DialogTrigger,
 } from "../ui/dialog";
 import { toast } from "sonner";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Button } from "../ui/button";
 import LoadingButton from "../ui/loading-button";
 
@@ -21,6 +21,7 @@ const DeleteDialog = ({
     successMsg,
     errorMsg,
     title,
+    children,
 }: {
     id: string;
     action: (id: string) => Promise<
@@ -37,6 +38,7 @@ const DeleteDialog = ({
     successMsg: string;
     errorMsg: string;
     title: string;
+    children?: ReactNode;
 }) => {
     const [loading, setLoading] = useState(false);
 
@@ -60,9 +62,13 @@ const DeleteDialog = ({
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button>
-                    <Trash2 size={18} className="stroke-2 text-danger" />
-                </button>
+                {children ? (
+                    children
+                ) : (
+                    <button>
+                        <Trash2 size={18} className="stroke-2 text-danger" />
+                    </button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

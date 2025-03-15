@@ -1,16 +1,14 @@
 import { Suspense } from "react";
-import ServerWrapper from "./server-wrapper";
 import { getTotalExpenseServer } from "@/lib/api/finance/get-total-expense";
 import TotalExpense from "./total-expense";
 import ExpenseStatCardSkeleton from "../skeleton/expense-stat-card-skeleton";
 import ExpenseDetails from "./expense-details";
-import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { getExpenseDetailsServer } from "@/lib/api/finance/get-expense-details-server";
-import ProfitDetails from "./expense-monthly-trend";
 import ExpenseMonthlyTrend from "./expense-monthly-trend";
 import { getMonthlyTrendServer } from "@/lib/api/finance/get-monthly-trend-server";
 import CardSkeleton from "../skeleton/card-skeleton";
+import ServerWrapper from "../server-wrapper";
 
 const ExpenseTracking = () => {
     return (

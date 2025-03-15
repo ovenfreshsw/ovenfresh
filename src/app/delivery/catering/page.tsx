@@ -3,10 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WelcomeSection from "@/components/delivery/welcome-section";
 import { Suspense } from "react";
 import DeliveryStatSkeleton from "@/components/skeleton/delivery-stat-skeleton";
-import ServerWrapper from "@/components/delivery/server-wrapper";
 import SortedOrderList from "@/components/delivery/sorted-order-list";
 import { getDeliveryOrdersServer } from "@/lib/api/order/get-delivery-orders";
 import BottomNav from "@/components/delivery/bottom-nav";
+import ServerWrapper from "@/components/server-wrapper";
 
 export default function DeliveryDashboard() {
     return (

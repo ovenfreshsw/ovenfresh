@@ -17,6 +17,7 @@ import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import { useSession } from "next-auth/react";
 import PaidIcon from "@mui/icons-material/Paid";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+import ImageIcon from "@mui/icons-material/Image";
 
 const mainListItems = [
     {
@@ -63,6 +64,11 @@ const mainListItems = [
         text: "Menus",
         icon: <MenuBookIcon />,
         href: "/dashboard/menus",
+    },
+    {
+        text: "Delivery Proof",
+        icon: <ImageIcon />,
+        href: "/dashboard/delivery-proof",
     },
 ];
 

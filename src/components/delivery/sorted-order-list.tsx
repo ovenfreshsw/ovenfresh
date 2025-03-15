@@ -147,6 +147,13 @@ const SortedOrderList = ({
                                                         setResource={
                                                             setResource
                                                         }
+                                                        extraOptions={{
+                                                            cropping: true,
+                                                            multiple: false,
+                                                            showSkipCropButton:
+                                                                false,
+                                                            croppingAspectRatio: 1.5,
+                                                        }}
                                                     >
                                                         <Camera className="h-4 w-4" />
                                                     </Upload>

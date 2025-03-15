@@ -1,7 +1,7 @@
 import Header from "@/components/dashboard/header";
 import CateringCategoryTable from "@/components/data-table/categories-table";
 import CateringMenuTable from "@/components/data-table/catering/menu-table";
-import ServerWrapper from "@/components/delivery/server-wrapper";
+import ServerWrapper from "@/components/server-wrapper";
 import TiffinMenuList from "@/components/tiffin/menu-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCateringCategoryServer } from "@/lib/api/category/get-catering-category";
