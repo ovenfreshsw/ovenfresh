@@ -1,6 +1,5 @@
 import { error403, error500, success200 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
-import { PendingDetailsProps } from "@/lib/types/finance";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";

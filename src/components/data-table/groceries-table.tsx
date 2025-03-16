@@ -154,7 +154,7 @@ export default function GroceriesTable() {
                 </div>
             </div>
         );
-    }, [filterValue, onSearchChange, groceries?.length, onClear]);
+    }, [filterValue, onSearchChange, groceries?.length, onClear, selectedDate]);
 
     return (
         <Table

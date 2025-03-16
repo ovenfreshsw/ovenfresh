@@ -7,7 +7,6 @@ import Grocery from "@/models/groceryModel";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
 import { format } from "date-fns";
-import mongoose from "mongoose";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {

@@ -63,7 +63,7 @@ export default function MenuForm({
                         ? error
                         : "Failed to update menu item. Please try again.",
             });
-        } catch (error) {
+        } catch {
             toast.error("Failed to update menu item. Please try again.");
         } finally {
             setIsSubmitting(false);

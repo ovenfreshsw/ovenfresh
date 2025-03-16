@@ -1,12 +1,12 @@
 import OrdersPDFViewer from "./order-pdf-generator";
 import connectDB from "@/lib/mongodb";
 import { isValid, startOfDay } from "date-fns";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import {
     getScheduledCateringOrders,
     getScheduledTiffinOrders,
-} from "@/lib/mongo-query/get-scheduled-orders";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+} from "@/app/api/order/scheduled/helper";
 
 const ScheduledPage = async ({
     searchParams,

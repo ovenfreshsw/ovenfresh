@@ -20,7 +20,7 @@ const FinanceAndExpensesPage = async () => {
                 spacing={2}
                 sx={{
                     alignItems: "center",
-                    mx: 3,
+                    mx: { xs: 1.5, md: 3 },
                     pb: 5,
                     pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
@@ -37,7 +37,7 @@ const FinanceAndExpensesPage = async () => {
                         Finance & Expenses
                     </Typography>
                     <Tabs defaultValue="overview" className="space-y-4">
-                        <TabsList>
+                        <TabsList className="max-w-full justify-start overflow-x-scroll scrollbar-hide">
                             <TabsTrigger value="overview">Overview</TabsTrigger>
                             <TabsTrigger value="revenue">Revenue</TabsTrigger>
                             <TabsTrigger value="pending">

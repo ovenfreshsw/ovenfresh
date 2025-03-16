@@ -61,7 +61,7 @@ const ProfitMetrics = () => {
         );
 
     return (
-        <div className="p-6 rounded-lg bg-white shadow border space-y-6 min-h-[520px]">
+        <div className="p-4 md:p-6 rounded-lg bg-white shadow border space-y-6 min-h-[520px]">
             <div>
                 <div className="flex justify-between items-center">
                     <h1 className="text-lg font-semibold">Profit Details</h1>

@@ -2,7 +2,6 @@
 
 import { deleteFile } from "@/config/cloudinary.config";
 import connectDB from "@/lib/mongodb";
-import { error400 } from "@/lib/response";
 import CateringMenu from "@/models/cateringMenuModel";
 import Catering from "@/models/cateringModel";
 import mongoose from "mongoose";

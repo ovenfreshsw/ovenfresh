@@ -1,7 +1,5 @@
 "use client";
 
-import { usePendingDetails } from "@/api-hooks/admin/get-pending-details";
-import PendingPaymentsTable from "../data-table/pending-payments-table";
 import {
     Card,
     CardContent,
@@ -34,7 +32,7 @@ const ExpenseDetails = () => {
 
     // Filter items based on search query and selected store
     const getFilteredItems = () => {
-        let allItems: ExpenseDetailsProps[] = expenseDetails || [];
+        const allItems: ExpenseDetailsProps[] = expenseDetails || [];
 
         // Apply search filter
         if (searchQuery) {
@@ -92,9 +90,13 @@ const ExpenseDetails = () => {
                             <TableHead>Item</TableHead>
                             <TableHead>Store</TableHead>
                             <TableHead>Quantity</TableHead>
-                            <TableHead>Unit Price &#040;$&#041;</TableHead>
-                            <TableHead>Tax &#040;$&#041;</TableHead>
-                            <TableHead className="text-right">
+                            <TableHead className="whitespace-nowrap">
+                                Unit Price &#040;$&#041;
+                            </TableHead>
+                            <TableHead className="whitespace-nowrap">
+                                Tax &#040;$&#041;
+                            </TableHead>
+                            <TableHead className="text-right whitespace-nowrap">
                                 Total &#040;$&#041;
                             </TableHead>
                         </TableRow>
@@ -103,7 +105,7 @@ const ExpenseDetails = () => {
                         {filteredItems.length > 0 ? (
                             filteredItems.map((item) => (
                                 <TableRow key={`${item.store}-${item._id}`}>
-                                    <TableCell className="font-medium">
+                                    <TableCell className="font-medium whitespace-nowrap">
                                         {format(new Date(item.date), "MMM d")}
                                     </TableCell>
                                     <TableCell className="font-medium">

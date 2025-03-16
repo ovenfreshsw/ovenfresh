@@ -77,7 +77,7 @@ async function postHandler(req: AuthenticatedRequest) {
                 note,
             } = result.data;
 
-            let placeData: {
+            const placeData: {
                 lat: number;
                 lng: number;
                 street?: string;

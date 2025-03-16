@@ -23,7 +23,13 @@ async function getHandler(req: AuthenticatedRequest) {
         // Get last 3 months
         const months = getMonthsUpToCurrent(true); // Example: [{ value: "jan", name: "January 2025" }, ...]
 
-        const expensesData: Record<string, any> = {};
+        const expensesData: Record<
+            string,
+            {
+                month: string;
+                expenses: Record<string, { total: number; items: number }>;
+            }
+        > = {};
         months.forEach(({ value, name }) => {
             expensesData[value] = { month: name, expenses: {} };
         });

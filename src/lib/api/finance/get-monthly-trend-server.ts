@@ -1,9 +1,5 @@
 import axios from "@/config/axios.config";
-import {
-    ExpenseDetailsProps,
-    MonthlyExpenseTrendProps,
-} from "@/lib/types/finance";
-import { format } from "date-fns";
+import { MonthlyExpenseTrendProps } from "@/lib/types/finance";
 import { headers } from "next/headers";
 
 export async function getMonthlyTrendServer() {

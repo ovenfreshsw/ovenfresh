@@ -80,7 +80,7 @@ export default function OrderConfirmation({
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Item</TableHead>
-                                <TableHead>Description</TableHead>
+                                <TableHead>Size</TableHead>
                                 <TableHead className="text-right">
                                     Quantity
                                 </TableHead>
@@ -108,12 +108,24 @@ export default function OrderConfirmation({
                                                 className="rounded-md"
                                             />
                                             <span className="whitespace-nowrap">
-                                                {item.itemId.name}
+                                                {item.itemId.name}{" "}
+                                                {item.itemId.variant
+                                                    ? `(${item.itemId.variant})`
+                                                    : ""}
                                             </span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="max-w-[200px] truncate">
-                                        {item.itemId.description}
+                                    <TableCell className="max-w-[200px] capitalize">
+                                        {item.size}{" "}
+                                        {item.itemId[
+                                            `${item.size}ServingSize` as "smallServingSize"
+                                        ]
+                                            ? `(${
+                                                  item.itemId[
+                                                      `${item.size}ServingSize` as "smallServingSize"
+                                                  ]
+                                              })`
+                                            : ""}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {item.quantity}

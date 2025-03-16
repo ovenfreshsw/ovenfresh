@@ -294,8 +294,10 @@ export default function PendingPaymentsTable({
                 {(item: PendingDetailsProps) => (
                     <TableRow key={item.orderId}>
                         {(columnKey) => (
-                            // @ts-expect-error: cellValue is of type PendingDetailsProps
-                            <TableCell>{renderCell(item, columnKey)}</TableCell>
+                            <TableCell className="whitespace-nowrap">
+                                {/* @ts-expect-error: cellValue is of type PendingDetailsProps */}
+                                {renderCell(item, columnKey)}
+                            </TableCell>
                         )}
                     </TableRow>
                 )}

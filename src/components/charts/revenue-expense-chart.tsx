@@ -93,7 +93,7 @@ export function RevenueExpenseCharts() {
 
     return (
         <Card>
-            <CardHeader>
+            <CardHeader className="p-4 md:p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         {/* <CardTitle>Revenue & Expense Analysis</CardTitle> */}
@@ -152,7 +152,7 @@ export function RevenueExpenseCharts() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="pt-7">
+            <CardContent className="p-4 md:p-6 pt-5 md:pt-7">
                 {/* <Tabs defaultValue="revenue"> */}
                 {/* <TabsList className="mb-4">
                         <TabsTrigger value="revenue">Revenue</TabsTrigger>

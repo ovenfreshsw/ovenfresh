@@ -9,7 +9,7 @@ async function formatRevenueBreakdown(
     const result = [];
 
     // Loop through each store
-    for (let store of stores) {
+    for (const store of stores) {
         const storeRevenue = {
             store: store.location,
             tiffin: 0,

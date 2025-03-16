@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 
 const ExpenseStatCardSkeleton = () => {
