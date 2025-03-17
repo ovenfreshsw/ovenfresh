@@ -25,7 +25,11 @@ const ExpenseTracking = () => {
                 >
                     <ServerWrapper
                         queryFn={getTotalExpenseServer}
-                        queryKey={["total-expense"]}
+                        queryKey={[
+                            "expense",
+                            "total-expense",
+                            format(new Date(), "yyyy"),
+                        ]}
                     >
                         <TotalExpense />
                     </ServerWrapper>
@@ -36,7 +40,9 @@ const ExpenseTracking = () => {
                 <ServerWrapper
                     queryFn={getExpenseDetailsServer}
                     queryKey={[
+                        "expense",
                         "expense-details",
+                        format(new Date(), "yyyy"),
                         format(new Date(), "MMM").toLowerCase(),
                     ]}
                 >
@@ -47,7 +53,11 @@ const ExpenseTracking = () => {
             <Suspense fallback={<CardSkeleton className="mt-7" />}>
                 <ServerWrapper
                     queryFn={getMonthlyTrendServer}
-                    queryKey={["monthly-trend"]}
+                    queryKey={[
+                        "expense",
+                        "monthly-trend",
+                        format(new Date(), "yyyy"),
+                    ]}
                 >
                     <ExpenseMonthlyTrend />
                 </ServerWrapper>

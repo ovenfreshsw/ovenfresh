@@ -8,10 +8,14 @@ import {
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Grocery from "@/models/groceryModel";
 import Store from "@/models/storeModel";
+import { format } from "date-fns";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN"])) return error403();
+
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
 
         // Get all stores with their locations
         const stores = await Store.find({}, "_id location");
@@ -21,7 +25,7 @@ async function getHandler(req: AuthenticatedRequest) {
         const storesLocation = stores.map((store) => store.location);
 
         // Get last 3 months
-        const months = getMonthsUpToCurrent(true); // Example: [{ value: "jan", name: "January 2025" }, ...]
+        const months = getMonthsUpToCurrent(true, Number(year)); // Example: [{ value: "jan", name: "January 2025" }, ...]
 
         const expensesData: Record<
             string,
@@ -35,13 +39,21 @@ async function getHandler(req: AuthenticatedRequest) {
         });
 
         // Create a date filter range using month-to-number conversion
-        const currentYear = new Date().getFullYear();
         const startMonth = getMonthInNumber(months[0].value); // Convert "jan" -> 1, etc.
-        const startDate = new Date(currentYear, startMonth - 1, 1); // YYYY-MM-01
+        const endMonth = getMonthInNumber(months[months.length - 1].value); // Convert "jan" -> 1, etc.
+
+        const startDate = format(
+            new Date(Number(year), startMonth - 1, 1),
+            "yyyy-MM-dd"
+        ); // YYYY-MM-01
+        const endDate = format(
+            new Date(Number(year), endMonth, 0),
+            "yyyy-MM-dd"
+        );
 
         // Fetch grocery data
         const groceries = await Grocery.find(
-            { date: { $gte: startDate } }, // Filter from the earliest month
+            { date: { $gte: startDate, $lte: endDate } }, // Filter from the earliest month
             { store: 1, total: 1, date: 1 }
         ).lean();
 
@@ -75,7 +87,6 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({ result });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

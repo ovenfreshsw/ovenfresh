@@ -9,7 +9,6 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 import ItemCardSummary from "@/components/catering/select-items/item-card-summary";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import {
     Dialog,
     DialogContent,
@@ -20,6 +19,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { CateringItemsState } from "@/lib/types/catering/catering-order-state";
+import { useMediaQuery } from "@mui/material";
 
 export function OrderListDrawer() {
     const [open, setOpen] = React.useState(false);

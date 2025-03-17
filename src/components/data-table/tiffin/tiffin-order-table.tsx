@@ -388,8 +388,9 @@ export default function TiffinOrderTable({
                         <Show>
                             <Show.When
                                 isTrue={
-                                    userRole === "ADMIN" ||
-                                    userRole === "SUPERADMIN"
+                                    (userRole === "ADMIN" ||
+                                        userRole === "SUPERADMIN") &&
+                                    orders.length > 0
                                 }
                             >
                                 <ExportToExcel
@@ -519,7 +520,7 @@ export default function TiffinOrderTable({
                 {(item: TiffinDocumentPopulate) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
-                            <TableCell>
+                            <TableCell className="whitespace-nowrap">
                                 {/* @ts-expect-error: renderCell doesn't take TiffinDocPopulate type */}
                                 {renderCell(item, columnKey)}
                             </TableCell>

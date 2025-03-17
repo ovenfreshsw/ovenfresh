@@ -170,7 +170,6 @@ async function postHandler(req: AuthenticatedRequest) {
             return error400("Invalid data format.", {});
         }
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) {
             return error500({ error: error.message });
         } else {

@@ -402,8 +402,9 @@ export default function CateringOrderTable({
                         <Show>
                             <Show.When
                                 isTrue={
-                                    userRole === "ADMIN" ||
-                                    userRole === "SUPERADMIN"
+                                    (userRole === "ADMIN" ||
+                                        userRole === "SUPERADMIN") &&
+                                    orders.length > 0
                                 }
                             >
                                 <ExportToExcel
@@ -421,7 +422,7 @@ export default function CateringOrderTable({
                         <DatePickerWithRange
                             orderType="catering"
                             printType="sticker"
-                            label="Print Sticker"
+                            label="Print Stickers"
                             disabled={orders.length === 0}
                         />
                     </div>
@@ -533,7 +534,7 @@ export default function CateringOrderTable({
                 {(item: CateringDocumentPopulate) => (
                     <TableRow key={item._id.toString()}>
                         {(columnKey) => (
-                            <TableCell>
+                            <TableCell className="whitespace-nowrap">
                                 {/* @ts-expect-error: renderCell doesn't take CateringDocPopulate type */}
                                 {renderCell(item, columnKey)}
                             </TableCell>

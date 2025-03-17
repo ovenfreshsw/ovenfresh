@@ -101,8 +101,6 @@ export async function editAddressAction(formData: FormData) {
 
             let newAddressId = addressId as string;
 
-            console.log(isAddressInUse);
-
             if (isAddressInUse.some((order) => order)) {
                 // Create a new address if it's used by another order
                 const newAddress = await Address.create({

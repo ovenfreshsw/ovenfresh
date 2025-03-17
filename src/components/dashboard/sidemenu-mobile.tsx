@@ -2,11 +2,9 @@ import * as React from "react";
 import Divider from "@mui/material/Divider";
 import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Stack from "@mui/material/Stack";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import MenuContent from "./menu-content";
 import SignOutButton from "../sign-out-button";
 import { Badge as ShadBadge } from "../ui/badge";
-import { Badge } from "@heroui/badge";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Show } from "../show";
@@ -14,7 +12,7 @@ import StoreSelect from "../select/store-select";
 
 interface SideMenuMobileProps {
     open: boolean | undefined;
-    toggleDrawer: (newOpen: boolean) => () => void;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     username: string;
     role: string;
     active: { id: string; location: string };
@@ -23,7 +21,7 @@ interface SideMenuMobileProps {
 
 export default function SideMenuMobile({
     open,
-    toggleDrawer,
+    setOpen,
     username,
     role,
     active,
@@ -33,7 +31,7 @@ export default function SideMenuMobile({
         <Drawer
             anchor="right"
             open={open}
-            onClose={toggleDrawer(false)}
+            onClose={() => setOpen(false)}
             sx={{
                 zIndex: (theme) => theme.zIndex.drawer + 1,
                 [`& .${drawerClasses.paper}`]: {
@@ -76,14 +74,14 @@ export default function SideMenuMobile({
                             </p>
                         </div>
                     </Stack>
-                    <Badge
+                    {/* <Badge
                         color="danger"
                         content=""
                         placement="top-right"
                         shape="circle"
                     >
                         <NotificationsRoundedIcon color="primary" />
-                    </Badge>
+                    </Badge> */}
                 </Stack>
                 <div className="flex items-center gap-2 px-6 mb-2">
                     <Show>
@@ -99,13 +97,13 @@ export default function SideMenuMobile({
                             </ShadBadge>
                         </Show.When>
                         <Show.When isTrue={role === "SUPERADMIN"}>
-                            <StoreSelect active={active.id} stores={stores} />
+                            <StoreSelect stores={stores} />
                         </Show.When>
                     </Show>
                 </div>
                 <Divider />
                 <Stack sx={{ flexGrow: 1 }}>
-                    <MenuContent />
+                    <MenuContent setOpen={setOpen} />
                     <Divider />
                 </Stack>
                 <Stack sx={{ p: 2 }}>

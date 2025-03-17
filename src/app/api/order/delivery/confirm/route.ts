@@ -109,8 +109,6 @@ async function patchHandler(req: AuthenticatedRequest) {
 
         return success200({});
     } catch (error) {
-        console.log(error);
-
         if (error instanceof Error) return error500({ error: error.message });
         return error500({ error: "An unknown error occurred." });
     }

@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import FinalItemCard from "./final-item-card";
 import {
     setAdvancePaid,
+    setDeliveryCharge,
     setFullyPaid,
     setNote,
     setPendingBalance,
@@ -38,6 +39,15 @@ export default function FinalSummary({
         const value = e.target.value;
         if (value === "" || Number.parseFloat(value) > 0) {
             dispatch(setAdvancePaid(Number(value)));
+        }
+    };
+
+    const handleDeliveryChargeChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const value = e.target.value;
+        if (value === "" || Number.parseFloat(value) > 0) {
+            dispatch(setDeliveryCharge(Number(value)));
         }
     };
 
@@ -218,9 +228,22 @@ export default function FinalSummary({
 
                     <div>
                         <h2 className="text-xl font-semibold mb-4">
-                            Advance Payment
+                            Additional Details
                         </h2>
                         <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="advance-amount">
+                                    Delivery Charge
+                                </Label>
+                                <Input
+                                    id="delivery-charge"
+                                    type="number"
+                                    step=""
+                                    placeholder="Enter delivery charge"
+                                    value={orderDetail.deliveryCharge}
+                                    onChange={handleDeliveryChargeChange}
+                                />
+                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="advance-amount">
                                     Advance Amount

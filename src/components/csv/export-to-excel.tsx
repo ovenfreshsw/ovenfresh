@@ -61,10 +61,10 @@ const ExportToExcel = <T extends Record<string, string | number | string[]>>({
             radius="sm"
             startContent={<Table className="size-4" />}
             variant="solid"
-            className="bg-white shadow hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className="bg-white shadow hover:bg-gray-100 disabled:bg-gray-100 disabled:hover:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed min-w-fit"
             onPress={exportToExcel}
         >
-            Export to Excel
+            <span className="hidden sm:inline">Export to Excel</span>
         </Button>
     );
 };

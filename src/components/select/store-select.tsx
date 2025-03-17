@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
     Select,
     SelectContent,
@@ -11,18 +11,25 @@ import {
 import { MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import getQueryClient from "@/lib/query-utils/get-query-client";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useDispatch } from "react-redux";
+import { setState } from "@/store/slices/selectStoreSlice";
 
 const StoreSelect = ({
     active,
     stores,
 }: {
-    active: string;
+    active?: string;
     stores: { id: string; location: string }[];
 }) => {
     const { update } = useSession();
     const queryClient = getQueryClient();
+    const value = useSelector((state: RootState) => state.selectStore);
+    const dispatch = useDispatch();
 
     const onValueChange = async (newStoreId: string) => {
+        dispatch(setState(newStoreId));
         await update({ storeId: newStoreId });
         await Promise.all([
             queryClient.invalidateQueries({
@@ -35,9 +42,8 @@ const StoreSelect = ({
     };
     return (
         <Select
-            // value={value} // Watch the selected value
+            value={active ? active : value} // Watch the selected value
             onValueChange={onValueChange} // Call the onValueChange function when the value changes
-            defaultValue={active}
         >
             <SelectTrigger className="bg-primary-foreground text-primary w-fit md:w-auto">
                 <>

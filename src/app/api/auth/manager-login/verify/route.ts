@@ -5,7 +5,6 @@ import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 async function getHandler(req: AuthenticatedRequest) {
     try {
         const user = req.user;
-        console.log(user, "USER");
         return success200({ user });
     } catch (error) {
         return error500({

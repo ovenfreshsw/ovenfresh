@@ -19,7 +19,11 @@ export function RevenueMetrics({ detailed = false }: RevenueMetricsProps) {
             <Suspense fallback={<RevenueStatCardSkeleton />}>
                 <ServerWrapper
                     queryFn={getTotalRevenueServer}
-                    queryKey={["total-revenue"]}
+                    queryKey={[
+                        "revenue",
+                        "total-revenue",
+                        format(new Date(), "yyyy"),
+                    ]}
                 >
                     <TotalRevenue />
                 </ServerWrapper>
@@ -34,7 +38,11 @@ export function RevenueMetrics({ detailed = false }: RevenueMetricsProps) {
             >
                 <ServerWrapper
                     queryFn={getStoresRevenueServer}
-                    queryKey={["stores-revenue"]}
+                    queryKey={[
+                        "revenue",
+                        "stores-revenue",
+                        format(new Date(), "yyyy"),
+                    ]}
                 >
                     <StoresRevenue />
                 </ServerWrapper>
@@ -45,7 +53,9 @@ export function RevenueMetrics({ detailed = false }: RevenueMetricsProps) {
                     <ServerWrapper
                         queryFn={getRevenueBreakdownServer}
                         queryKey={[
+                            "revenue",
                             "revenue-breakdown",
+                            format(new Date(), "yyyy"),
                             format(new Date(), "MMM").toLowerCase(),
                         ]}
                     >

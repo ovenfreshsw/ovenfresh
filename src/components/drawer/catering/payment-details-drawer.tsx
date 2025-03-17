@@ -8,7 +8,6 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import {
     Dialog,
     DialogContent,
@@ -19,6 +18,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { CateringItemsState } from "@/lib/types/catering/catering-order-state";
+import { useMediaQuery } from "@mui/material";
 
 export function PaymentDetailsDrawer() {
     const [open, setOpen] = React.useState(false);

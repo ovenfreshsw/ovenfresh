@@ -102,8 +102,6 @@ export default function CateringFormStepper() {
             });
         }
         if (result.error) {
-            console.log(result.error);
-
             toast.error("Please fill all the form fields!");
         }
     };

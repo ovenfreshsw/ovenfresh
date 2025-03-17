@@ -214,7 +214,7 @@ export default function CateringOrderDetails({
     }, [showSettlementDialog, orderData?.status]);
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="py-10 px-2.5">
             <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">
@@ -309,10 +309,10 @@ export default function CateringOrderDetails({
                                     <TableHead className="text-center">
                                         Size
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-right whitespace-nowrap">
                                         Price at Order
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-right whitespace-nowrap">
                                         Current Price
                                     </TableHead>
                                 </TableRow>
@@ -320,7 +320,7 @@ export default function CateringOrderDetails({
                             <TableBody>
                                 {orderItems.map((item) => (
                                     <TableRow key={item.itemId._id + item.size}>
-                                        <TableCell>
+                                        <TableCell className="whitespace-nowrap min-w-64">
                                             <div className="flex items-center gap-3">
                                                 <Image
                                                     src={
@@ -379,7 +379,7 @@ export default function CateringOrderDetails({
                                                 </button>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-right capitalize">
+                                        <TableCell className="text-right capitalize whitespace-nowrap">
                                             <Show>
                                                 <Show.When isTrue={editItems}>
                                                     <SizeSelect

@@ -4,15 +4,28 @@ import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Grocery from "@/models/groceryModel";
 import Store from "@/models/storeModel";
+import { format } from "date-fns";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN"])) return error403();
 
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
+
+        const startOfYear = new Date(Number(year), 0, 1);
+        const endOfYear = new Date(Number(year) + 1, 0, 0);
+
         const stores = await Store.find({}, "_id location");
 
         const queryPromise = stores.map(async (store) => {
-            const total = await Grocery.find({ store: store._id }, "total");
+            const total = await Grocery.find(
+                {
+                    store: store._id,
+                    date: { $gte: startOfYear, $lte: endOfYear },
+                },
+                "total"
+            );
 
             const sum = total.reduce((sum, grocery) => sum + grocery.total, 0);
 
@@ -37,7 +50,6 @@ async function getHandler(req: AuthenticatedRequest) {
             },
         });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

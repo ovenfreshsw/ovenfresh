@@ -23,7 +23,6 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({ groceries });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error.message;
         else return "An unknown error occurred";
     }

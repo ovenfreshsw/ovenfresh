@@ -43,7 +43,11 @@ export default async function RootLayout({
                             </QueryProvider>
                         </AppRouterCacheProvider>
                     </ReduxProvider>
-                    <Toaster position="top-right" richColors />
+                    <Toaster
+                        position="top-right"
+                        richColors
+                        className="z-[1560]"
+                    />
                 </body>
             </Provider>
         </html>

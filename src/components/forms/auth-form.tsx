@@ -55,9 +55,6 @@ const AuthForm = () => {
             toast.success("Signed in successfully. redirecting...");
             router.refresh();
 
-            console.log(signInResponse?.url, "URL");
-            console.log(userRole, "USER ROLE");
-
             // Redirect based on role
             if (userRole === "DELIVERY") {
                 router.replace("/delivery");

@@ -8,6 +8,7 @@ export async function getProfitDetailsServer() {
     const cookie = headerSequence.get("cookie");
     const { data } = await axios.get("/api/admin/profit-details", {
         params: {
+            year: format(new Date(), "yyyy"),
             month: format(new Date(), "MMM").toLowerCase(),
         },
         headers: {

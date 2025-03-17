@@ -3,9 +3,12 @@
 import { useStoresRevenue } from "@/api-hooks/admin/get-stores-revenue";
 import RevenueStatCard from "./revenue-stat-card";
 import RevenueStatCardSkeleton from "../skeleton/revenue-stat-card-skeleton";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const StoresRevenue = () => {
-    const { data, isPending } = useStoresRevenue();
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
+    const { data, isPending } = useStoresRevenue(yearFilter);
     if (isPending)
         return (
             <>

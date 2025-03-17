@@ -15,6 +15,7 @@ import {
 import { Printer } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { useMediaQuery } from "@mui/material";
 
 export function DatePickerWithRange({
     className,
@@ -32,6 +33,8 @@ export function DatePickerWithRange({
         from: new Date(),
         to: new Date(),
     });
+
+    const isMobile = useMediaQuery("(max-width:640px)");
 
     return (
         <div className={cn("grid gap-2", className)}>
@@ -55,7 +58,7 @@ export function DatePickerWithRange({
                         defaultMonth={date?.from}
                         selected={date}
                         onSelect={setDate}
-                        numberOfMonths={2}
+                        numberOfMonths={isMobile ? 1 : 2}
                     />
                     <div className="py-3 px-4 pt-0 flex justify-end gap-3">
                         <ShadButton size="sm" variant={"ghost"}>

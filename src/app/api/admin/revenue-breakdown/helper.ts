@@ -4,7 +4,8 @@ import { StoreDocument } from "@/models/types/store";
 
 async function formatRevenueBreakdown(
     stores: StoreDocument[],
-    monthNumber: number
+    monthNumber: number,
+    year: number
 ) {
     const result = [];
 
@@ -25,9 +26,10 @@ async function formatRevenueBreakdown(
                         totalPrice: 1,
                         store: 1,
                         month: { $month: "$createdAt" },
+                        year: { $year: "$createdAt" },
                     },
                 },
-                { $match: { month: monthNumber, store: store._id } },
+                { $match: { month: monthNumber, store: store._id, year } },
             ]),
             // Fetch Catering data for current and previous months
             Catering.aggregate([
@@ -36,9 +38,10 @@ async function formatRevenueBreakdown(
                         totalPrice: 1,
                         store: 1,
                         month: { $month: "$createdAt" },
+                        year: { $year: "$createdAt" },
                     },
                 },
-                { $match: { month: monthNumber, store: store._id } },
+                { $match: { month: monthNumber, store: store._id, year } },
             ]),
         ]);
 

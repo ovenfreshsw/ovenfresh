@@ -11,6 +11,9 @@ async function getHandler(req: AuthenticatedRequest) {
         const month =
             req.nextUrl.searchParams.get("month") ||
             format(new Date(), "MMM").toLowerCase();
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
+
         const monthNumber = getMonthInNumber(month);
 
         const groceries = await Grocery.aggregate([
@@ -34,9 +37,10 @@ async function getHandler(req: AuthenticatedRequest) {
                     unit: 1,
                     date: 1,
                     month: { $month: "$date" },
+                    year: { $year: "$date" },
                 },
             },
-            { $match: { month: monthNumber } },
+            { $match: { month: monthNumber, year: Number(year) } },
         ]);
 
         const result = groceries.map((grocery) => ({
@@ -53,7 +57,6 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({ result });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

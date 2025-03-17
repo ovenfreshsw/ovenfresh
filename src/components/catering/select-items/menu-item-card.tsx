@@ -23,7 +23,9 @@ type MenuItemCardProps = {
 
 const MenuItemCard = ({ item }: MenuItemCardProps) => {
     const [imgSrc, setImgSrc] = useState(item.image);
-    const [size, setSize] = useState<Size>("small");
+    const [size, setSize] = useState<Size>(
+        item.smallPrice ? "small" : item.mediumPrice ? "medium" : "large"
+    );
     const cateringOrder = useSelector((state: RootState) => state.cateringItem);
     const dispatch = useDispatch();
 
@@ -35,7 +37,7 @@ const MenuItemCard = ({ item }: MenuItemCardProps) => {
                 category: item.category.name,
                 variant: item.variant || undefined,
                 image: item.image || "/fsr-placeholder.webp",
-                size: size,
+                size,
                 priceAtOrder: item[`${size}Price`] || 0,
                 quantity: 1,
             })
@@ -50,7 +52,7 @@ const MenuItemCard = ({ item }: MenuItemCardProps) => {
                 category: item.category.name,
                 variant: item.variant || undefined,
                 image: item.image || "/fsr-placeholder.webp",
-                size: size,
+                size,
                 priceAtOrder: item[`${size}Price`] || 0,
                 quantity: 1,
             })

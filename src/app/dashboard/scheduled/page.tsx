@@ -46,7 +46,7 @@ const ScheduledPage = async () => {
             <Stack
                 spacing={2}
                 sx={{
-                    mx: 3,
+                    mx: { xs: 1.5, md: 3 },
                     pb: 5,
                     pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },

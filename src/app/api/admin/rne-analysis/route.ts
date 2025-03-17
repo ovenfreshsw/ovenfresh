@@ -9,17 +9,21 @@ import {
     generateStoreColors,
     getStoreServiceMap,
 } from "./helper";
+import { format } from "date-fns";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN"])) return error403();
+
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
 
         const stores = await Store.find({}, "location _id");
         if (!stores) return error404("No stores found!");
 
         const formattedStores = formatStoreData(stores);
         const colors = generateStoreColors(stores);
-        const revenueData = await formatRevenueData(stores);
+        const revenueData = await formatRevenueData(stores, Number(year));
         const storeServiceMap = getStoreServiceMap(stores);
 
         return success200({
@@ -31,7 +35,6 @@ async function getHandler(req: AuthenticatedRequest) {
             },
         });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred." });
     }

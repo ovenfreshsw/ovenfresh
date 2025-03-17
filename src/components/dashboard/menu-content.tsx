@@ -73,9 +73,19 @@ const mainListItems = [
 ];
 
 // List of items that should be visible only to admins
-const adminOnlyItems = ["Staffs", "Stores", "Finance & Expenses", "Menus"];
+const adminOnlyItems = [
+    "Staffs",
+    "Stores",
+    "Finance & Expenses",
+    "Menus",
+    "Delivery Proof",
+];
 
-export default function MenuContent() {
+export default function MenuContent({
+    setOpen,
+}: {
+    setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
     const [selected, setSelected] = React.useState(0);
     const pathname = usePathname();
     const session = useSession();
@@ -101,6 +111,7 @@ export default function MenuContent() {
                         key={index}
                         disablePadding
                         sx={{ display: "block" }}
+                        onClick={setOpen ? () => setOpen(false) : () => {}}
                     >
                         <Link href={item.href}>
                             <ListItemButton selected={index === selected}>

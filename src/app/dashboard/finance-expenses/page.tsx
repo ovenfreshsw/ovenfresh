@@ -11,6 +11,7 @@ import ProfitMetrics from "@/components/finance-expense/profit-metrics";
 import { format } from "date-fns";
 import { getProfitDetailsServer } from "@/lib/api/finance/get-profit-details-server";
 import ServerWrapper from "@/components/server-wrapper";
+import YearSelect from "@/components/select/year-select";
 
 const FinanceAndExpensesPage = async () => {
     return (
@@ -33,9 +34,12 @@ const FinanceAndExpensesPage = async () => {
                         flexDirection: "column",
                     }}
                 >
-                    <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-                        Finance & Expenses
-                    </Typography>
+                    <div className="flex justify-between items-center">
+                        <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+                            Finance & Expenses
+                        </Typography>
+                        <YearSelect />
+                    </div>
                     <Tabs defaultValue="overview" className="space-y-4">
                         <TabsList className="max-w-full justify-start overflow-x-scroll scrollbar-hide">
                             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -51,7 +55,11 @@ const FinanceAndExpensesPage = async () => {
                             <Suspense fallback={<div>Loading...</div>}>
                                 <ServerWrapper
                                     queryFn={getRevenueExpenseAnalysisServer}
-                                    queryKey={["rne-analysis"]}
+                                    queryKey={[
+                                        "revenue",
+                                        "rne-analysis",
+                                        format(new Date(), "yyyy"),
+                                    ]}
                                 >
                                     <RevenueExpenseCharts />
                                 </ServerWrapper>
@@ -61,6 +69,7 @@ const FinanceAndExpensesPage = async () => {
                                     queryFn={getProfitDetailsServer}
                                     queryKey={[
                                         "profit-details",
+                                        format(new Date(), "yyyy"),
                                         format(new Date(), "MMM").toLowerCase(),
                                     ]}
                                 >

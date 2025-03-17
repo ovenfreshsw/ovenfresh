@@ -3,15 +3,18 @@
 import { useTotalExpense } from "@/api-hooks/admin/get-total-expense";
 import ExpenseStatCard from "./expense-stat-card";
 import ExpenseStatCardSkeleton from "../skeleton/expense-stat-card-skeleton";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 const TotalExpense = () => {
-    const { data, isPending } = useTotalExpense();
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
+    const { data, isPending } = useTotalExpense(yearFilter);
     if (isPending)
         return (
             <>
-                <ExpenseStatCardSkeleton />;
-                <ExpenseStatCardSkeleton />;
-                <ExpenseStatCardSkeleton />;
+                <ExpenseStatCardSkeleton />
+                <ExpenseStatCardSkeleton />
+                <ExpenseStatCardSkeleton />
             </>
         );
     return (

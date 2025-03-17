@@ -2,7 +2,6 @@
 
 import * as React from "react";
 
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -28,6 +27,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useDeleteOrder } from "@/api-hooks/delete-order";
 import { QueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "@mui/material";
 
 export function DeleteOrderDrawer({
     orderId,

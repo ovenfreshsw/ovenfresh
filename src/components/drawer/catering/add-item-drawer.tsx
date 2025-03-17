@@ -75,7 +75,7 @@ export function AddItemDrawer({
                         <DrawerTitle>Select Items</DrawerTitle>
                     </DrawerHeader>
                     <div className="p-4 pb-0 max-h-[90%] overflow-y-scroll scrollbar-thin">
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                             {isPending ? (
                                 <div className="flex justify-center items-center gap-3 col-span-3 py-20">
                                     <Loader2 className="animate-spin" />{" "}

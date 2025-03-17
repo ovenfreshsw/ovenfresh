@@ -13,12 +13,19 @@ async function getHandler(req: AuthenticatedRequest) {
         const month =
             req.nextUrl.searchParams.get("month") ||
             format(new Date(), "MMM").toLowerCase();
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
+
         const monthNumber = getMonthInNumber(month);
 
         const stores = await Store.find({}, "location _id");
         if (!stores) return error404("No stores found!");
 
-        const revenueData = await formatRevenueBreakdown(stores, monthNumber);
+        const revenueData = await formatRevenueBreakdown(
+            stores,
+            monthNumber,
+            Number(year)
+        );
 
         return success200({ result: revenueData });
     } catch (error) {

@@ -192,9 +192,16 @@ function findOptimalRoute(
 }
 
 const getMonthsUpToCurrent = (
-    removeAllMonth = false
+    removeAllMonth = false,
+    year?: number
 ): { value: string; name: string }[] => {
+    const currentYear = new Date().getFullYear(); // Get the current year
     const currentMonth = new Date().getMonth(); // Get the current month (0-based index)
+
+    // If a year is provided, use that year, otherwise, use the current year
+    const targetYear = year || currentYear;
+
+    // Define months array
     const months = [
         { value: "all", name: "All Months" },
         { value: "jan", name: "January" },
@@ -211,12 +218,32 @@ const getMonthsUpToCurrent = (
         { value: "dec", name: "December" },
     ];
 
-    // Slice the months array to include up to the current month
-    if (removeAllMonth) {
-        return months.slice(1, currentMonth + 2);
+    // If the given year is the current year, return months up to the current month
+    if (targetYear === currentYear) {
+        if (removeAllMonth) {
+            return months.slice(1, currentMonth + 2); // Exclude "All Months" and return up to the current month
+        }
+        return months.slice(0, currentMonth + 2); // Include "All Months" and return up to the current month
     }
-    return months.slice(0, currentMonth + 2); // Add 2 to include "All Months" and current month
+
+    // If the given year is not the current year, return all months for that year
+    if (removeAllMonth) {
+        return months.slice(1); // Exclude "All Months" and return all months from January to December
+    }
+    return months; // Include "All Months" and return all months from January to December
 };
+
+function getYearsUpToCurrent(): number[] {
+    const currentYear = new Date().getFullYear();
+
+    const years: number[] = [];
+
+    for (let year = 2025; year <= currentYear; year++) {
+        years.push(year);
+    }
+
+    return years;
+}
 
 function appendBracket(str1: string, str2?: string | null, isMoney = false) {
     if (str2 && str2.length > 0) {
@@ -265,4 +292,5 @@ export {
     appendBracket,
     calculatePercentageChange,
     getMonthInNumber,
+    getYearsUpToCurrent,
 };

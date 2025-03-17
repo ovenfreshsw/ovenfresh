@@ -14,6 +14,9 @@ async function getHandler(req: AuthenticatedRequest) {
         const month =
             req.nextUrl.searchParams.get("month") ||
             format(new Date(), "MMM").toLowerCase();
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
+
         const monthNumber = getMonthInNumber(month);
 
         const stores = await Store.find({}, "_id location");
@@ -26,12 +29,14 @@ async function getHandler(req: AuthenticatedRequest) {
                             totalPrice: 1,
                             store: 1,
                             month: { $month: "$createdAt" },
+                            year: { $year: "$createdAt" },
                         },
                     },
                     {
                         $match: {
                             month: monthNumber,
                             store: store._id,
+                            year: Number(year),
                         },
                     },
                 ]),
@@ -41,9 +46,16 @@ async function getHandler(req: AuthenticatedRequest) {
                             totalPrice: 1,
                             store: 1,
                             month: { $month: "$createdAt" },
+                            year: { $year: "$createdAt" },
                         },
                     },
-                    { $match: { month: monthNumber, store: store._id } },
+                    {
+                        $match: {
+                            month: monthNumber,
+                            store: store._id,
+                            year: Number(year),
+                        },
+                    },
                 ]),
                 await Grocery.aggregate([
                     {
@@ -51,9 +63,16 @@ async function getHandler(req: AuthenticatedRequest) {
                             total: 1,
                             store: 1,
                             month: { $month: "$date" },
+                            year: { $year: "$date" },
                         },
                     },
-                    { $match: { month: monthNumber, store: store._id } },
+                    {
+                        $match: {
+                            month: monthNumber,
+                            store: store._id,
+                            year: Number(year),
+                        },
+                    },
                 ]),
             ]);
 
@@ -72,9 +91,9 @@ async function getHandler(req: AuthenticatedRequest) {
 
             return {
                 store: store.location,
-                totalRevenue: (tiffinSum + cateringSum).toFixed(2),
-                totalExpense: grocerySum.toFixed(2),
-                totalProfit: (tiffinSum + cateringSum - grocerySum).toFixed(2),
+                totalRevenue: tiffinSum + cateringSum,
+                totalExpense: grocerySum,
+                totalProfit: tiffinSum + cateringSum - grocerySum,
             };
         });
 
@@ -83,7 +102,6 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({ result });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

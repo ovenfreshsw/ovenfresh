@@ -35,8 +35,6 @@ export async function editGroceryAction(formData: FormData) {
 
         return { success: true };
     } catch (error) {
-        console.log(error);
-
         if (error instanceof Error) {
             return { error: error.message };
         } else {

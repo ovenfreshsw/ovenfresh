@@ -2,9 +2,10 @@ import axios from "@/config/axios.config";
 import { RevenueBreakdownProps } from "@/lib/types/finance";
 import { useQuery } from "@tanstack/react-query";
 
-export async function getRevenueBreakdown(month: string) {
+export async function getRevenueBreakdown(year: string, month: string) {
     const { data } = await axios.get("/api/admin/revenue-breakdown", {
         params: {
+            year,
             month,
         },
     });
@@ -13,10 +14,10 @@ export async function getRevenueBreakdown(month: string) {
     return null;
 }
 
-export function useRevenueBreakdown(month: string) {
+export function useRevenueBreakdown(year: string, month: string) {
     return useQuery({
-        queryKey: ["revenue-breakdown", month],
-        queryFn: () => getRevenueBreakdown(month),
+        queryKey: ["revenue", "revenue-breakdown", year, month],
+        queryFn: () => getRevenueBreakdown(year, month),
         staleTime: 10 * 60 * 1000, // Cache remains fresh for 10 minutes
     });
 }

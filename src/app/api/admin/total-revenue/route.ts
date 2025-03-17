@@ -4,14 +4,30 @@ import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
+import { format } from "date-fns";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN"])) return error403();
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
+
+        const startOfYear = new Date(Number(year), 0, 1);
+        const endOfYear = new Date(Number(year) + 1, 0, 0);
 
         const [tiffins, caterings] = await Promise.all([
-            Tiffin.find({}, "totalPrice"),
-            Catering.find({}, "totalPrice"),
+            Tiffin.find(
+                {
+                    createdAt: { $gte: startOfYear, $lte: endOfYear },
+                },
+                "totalPrice"
+            ),
+            Catering.find(
+                {
+                    createdAt: { $gte: startOfYear, $lte: endOfYear },
+                },
+                "totalPrice"
+            ),
         ]);
         const tiffinTotal = tiffins.reduce(
             (sum, doc) => sum + doc.totalPrice,
@@ -30,7 +46,6 @@ async function getHandler(req: AuthenticatedRequest) {
             },
         });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

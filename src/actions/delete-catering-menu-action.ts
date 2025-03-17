@@ -16,7 +16,9 @@ export async function deleteCateringMenuAction(id: string) {
             items: { $elemMatch: { itemId: objectId } },
         });
         if (isMenuInUse) {
-            return { error: "Failed to delete menu item. It is in use." };
+            return {
+                error: "Unable to delete the menu item. It is currently in use.",
+            };
         }
         const deletedMenu = await CateringMenu.findByIdAndDelete({ _id: id });
 

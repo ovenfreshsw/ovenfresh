@@ -61,7 +61,6 @@ const generateStoreColors = (
     return result;
 };
 
-const currentYear = new Date().getFullYear();
 const months = [
     "Jan",
     "Feb",
@@ -77,13 +76,16 @@ const months = [
     "Dec",
 ];
 
-async function formatRevenueData(stores: StoreDocument[]) {
+async function formatRevenueData(stores: StoreDocument[], year: number) {
     // Initialize the result array
     const result: MonthlyRevenueData[] = [];
     const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const lastMonth = year < currentYear ? 12 : currentMonth + 1;
 
     // Loop through each month of the current year
-    for (let monthIndex = 0; monthIndex < currentMonth + 1; monthIndex++) {
+    for (let monthIndex = 0; monthIndex < lastMonth; monthIndex++) {
         // Example: Looping for Jan, Feb, Mar
         const monthName = months[monthIndex];
 
@@ -92,12 +94,8 @@ async function formatRevenueData(stores: StoreDocument[]) {
         // Loop over stores to gather month-specific data
         for (const store of stores) {
             // Get the start and end of the current month
-            const startOfTheMonth = startOfMonth(
-                new Date(currentYear, monthIndex, 1)
-            );
-            const endOfTheMonth = endOfMonth(
-                new Date(currentYear, monthIndex, 1)
-            );
+            const startOfTheMonth = startOfMonth(new Date(year, monthIndex, 1));
+            const endOfTheMonth = endOfMonth(new Date(year, monthIndex, 1));
 
             // Find Tiffins for the store in the current month
             const tiffins = await Tiffin.find(

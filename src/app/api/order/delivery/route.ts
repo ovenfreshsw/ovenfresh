@@ -235,7 +235,6 @@ async function getHandler(req: AuthenticatedRequest) {
             return success200({ data: { orders, result, haveZone: true } });
         }
     } catch (error) {
-        console.log(error);
         return error500({
             error:
                 error instanceof Error

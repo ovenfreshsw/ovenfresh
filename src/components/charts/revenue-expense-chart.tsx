@@ -29,6 +29,8 @@ import { useRevenueExpenseAnalysis } from "@/api-hooks/admin/get-rne-analysis";
 import { Frown } from "lucide-react";
 import { MonthlyRevenueData } from "@/lib/types/finance";
 import MonthSelect from "../select/month-select";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 // Define the types for store and service filters
 type Store = "store1" | "store2" | "all";
@@ -39,8 +41,10 @@ export function RevenueExpenseCharts() {
     const [serviceFilter, setServiceFilter] = useState<Service>("all");
     const [monthFilter, setMonthFilter] = useState("all");
 
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
+
     // useQuery
-    const { data, isPending } = useRevenueExpenseAnalysis();
+    const { data, isPending } = useRevenueExpenseAnalysis(yearFilter);
 
     // Filter data based on selected filters
     const getFilteredData = (data: MonthlyRevenueData[]) => {

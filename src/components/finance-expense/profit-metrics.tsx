@@ -22,16 +22,20 @@ import { useState } from "react";
 import { useProfitDetails } from "@/api-hooks/admin/get-profit-details";
 import { getMonthInNumber } from "@/lib/utils";
 import CardSkeleton from "../skeleton/card-skeleton";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 const ProfitMetrics = () => {
     const [monthFilter, setMonthFilter] = useState(
         format(new Date(), "MMM").toLowerCase()
     );
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
+
     const {
         data: profitDetails,
         isPending,
         isError,
-    } = useProfitDetails(monthFilter);
+    } = useProfitDetails(monthFilter, yearFilter);
 
     const totalRevenue = profitDetails?.reduce(
         (sum, data) => sum + data.totalRevenue,
@@ -85,7 +89,7 @@ const ProfitMetrics = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            ${totalRevenue}
+                            ${totalRevenue?.toFixed(2)}
                         </div>
                         <p className="text-xs text-muted-foreground">
                             For{" "}
@@ -110,7 +114,7 @@ const ProfitMetrics = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            ${totalExpense}
+                            ${totalExpense?.toFixed(2)}
                         </div>
                         <p className="text-xs text-muted-foreground">
                             For{" "}
@@ -134,7 +138,9 @@ const ProfitMetrics = () => {
                         <TrendingUp className="h-4 w-4 text-indigo-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">${totalProfit}</div>
+                        <div className="text-2xl font-bold">
+                            ${totalProfit?.toFixed(2)}
+                        </div>
                         <p className="text-xs text-muted-foreground">
                             For{" "}
                             {format(

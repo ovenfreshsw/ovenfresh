@@ -6,6 +6,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 type MonthSelectProps = {
     monthFilter: string;
@@ -18,17 +20,20 @@ const MonthSelect = ({
     setMonthFilter,
     removeAllMonth = false,
 }: MonthSelectProps) => {
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
     return (
         <Select value={monthFilter} onValueChange={setMonthFilter}>
             <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Month Filter" />
             </SelectTrigger>
             <SelectContent>
-                {getMonthsUpToCurrent(removeAllMonth).map((month) => (
-                    <SelectItem key={month.value} value={month.value}>
-                        {month.name}
-                    </SelectItem>
-                ))}
+                {getMonthsUpToCurrent(removeAllMonth, Number(yearFilter)).map(
+                    (month) => (
+                        <SelectItem key={month.value} value={month.value}>
+                            {month.name}
+                        </SelectItem>
+                    )
+                )}
             </SelectContent>
         </Select>
     );

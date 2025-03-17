@@ -5,20 +5,32 @@ import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
+import { format } from "date-fns";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {
         if (isRestricted(req.user, ["ADMIN"])) return error403();
+        const year =
+            req.nextUrl.searchParams.get("year") || format(new Date(), "yyyy");
+
+        const startOfYear = new Date(Number(year), 0, 1);
+        const endOfYear = new Date(Number(year) + 1, 0, 0);
 
         const stores = await Store.find({}, "_id location");
 
         const queryPromise = stores.map(async (store) => {
             const tiffinTotal = await Tiffin.find(
-                { store: store._id },
+                {
+                    store: store._id,
+                    createdAt: { $gte: startOfYear, $lte: endOfYear },
+                },
                 "totalPrice"
             );
             const cateringTotal = await Catering.find(
-                { store: store._id },
+                {
+                    store: store._id,
+                    createdAt: { $gte: startOfYear, $lte: endOfYear },
+                },
                 "totalPrice"
             );
 
@@ -46,7 +58,6 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({ result });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

@@ -22,13 +22,19 @@ import { format } from "date-fns";
 import { useExpenseDetails } from "@/api-hooks/admin/get-expense-details";
 import { ExpenseDetailsProps } from "@/lib/types/finance";
 import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const ExpenseDetails = () => {
     const [monthFilter, setMonthFilter] = useState(
         format(new Date(), "MMM").toLowerCase()
     );
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
     const [searchQuery, setSearchQuery] = useState("");
-    const { data: expenseDetails, isPending } = useExpenseDetails(monthFilter);
+    const { data: expenseDetails, isPending } = useExpenseDetails(
+        monthFilter,
+        yearFilter
+    );
 
     // Filter items based on search query and selected store
     const getFilteredItems = () => {

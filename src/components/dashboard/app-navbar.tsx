@@ -13,6 +13,8 @@ import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import SideMenuMobile from "./sidemenu-mobile";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { setState } from "@/store/slices/selectStoreSlice";
 
 const Toolbar = styled(MuiToolbar)({
     width: "100%",
@@ -42,10 +44,11 @@ export default function AppNavbar({
     stores: { id: string; location: string }[];
 }) {
     const [open, setOpen] = React.useState(false);
+    const dispatch = useDispatch();
 
-    const toggleDrawer = (newOpen: boolean) => () => {
-        setOpen(newOpen);
-    };
+    React.useEffect(() => {
+        dispatch(setState(active.id));
+    }, []);
 
     return (
         <AppBar
@@ -98,14 +101,14 @@ export default function AppNavbar({
                         variant={"outline"}
                         size={"icon"}
                         aria-label="menu"
-                        onClick={toggleDrawer(true)}
+                        onClick={() => setOpen(true)}
                         className="bg-primary-foreground text-primary"
                     >
                         <MenuRoundedIcon />
                     </Button>
                     <SideMenuMobile
                         open={open}
-                        toggleDrawer={toggleDrawer}
+                        setOpen={setOpen}
                         role={role}
                         username={username}
                         active={active}

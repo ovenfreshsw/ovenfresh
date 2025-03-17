@@ -20,14 +20,19 @@ import { Fragment, useState } from "react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import MonthSelect from "../select/month-select";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const RevenueBreakdown = () => {
     const [monthFilter, setMonthFilter] = useState(
         format(new Date(), "MMM").toLowerCase()
     );
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
 
-    const { data: revenueBreakdown, isPending } =
-        useRevenueBreakdown(monthFilter);
+    const { data: revenueBreakdown, isPending } = useRevenueBreakdown(
+        yearFilter,
+        monthFilter
+    );
 
     const totalForMonth =
         revenueBreakdown?.reduce(

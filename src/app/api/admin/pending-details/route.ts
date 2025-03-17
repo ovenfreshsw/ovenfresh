@@ -48,7 +48,6 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({ result: cateringData.concat(tiffinData) });
     } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

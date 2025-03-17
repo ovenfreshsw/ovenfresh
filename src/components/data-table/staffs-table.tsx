@@ -24,7 +24,6 @@ export const columns = [
     { name: "USERNAME", uid: "username" },
     { name: "ROLE", uid: "role" },
     { name: "STORE", uid: "storeId", sortable: true },
-    { name: "PASSWORD", uid: "password" },
     { name: "ACTIONS", uid: "actions" },
 ];
 

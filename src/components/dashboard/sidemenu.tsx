@@ -31,7 +31,7 @@ export default function SideMenu() {
                 },
             }}
         >
-            <div className="flex justify-center py-3 bg-primary-foreground">
+            <div className="flex justify-start py-3 bg-primary-foreground ps-4">
                 <Image src={"/logo.webp"} alt="logo" width={100} height={100} />
             </div>
             <Box

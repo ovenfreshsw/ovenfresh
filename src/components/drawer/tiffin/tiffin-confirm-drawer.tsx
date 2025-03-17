@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -32,6 +30,7 @@ import { ZodTiffinSchema } from "@/lib/zod-schema/schema";
 import { TiffinMenuDocument } from "@/models/types/tiffin-menu";
 import { calculateTotalAmount } from "@/lib/utils";
 import { UseMutationResult } from "@tanstack/react-query";
+import { useMediaQuery } from "@mui/material";
 
 export function TiffinConfirmDrawer({
     mutation,

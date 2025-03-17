@@ -100,6 +100,7 @@ export default function CateringForm({
                 lastName: customer.lastName || "",
                 address: { address: customer.address.address || "", key: 0 },
                 placeId: customer.address.placeId,
+                aptSuiteUnit: customer.address.aptSuiteUnit || "",
             })
         );
 
@@ -112,6 +113,10 @@ export default function CateringForm({
         );
         form.setValue("customerDetails.lat", customer.address.lat);
         form.setValue("customerDetails.lng", customer.address.lng);
+        form.setValue(
+            "customerDetails.aptSuiteUnit",
+            customer.address.aptSuiteUnit
+        );
     }
 
     function resetForm() {
@@ -411,18 +416,6 @@ export default function CateringForm({
                                     onValueChange={(
                                         val: "pickup" | "delivery"
                                     ) => {
-                                        if (val === "delivery") {
-                                            dispatch(
-                                                setDeliveryCharge(
-                                                    Number(
-                                                        process.env
-                                                            .NEXT_PUBLIC_DELIVERY_CHARGE
-                                                    ) || 0
-                                                )
-                                            );
-                                        } else {
-                                            dispatch(setDeliveryCharge(0));
-                                        }
                                         dispatch(setOrderType(val));
                                         form.setValue("order_type", val);
                                     }}

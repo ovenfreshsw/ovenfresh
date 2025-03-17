@@ -18,9 +18,12 @@ import {
 } from "../ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import CardSkeleton from "../skeleton/card-skeleton";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 const ExpenseMonthlyTrend = () => {
-    const { data, isPending, isError } = useMonthlyTrend();
+    const yearFilter = useSelector((state: RootState) => state.selectYear);
+    const { data, isPending, isError } = useMonthlyTrend(yearFilter);
     const months = data?.expensesData.map((data) => data.month);
 
     if (isPending) return <CardSkeleton className="mt-7 min-h-[320px]" />;

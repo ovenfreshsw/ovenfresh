@@ -31,8 +31,6 @@ async function postHandler(req: AuthenticatedRequest) {
         const data = await req.json();
         if (!data) return error400("Invalid data format.", {});
 
-        console.log(data);
-
         const result = ZodCateringSchema.safeParse(data);
         if (!result.success) {
             return error400("Invalid data format.", {});
