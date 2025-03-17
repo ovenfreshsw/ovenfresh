@@ -23,20 +23,22 @@ async function formatRevenueBreakdown(
                 {
                     $project: {
                         totalPrice: 1,
+                        store: 1,
                         month: { $month: "$createdAt" },
                     },
                 },
-                { $match: { month: monthNumber } },
+                { $match: { month: monthNumber, store: store._id } },
             ]),
             // Fetch Catering data for current and previous months
             Catering.aggregate([
                 {
                     $project: {
                         totalPrice: 1,
+                        store: 1,
                         month: { $month: "$createdAt" },
                     },
                 },
-                { $match: { month: monthNumber } },
+                { $match: { month: monthNumber, store: store._id } },
             ]),
         ]);
 

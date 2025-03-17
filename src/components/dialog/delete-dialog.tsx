@@ -78,7 +78,7 @@ const DeleteDialog = ({
                         delete this {title} from the server.
                     </DialogDescription>
                 </DialogHeader>
-                <DialogFooter>
+                <DialogFooter className="gap-2 sm:gap-0">
                     <DialogClose asChild>
                         <Button
                             variant="ghost"

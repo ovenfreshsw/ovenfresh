@@ -156,7 +156,9 @@ export default function StoresTable() {
                 {(item: StoreDocument) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
-                            <TableCell>{renderCell(item, columnKey)}</TableCell>
+                            <TableCell className="whitespace-nowrap">
+                                {renderCell(item, columnKey)}
+                            </TableCell>
                         )}
                     </TableRow>
                 )}

@@ -72,9 +72,9 @@ async function getHandler(req: AuthenticatedRequest) {
 
             return {
                 store: store.location,
-                totalRevenue: tiffinSum + cateringSum,
-                totalExpense: grocerySum,
-                totalProfit: tiffinSum + cateringSum - grocerySum,
+                totalRevenue: (tiffinSum + cateringSum).toFixed(2),
+                totalExpense: grocerySum.toFixed(2),
+                totalProfit: (tiffinSum + cateringSum - grocerySum).toFixed(2),
             };
         });
 

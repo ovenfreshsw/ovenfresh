@@ -24,9 +24,9 @@ async function getHandler(req: AuthenticatedRequest) {
 
         return success200({
             result: {
-                total: tiffinTotal + cateringTotal,
-                tiffin: tiffinTotal,
-                catering: cateringTotal,
+                total: (tiffinTotal + cateringTotal).toFixed(2),
+                tiffin: tiffinTotal.toFixed(2),
+                catering: cateringTotal.toFixed(2),
             },
         });
     } catch (error) {

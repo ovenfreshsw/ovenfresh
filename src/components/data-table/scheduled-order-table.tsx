@@ -21,11 +21,11 @@ import { Pagination } from "@heroui/pagination";
 import { Chip, ChipProps } from "@heroui/chip";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { Eye, ListFilter, Loader2, PlusCircle, Printer } from "lucide-react";
+import { Eye, ListFilter, Loader2, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { ScheduledOrderProps } from "@/lib/types/scheduled-order";
 import DateFilter from "../scheduled-orders/date-filter";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -321,7 +321,7 @@ export default function ScheduledOrderTable({
                             footer="Scheduled orders for"
                         />
                     </div>
-                    <div className="flex-1 flex justify-end gap-2">
+                    {/* <div className="flex-1 flex justify-end gap-2">
                         <Button
                             size="sm"
                             radius="sm"
@@ -344,7 +344,7 @@ export default function ScheduledOrderTable({
                                 "Print Report"
                             )}
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">

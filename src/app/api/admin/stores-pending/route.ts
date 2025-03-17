@@ -34,9 +34,9 @@ async function getHandler(req: AuthenticatedRequest) {
             return {
                 location: store.location,
                 data: {
-                    total: tiffinSum + cateringSum,
-                    tiffin: tiffinSum,
-                    catering: cateringSum,
+                    total: (tiffinSum + cateringSum).toFixed(2),
+                    tiffin: tiffinSum.toFixed(2),
+                    catering: cateringSum.toFixed(2),
                 },
             };
         });

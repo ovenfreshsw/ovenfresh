@@ -109,9 +109,19 @@ const ProfitMetrics = () => {
                         <TrendingDown className="h-4 w-4 text-rose-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalExpense}</div>
+                        <div className="text-2xl font-bold">
+                            ${totalExpense}
+                        </div>
                         <p className="text-xs text-muted-foreground">
-                            For March
+                            For{" "}
+                            {format(
+                                new Date(
+                                    2025,
+                                    getMonthInNumber(monthFilter) - 1,
+                                    1
+                                ),
+                                "MMMM"
+                            )}
                         </p>
                     </CardContent>
                 </Card>
@@ -124,9 +134,17 @@ const ProfitMetrics = () => {
                         <TrendingUp className="h-4 w-4 text-indigo-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalProfit}</div>
+                        <div className="text-2xl font-bold">${totalProfit}</div>
                         <p className="text-xs text-muted-foreground">
-                            For March
+                            For{" "}
+                            {format(
+                                new Date(
+                                    2025,
+                                    getMonthInNumber(monthFilter) - 1,
+                                    1
+                                ),
+                                "MMMM"
+                            )}
                         </p>
                     </CardContent>
                 </Card>
