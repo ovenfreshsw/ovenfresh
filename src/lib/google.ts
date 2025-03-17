@@ -15,7 +15,7 @@ export const autocomplete = async (input: string) => {
         });
 
         return response.data.predictions;
-    } catch (error) {
+    } catch {
         return null;
     }
 };
@@ -78,7 +78,7 @@ export const getPlaceDetails = async (placeID: string) => {
             lng,
             ...addressComponents,
         };
-    } catch (error) {
+    } catch {
         return null;
     }
 };

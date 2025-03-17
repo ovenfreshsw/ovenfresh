@@ -48,7 +48,7 @@ export default function AppNavbar({
 
     React.useEffect(() => {
         dispatch(setState(active.id));
-    }, []);
+    }, [active.id]);
 
     return (
         <AppBar

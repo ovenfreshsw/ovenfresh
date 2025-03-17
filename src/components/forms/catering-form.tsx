@@ -36,7 +36,6 @@ import { useDispatch } from "react-redux";
 import { clearState } from "@/store/slices/cateringItemSlice";
 import {
     setCustomerDetails,
-    setDeliveryCharge,
     setDeliveryDate,
     setOrderType,
 } from "@/store/slices/cateringOrderSlice";
