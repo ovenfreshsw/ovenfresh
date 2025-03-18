@@ -5,7 +5,7 @@ export interface GroceryDocument {
     store: mongoose.Types.ObjectId;
     item: string;
     quantity: number;
-    unit: "l" | "kg" | "g" | "lbs" | "none" | "Mixed";
+    unit: "l" | "kg" | "g" | "lbs" | "Pcs" | "Nos" | "none" | "Mixed";
     price: number;
     tax: number;
     total: number;

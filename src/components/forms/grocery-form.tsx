@@ -85,6 +85,8 @@ const GroceryForm = ({
                         <SelectItem value="Kg">Kg</SelectItem>
                         <SelectItem value="g">g</SelectItem>
                         <SelectItem value="lbs">lbs</SelectItem>
+                        <SelectItem value="Pcs">Pcs</SelectItem>
+                        <SelectItem value="Nos">Nos</SelectItem>
                         <SelectItem value="none">none</SelectItem>
                     </SelectContent>
                 </Select>

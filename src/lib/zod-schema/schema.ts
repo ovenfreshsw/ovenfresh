@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ZodAuthSchema = z.object({
-    username: z.string().min(5, { message: "Invalid username address" }),
+    username: z.string().min(5, { message: "Invalid username" }),
     password: z.string().min(5, "Password must be 8 or more characters long"),
 });
 
@@ -90,7 +90,7 @@ export const ZodTiffinSchema = z.object({
 export const ZodGrocerySchema = z.object({
     item: z.string().min(3).max(20),
     quantity: z.string().min(1),
-    unit: z.enum(["L", "Kg", "g", "lbs", "none"]),
+    unit: z.enum(["L", "Kg", "g", "lbs", "Pcs", "Nos", "none"]),
     price: z.string(),
     tax: z.string(),
     total: z.string(),
