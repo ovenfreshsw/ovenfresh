@@ -29,13 +29,13 @@ import { Checkbox } from "@heroui/checkbox";
 
 const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
     const [loading, setLoading] = useState(false);
-    const [mixed, setMixed] = useState(grocery.unit === "Mixed" ? true : false);
+    const [box, setBox] = useState(grocery.unit === "Box" ? true : false);
 
     function handleSubmit(formData: FormData) {
         setLoading(true);
 
-        if (mixed) {
-            formData.set("mixed", "true");
+        if (box) {
+            formData.set("box", "true");
             formData.set("quantity", "0");
             formData.set("unit", "none");
         }
@@ -106,13 +106,13 @@ const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
                             type="number"
                             min="0"
                             step="0.01"
-                            disabled={mixed}
+                            disabled={box}
                             defaultValue={grocery.quantity}
                         />
                         <Select
                             name="unit"
                             defaultValue={grocery.unit}
-                            disabled={mixed}
+                            disabled={box}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Unit" />
@@ -129,10 +129,10 @@ const EditGroceryDialog = ({ grocery }: { grocery: GroceryDocument }) => {
                         </Select>
                         <Checkbox
                             size="sm"
-                            isSelected={mixed}
-                            onValueChange={setMixed}
+                            isSelected={box}
+                            onValueChange={setBox}
                         >
-                            Mixed
+                            Box
                         </Checkbox>
                     </div>
                     <div className="grid grid-cols-4 gap-2 items-center">

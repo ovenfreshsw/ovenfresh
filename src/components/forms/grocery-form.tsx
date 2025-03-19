@@ -21,12 +21,12 @@ const GroceryForm = ({
 }: {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    const [mixed, setMixed] = useState(false);
+    const [box, setBox] = useState(false);
     function handleSubmit(formData: FormData) {
         setLoading(true);
 
-        if (mixed) {
-            formData.set("mixed", "true");
+        if (box) {
+            formData.set("box", "true");
             formData.set("quantity", "0");
             formData.set("unit", "none");
         }
@@ -73,10 +73,10 @@ const GroceryForm = ({
                 <Input
                     placeholder="Quantity"
                     name="quantity"
-                    disabled={mixed}
+                    disabled={box}
                     className="col-span-1"
                 />
-                <Select name="unit" disabled={mixed}>
+                <Select name="unit" disabled={box}>
                     <SelectTrigger>
                         <SelectValue placeholder="Unit" />
                     </SelectTrigger>
@@ -90,8 +90,8 @@ const GroceryForm = ({
                         <SelectItem value="none">none</SelectItem>
                     </SelectContent>
                 </Select>
-                <Checkbox size="sm" checked={mixed} onValueChange={setMixed}>
-                    Mixed
+                <Checkbox size="sm" checked={box} onValueChange={setBox}>
+                    Box
                 </Checkbox>
             </div>
             <div className="grid grid-cols-4 gap-2 items-center">
