@@ -2,8 +2,10 @@ import Header from "@/components/dashboard/header";
 import { Box, Stack } from "@mui/material";
 import CateringCategory from "@/models/cateringCategoryModel";
 import MenuForm from "@/components/forms/add-menu-form";
+import connectDB from "@/lib/mongodb";
 
 const AddMenuPage = async () => {
+    await connectDB();
     const categories = await CateringCategory.find({});
 
     return (

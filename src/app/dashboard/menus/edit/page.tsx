@@ -4,6 +4,7 @@ import CateringCategory from "@/models/cateringCategoryModel";
 import CateringMenu from "@/models/cateringMenuModel";
 import { notFound } from "next/navigation";
 import MenuForm from "@/components/forms/edit-menu-form";
+import connectDB from "@/lib/mongodb";
 
 const EditMenuPage = async ({
     searchParams,
@@ -11,7 +12,7 @@ const EditMenuPage = async ({
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
     const menuId = (await searchParams)?.id as string;
-
+    await connectDB();
     const [menu, categories] = await Promise.all([
         CateringMenu.findOne({
             _id: menuId,

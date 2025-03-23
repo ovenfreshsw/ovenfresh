@@ -1,3 +1,4 @@
+import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
 import { addDays, format } from "date-fns";
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
         const today = new Date(format(new Date(), "yyyy-MM-dd"));
         const endingDate = new Date(format(addDays(today, 2), "yyyy-MM-dd"));
 
+        await connectDB();
         const expiringTiffins = await Tiffin.find(
             { endDate: endingDate },
             "customerPhone customerName orderId endDate"
@@ -25,6 +27,8 @@ export async function GET(request: NextRequest) {
             model: Store,
             select: "location name phone address",
         });
+
+        console.log(expiringTiffins);
 
         if (expiringTiffins.length === 0) {
             return Response.json({ success: true });
