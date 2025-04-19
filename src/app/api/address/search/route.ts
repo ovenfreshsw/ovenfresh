@@ -15,7 +15,7 @@ async function getHandler(req: AuthenticatedRequest) {
 
     try {
         const searchResult = await autocomplete(search);
-        if (!searchResult) return error400("Invalid Address keyword");
+        if (!searchResult) return error500({ error: "Google API Error" });
 
         return success200({
             result: searchResult,

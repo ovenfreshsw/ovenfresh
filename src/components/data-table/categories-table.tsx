@@ -19,7 +19,6 @@ import DeleteDialog from "../dialog/delete-dialog";
 import { deleteCategoryAction } from "@/actions/delete-category-action";
 
 export const columns = [
-    { name: "ID", uid: "_id" },
     { name: "NAME", uid: "name" },
     { name: "ACTIONS", uid: "actions" },
 ];

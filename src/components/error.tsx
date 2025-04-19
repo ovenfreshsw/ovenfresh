@@ -4,6 +4,7 @@ import { AlertCircle } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 const ErrorComponent = ({
     message,
@@ -14,6 +15,10 @@ const ErrorComponent = ({
     code?: number;
     title?: string;
 }) => {
+    function handleLogin() {
+        signOut();
+    }
+
     return (
         <main className="min-h-screen flex items-center justify-center p-4 bg-background">
             <div className="max-w-md w-full text-center space-y-6">
@@ -54,6 +59,9 @@ const ErrorComponent = ({
                                 <Link href="/dashboard">Dashboard</Link>
                             </Button>
                         </div>
+                        <Button variant={"link"} onClick={handleLogin}>
+                            Log in
+                        </Button>
                     </div>
                 </div>
             </div>
