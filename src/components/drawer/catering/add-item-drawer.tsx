@@ -62,11 +62,21 @@ export function AddItemDrawer({
     }, [menu, existingItems]);
 
     React.useEffect(() => {
-        setFilterMenu(
-            menu?.filter((item) =>
-                item.name.toLowerCase().includes(search.toLowerCase())
-            )
-        );
+        if (search.length > 0) {
+            setFilterMenu(
+                menu?.filter(
+                    (item) =>
+                        item.name
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) &&
+                        !existingItems.includes(item._id)
+                )
+            );
+        } else {
+            setFilterMenu(
+                menu?.filter((item) => !existingItems.includes(item._id))
+            );
+        }
     }, [menu, search]);
 
     function handelClose(value: boolean) {

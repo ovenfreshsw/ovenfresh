@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RadioGroup, Radio } from "@heroui/radio";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -28,6 +28,10 @@ const MenuItemCard = ({ item }: MenuItemCardProps) => {
     );
     const cateringOrder = useSelector((state: RootState) => state.cateringItem);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        setImgSrc(item.image);
+    }, [item.image]);
 
     const handleIncrement = () => {
         dispatch(
