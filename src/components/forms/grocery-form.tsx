@@ -1,6 +1,5 @@
 import { DateInput } from "@heroui/date-input";
 import { Label } from "../ui/label";
-import { CalendarDays } from "lucide-react";
 import { Input } from "../ui/input";
 import { ZodGrocerySchema } from "@/lib/zod-schema/schema";
 import { toast } from "sonner";
@@ -139,7 +138,6 @@ const GroceryForm = ({
                 </Label>
                 <DateInput
                     aria-label="Date"
-                    endContent={<CalendarDays />}
                     placeholderValue={new CalendarDate(1995, 11, 6)}
                     name="date"
                     className="col-span-3"

@@ -143,7 +143,7 @@ async function postHandler(req: AuthenticatedRequest) {
                     endDate: formatDate(new Date(end_date), "yyyy-MM-dd"),
                     numberOfWeeks: number_of_weeks,
                     paymentMethod: payment_method,
-                    advancePaid,
+                    advancePaid: advancePaid || 0,
                     pendingBalance: Number(pendingAmount)?.toFixed(2),
                     totalPrice: Number(totalAmount)?.toFixed(2),
                     tax: Number(tax)?.toFixed(2),

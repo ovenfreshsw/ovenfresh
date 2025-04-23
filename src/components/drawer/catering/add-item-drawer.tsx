@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Button as HeroButton } from "@heroui/button";
@@ -24,6 +24,9 @@ import { useAddItems } from "@/api-hooks/catering/add-items";
 import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
 import { revalidateOrder } from "@/actions/revalidate-order";
 import MenuItemCard from "@/components/catering/select-items/menu-item-card";
+import { DialogClose } from "@/components/ui/dialog";
+import { Input } from "@heroui/input";
+import { Show } from "@/components/show";
 
 export function AddItemDrawer({
     orderId,
@@ -32,6 +35,7 @@ export function AddItemDrawer({
     orderId: string;
     existingItems: string[];
 }) {
+    const [search, setSearch] = React.useState("");
     const [open, setOpen] = React.useState(false);
     const [filterMenu, setFilterMenu] = React.useState<
         CateringMenuDocumentPopulate[] | null
@@ -57,6 +61,14 @@ export function AddItemDrawer({
         );
     }, [menu, existingItems]);
 
+    React.useEffect(() => {
+        setFilterMenu(
+            menu?.filter((item) =>
+                item.name.toLowerCase().includes(search.toLowerCase())
+            )
+        );
+    }, [menu, search]);
+
     function handelClose(value: boolean) {
         dispatch(clearState());
         setOpen(value);
@@ -69,12 +81,34 @@ export function AddItemDrawer({
                     <Plus size={15} />
                 </HeroButton>
             </DrawerTrigger>
-            <DrawerContent className="max-w-5xl mx-auto">
-                <div className="mx-auto w-full">
-                    <DrawerHeader>
+            <DrawerContent className="max-w-5xl mx-auto h-[90%]">
+                <div className="mx-auto w-full flex flex-col h-full">
+                    <DrawerHeader className="flex justify-between items-center">
                         <DrawerTitle>Select Items</DrawerTitle>
+                        <DialogClose asChild>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="rounded-full"
+                            >
+                                <X size={15} />
+                            </Button>
+                        </DialogClose>
                     </DrawerHeader>
-                    <div className="p-4 pb-0 max-h-[90%] overflow-y-scroll scrollbar-thin">
+                    <div className="px-4 pb-0 overflow-y-scroll scrollbar-thin flex-1">
+                        <Show>
+                            <Show.When isTrue={!isPending}>
+                                <div className="mb-3">
+                                    <Input
+                                        placeholder="Search items..."
+                                        className="max-w-sm"
+                                        startContent={<Search size={15} />}
+                                        value={search}
+                                        onValueChange={setSearch}
+                                    />
+                                </div>
+                            </Show.When>
+                        </Show>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                             {isPending ? (
                                 <div className="flex justify-center items-center gap-3 col-span-3 py-20">
@@ -92,7 +126,7 @@ export function AddItemDrawer({
                             )}
                         </div>
                     </div>
-                    <DrawerFooter className="flex-row justify-end">
+                    <DrawerFooter className="flex-row justify-end pb-7">
                         <Button
                             onClick={() =>
                                 mutation.mutate({

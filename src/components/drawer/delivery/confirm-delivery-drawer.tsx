@@ -75,7 +75,9 @@ export function ConfirmDeliveryDrawer({
                             />
                             <p className="text-sm">
                                 Collected pending balance{" "}
-                                <span className="font-bold">$22.1</span>
+                                <span className="font-bold">
+                                    ${pendingBalance}
+                                </span>
                             </p>
                         </div>
                     </Show.When>

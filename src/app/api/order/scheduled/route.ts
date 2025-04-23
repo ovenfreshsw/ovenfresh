@@ -29,7 +29,10 @@ async function getHandler(req: AuthenticatedRequest) {
         }));
 
         const tiffinData = tiffin
-            .filter((item) => item.store.toString() === storeId)
+            .filter(
+                (item) =>
+                    item.store.toString() === storeId && item.orderId !== null
+            )
             .map((item) => ({
                 _id: item.orderId._id.toString(),
                 store: item.orderId.store._id,

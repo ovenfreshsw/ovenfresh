@@ -35,7 +35,7 @@ async function getScheduledCateringOrders(
 async function getScheduledTiffinOrders(date: Date | string) {
     return await TiffinOrderStatus.find({
         date: new Date(date),
-        status: { $in: ["PENDING", "ONGOING"] },
+        status: { $in: ["PENDING", "ONGOING", "DELIVERED"] },
     }).populate({
         path: "orderId",
         model: Tiffin,
