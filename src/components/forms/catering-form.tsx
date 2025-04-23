@@ -33,7 +33,6 @@ import { useDebounce } from "@/hooks/use-debounce";
 import PaymentSelect from "../select/payment-select";
 import AddressCommand from "../commands/address-command";
 import { useDispatch } from "react-redux";
-import { clearState } from "@/store/slices/cateringItemSlice";
 import {
     setCustomerDetails,
     setDeliveryDate,
@@ -120,7 +119,6 @@ export default function CateringForm({
 
     function resetForm() {
         form.reset();
-        dispatch(clearState());
         setPhone("");
     }
 

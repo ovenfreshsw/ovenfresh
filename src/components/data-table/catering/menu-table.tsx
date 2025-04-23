@@ -219,7 +219,7 @@ export default function CateringMenuTable() {
                 )}
             </TableHeader>
             <TableBody
-                emptyContent={"No orders found"}
+                emptyContent={"No menus found"}
                 items={filteredItems}
                 isLoading={isPending}
                 loadingContent={<Loader2 className="animate-spin" />}
