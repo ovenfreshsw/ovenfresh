@@ -162,6 +162,7 @@ export default function TiffinForm() {
         setAddressInput({ address: address.description, key: 0 });
         form.setValue("customerDetails.lat", 0);
         form.setValue("customerDetails.lng", 0);
+        form.setValue("customerDetails.address", address.description);
     }
 
     function setSelectedCustomer(customer: CustomerSearchResult) {
