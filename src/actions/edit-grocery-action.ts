@@ -27,6 +27,7 @@ export async function editGroceryAction(formData: FormData) {
                 price: result.data.price,
                 tax: result.data.tax,
                 total: result.data.total,
+                purchasedFrom: result.data.purchasedFrom,
                 date: result.data.date,
             },
         });

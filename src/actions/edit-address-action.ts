@@ -21,6 +21,7 @@ type ValidatedDataType = {
     deliveryDate: Date;
     start_date: Date;
     end_date: Date;
+    order_type: "pickup" | "delivery";
 };
 
 export async function editAddressAction(formData: FormData) {
@@ -37,6 +38,7 @@ export async function editAddressAction(formData: FormData) {
             startDate,
             endDate,
             aptSuiteUnit,
+            order_type,
         } = Object.fromEntries(formData.entries());
 
         if (!orderId || !orderType) {
@@ -57,6 +59,7 @@ export async function editAddressAction(formData: FormData) {
                       address: true,
                       aptSuiteUnit: true,
                       deliveryDate: true,
+                      order_type: true,
                   })
                 : ZodCustomerSchema.merge(ZodTiffinSchema).pick({
                       address: true,
@@ -71,6 +74,7 @@ export async function editAddressAction(formData: FormData) {
             aptSuiteUnit,
             start_date: startDate,
             end_date: endDate,
+            order_type,
         });
 
         if (!validated.success) {
@@ -161,6 +165,7 @@ export async function editAddressAction(formData: FormData) {
 // Define the type for updateData
 type UpdateDataType = {
     address?: string;
+    order_type?: string;
     deliveryDate?: string;
     startDate?: string;
     endDate?: string;
@@ -182,6 +187,7 @@ async function updateOrder(
             new Date(data.deliveryDate),
             "yyyy-MM-dd"
         );
+        updateData.order_type = data.order_type;
         await Catering.updateOne({ _id: orderId }, { $set: updateData });
     } else {
         updateData.startDate = format(new Date(data.start_date), "yyyy-MM-dd");

@@ -2,9 +2,9 @@ import { error403, error500, success200 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
-import Catering from "@/models/cateringModel";
 import DeliveryImage from "@/models/deliveryImageModel";
 import Store from "@/models/storeModel";
+import Tiffin from "@/models/tiffinModel";
 import User from "@/models/userModel";
 
 async function getHandler(req: AuthenticatedRequest) {
@@ -15,7 +15,7 @@ async function getHandler(req: AuthenticatedRequest) {
             .populate({ path: "user", model: User, select: "username" })
             .populate({
                 path: "order",
-                model: Catering,
+                model: Tiffin,
                 select: "orderId _id",
             })
             .populate({
@@ -36,6 +36,8 @@ async function getHandler(req: AuthenticatedRequest) {
             })),
         });
     } catch (error) {
+        console.log(error);
+
         if (error instanceof Error) return error500({ error: error.message });
         else return error500({ error: "An unknown error occurred" });
     }

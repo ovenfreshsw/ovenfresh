@@ -25,7 +25,7 @@ const PaymentSelect = ({ form }: PaymentSelectProps) => {
     return (
         <Select
             value={(form as CateringType).watch("payment_method")} // Watch the selected value
-            onValueChange={(val: "card" | "cash") => {
+            onValueChange={(val: "card" | "cash" | "e-transfer") => {
                 (form as CateringType).setValue("payment_method", val);
                 dispatch(setPaymentMethod(val));
             }}
@@ -39,6 +39,7 @@ const PaymentSelect = ({ form }: PaymentSelectProps) => {
             <SelectContent>
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="card">Card</SelectItem>
+                <SelectItem value="e-transfer">E-Transfer</SelectItem>
             </SelectContent>
         </Select>
     );

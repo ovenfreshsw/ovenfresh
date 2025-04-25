@@ -191,6 +191,9 @@ const EditPaymentDialog = ({
                             <SelectContent className="z-[1560]">
                                 <SelectItem value="cash">Cash</SelectItem>
                                 <SelectItem value="card">Card</SelectItem>
+                                <SelectItem value="e-transfer">
+                                    E-Transfer
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

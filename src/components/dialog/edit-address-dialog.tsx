@@ -27,6 +27,13 @@ import { useSearchAddress } from "@/api-hooks/use-search-address";
 import { useDebounce } from "@/hooks/use-debounce";
 import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
 import { Textarea } from "../ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "../ui/select";
 
 function isGapInWeeks(
     startDate: Date,
@@ -54,6 +61,7 @@ const EditAddressDialog = ({
     startDate,
     endDate,
     numberOfWeeks,
+    type,
 }: {
     orderId: string;
     orderType: "catering" | "tiffin";
@@ -62,6 +70,7 @@ const EditAddressDialog = ({
     deliveryDate?: Date;
     startDate?: Date;
     endDate?: Date;
+    type?: "pickup" | "delivery";
 }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -70,6 +79,7 @@ const EditAddressDialog = ({
         key: 0,
     });
     const [placeId, setPlaceId] = useState<string>(address.placeId);
+    const [order_type, setOrder_Type] = useState(type);
     const [dDate, setDDate] = useState<Date | undefined>(deliveryDate);
     const [sDate, setSDate] = useState<Date | undefined>(startDate);
     const [eDate, setEDate] = useState<Date | undefined>(
@@ -94,6 +104,7 @@ const EditAddressDialog = ({
         if (dDate) formData.append("deliveryDate", dDate.toString());
         if (sDate) formData.append("startDate", sDate.toString());
         if (eDate) formData.append("endDate", eDate.toString());
+        if (order_type) formData.append("order_type", order_type);
 
         setLoading(true);
 
@@ -334,6 +345,36 @@ const EditAddressDialog = ({
                                 </Alert>
                             )}
                         </>
+                    )}
+                    {orderType === "catering" && type && (
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="order_type" className="text-right">
+                                Order Type
+                            </Label>
+                            <Select
+                                value={order_type}
+                                onValueChange={(value) =>
+                                    setOrder_Type(
+                                        value as "pickup" | "delivery"
+                                    )
+                                }
+                            >
+                                <SelectTrigger
+                                    id="order_type"
+                                    className="col-span-3"
+                                >
+                                    <SelectValue placeholder="order type" />
+                                </SelectTrigger>
+                                <SelectContent className="z-[1560]">
+                                    <SelectItem value="pickup">
+                                        Pickup
+                                    </SelectItem>
+                                    <SelectItem value="delivery">
+                                        Delivery
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     )}
                 </form>
                 <DialogFooter>

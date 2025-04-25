@@ -5,7 +5,7 @@ const DeliveryImageSchema = new Schema<DeliveryImageDocument>(
     {
         order: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Catering",
+            ref: "Tiffin",
             required: true,
         },
         store: {

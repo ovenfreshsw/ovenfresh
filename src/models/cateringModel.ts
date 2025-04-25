@@ -83,6 +83,7 @@ const CateringSchema = new Schema<CateringDocument>(
         },
         tax: Number,
         deliveryCharge: Number,
+        discount: Number,
         note: String,
         order_type: {
             type: String,

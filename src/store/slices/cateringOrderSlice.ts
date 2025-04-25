@@ -23,6 +23,7 @@ const initialState: CateringOrderState = {
     deliveryCharge: 0,
     advancePaid: 0,
     pendingBalance: 0,
+    discount: 0,
     fullyPaid: false,
     order_type: "delivery",
 };
@@ -53,7 +54,10 @@ export const cateringOrderSlice = createSlice({
             };
         },
 
-        setPaymentMethod: (state, action: PayloadAction<"card" | "cash">) => {
+        setPaymentMethod: (
+            state,
+            action: PayloadAction<"card" | "cash" | "e-transfer">
+        ) => {
             state.payment_method = action.payload;
         },
 
@@ -85,6 +89,10 @@ export const cateringOrderSlice = createSlice({
             state.deliveryCharge = action.payload;
         },
 
+        setDiscount: (state, action: PayloadAction<number>) => {
+            state.discount = action.payload;
+        },
+
         setOrderType: (state, action: PayloadAction<"pickup" | "delivery">) => {
             state.order_type = action.payload;
         },
@@ -104,6 +112,7 @@ export const {
     setTotalPrice,
     setTaxAmount,
     setDeliveryCharge,
+    setDiscount,
     setOrderType,
 } = cateringOrderSlice.actions;
 

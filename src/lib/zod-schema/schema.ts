@@ -48,13 +48,14 @@ export const ZodCateringSchema = z.object({
             })
         )
         .min(1),
-    payment_method: z.enum(["cash", "card"]),
+    payment_method: z.enum(["cash", "card", "e-transfer"]),
     note: z.string().optional(),
     totalPrice: z.number(),
     tax: z.number(),
     deliveryCharge: z.number(),
     advancePaid: z.number(),
     pendingBalance: z.number(),
+    discount: z.number(),
     fullyPaid: z.boolean(),
     order_type: z.enum(["pickup", "delivery"]),
 });
@@ -78,11 +79,12 @@ export const ZodTiffinSchema = z.object({
     start_date: z.string(),
     end_date: z.string(),
     number_of_weeks: z.string().min(1),
-    payment_method: z.enum(["cash", "card"]),
+    payment_method: z.enum(["cash", "card", "e-transfer"]),
     totalAmount: z.string().min(1),
     tax: z.number(),
     pendingAmount: z.string().optional(),
     advancePaid: z.string().optional(),
+    discount: z.string().optional(),
     note: z.string().optional(),
     order_type: z.enum(["pickup", "delivery"]),
 });
@@ -94,6 +96,7 @@ export const ZodGrocerySchema = z.object({
     price: z.string(),
     tax: z.string(),
     total: z.string(),
+    purchasedFrom: z.string(),
     date: z
         .string()
         .refine((val) => !isNaN(Date.parse(val)), {

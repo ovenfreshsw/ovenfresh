@@ -70,6 +70,7 @@ export const columns = [
     { name: "PAYMENT METHOD", uid: "paymentMethod" },
     { name: "ADVANCE PAID", uid: "advancePaid" },
     { name: "PENDING BALANCE", uid: "pendingBalance" },
+    { name: "DISCOUNT", uid: "discount" },
     { name: "TAX", uid: "tax" },
     { name: "TOTAL", uid: "totalPrice" },
     { name: "FULLY PAID", uid: "fullyPaid" },
@@ -151,7 +152,7 @@ export default function CateringOrderTable({
             Array.from(statusFilter).length !== statusOptions.length
         ) {
             filteredOrders = filteredOrders.filter((order) =>
-                Array.from(statusFilter).includes(order.status)
+                Array.from(statusFilter).includes(order.status.toLowerCase())
             );
         }
 
@@ -203,6 +204,10 @@ export default function CateringOrderTable({
                     return <p className="text-center">{`$${cellValue}`}</p>;
                 case "pendingBalance":
                     return <p className="text-center">{`$${cellValue}`}</p>;
+                case "discount":
+                    return (
+                        <p className="text-center">{`$${cellValue ?? 0}`}</p>
+                    );
                 case "tax":
                     return <p className="text-center">{`$${cellValue}`}</p>;
                 case "totalPrice":

@@ -133,6 +133,17 @@ const GroceryForm = ({
                 />
             </div>
             <div className="grid grid-cols-4 gap-2 items-center">
+                <Label htmlFor="purchasedFrom" className="text-right">
+                    Purchased from
+                </Label>
+                <Input
+                    placeholder="Store name"
+                    name="purchasedFrom"
+                    type="text"
+                    className="col-span-3"
+                />
+            </div>
+            <div className="grid grid-cols-4 gap-2 items-center">
                 <Label htmlFor="date" className="text-right">
                     Date
                 </Label>

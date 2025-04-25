@@ -11,13 +11,14 @@ export interface CateringOrderState {
         lat: string;
         lng: string;
     };
-    payment_method: "cash" | "card";
+    payment_method: "cash" | "card" | "e-transfer";
     note?: string;
     totalPrice: number;
     tax: number;
     deliveryCharge: number;
     advancePaid: number;
     pendingBalance: number;
+    discount: number;
     fullyPaid: boolean;
     order_type: "pickup" | "delivery";
 }

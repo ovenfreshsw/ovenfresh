@@ -36,7 +36,6 @@ const StoreDisplay = async () => {
                     </Show.When>
                     <Show.When isTrue={session.user.role === "SUPERADMIN"}>
                         <StoreSelect
-                            active={store.id}
                             stores={allStores.map((store) => ({
                                 id: store._id.toString(),
                                 location: store.location,

@@ -16,6 +16,7 @@ export interface TiffinDocument {
     numberOfWeeks: number;
     paymentMethod: string;
     advancePaid: number;
+    discount: number;
     pendingBalance: number;
     fullyPaid: boolean;
     totalPrice: number;

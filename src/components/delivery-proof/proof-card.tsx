@@ -58,7 +58,7 @@ const ProofCard = ({ order }: { order: DeliveryProof }) => {
                             <TooltipTrigger asChild>
                                 <Button size="icon" variant="outline" asChild>
                                     <Link
-                                        href={`/dashboard/orders/catering-${order.orderId}?mid=${order.order_id}`}
+                                        href={`/dashboard/orders/tiffin-${order.orderId}?mid=${order.order_id}`}
                                     >
                                         <SquareArrowOutUpRight className="size-4" />
                                     </Link>

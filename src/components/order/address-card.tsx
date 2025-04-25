@@ -37,6 +37,7 @@ const AddressCard = ({
                     startDate={startDate}
                     orderId={orderId}
                     orderType={orderType}
+                    type={order_type}
                     numberOfWeeks={numberOfWeeks}
                 />
             </CardHeader>

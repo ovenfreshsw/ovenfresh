@@ -1,12 +1,17 @@
 "use client";
 
-import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import {
+    CldUploadWidget,
+    CloudinaryUploadWidgetInfo,
+    CloudinaryUploadWidgetOptions,
+} from "next-cloudinary";
 
 const Upload = ({
     setResource,
     folder,
     children,
     defaultSource = "camera",
+    sources = ["camera", "local"],
     extraOptions,
 }: {
     setResource: React.Dispatch<
@@ -15,6 +20,7 @@ const Upload = ({
     folder: string;
     children: React.ReactNode;
     defaultSource?: string;
+    sources?: CloudinaryUploadWidgetOptions["sources"];
     extraOptions?: Partial<CloudinaryUploadWidgetInfo>;
 }) => {
     return (
@@ -23,7 +29,7 @@ const Upload = ({
             options={{
                 folder,
                 defaultSource,
-                sources: ["camera", "local"],
+                sources,
                 ...extraOptions,
             }}
             onSuccess={(result) => {

@@ -126,7 +126,7 @@ const SortedOrderList = ({
                                     <Show.When
                                         isTrue={
                                             order.status !== "DELIVERED" &&
-                                            orderType === "catering"
+                                            orderType === "tiffin"
                                         }
                                     >
                                         <div className="flex gap-2">
@@ -147,6 +147,7 @@ const SortedOrderList = ({
                                                         setResource={
                                                             setResource
                                                         }
+                                                        sources={["camera"]}
                                                         extraOptions={{
                                                             cropping: true,
                                                             multiple: false,
@@ -188,10 +189,11 @@ const SortedOrderList = ({
                                         orderType={orderType}
                                         pendingBalance={order.pendingBalance}
                                         disabled={
-                                            orderType === "catering"
+                                            orderType === "tiffin"
                                                 ? !resource
                                                 : false
                                         }
+                                        statusId={order.statusId}
                                         resource={resource}
                                     />
                                 </Show.Else>

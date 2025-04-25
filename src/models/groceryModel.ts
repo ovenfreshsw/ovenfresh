@@ -31,6 +31,7 @@ const GrocerySchema = new Schema<GroceryDocument>(
             type: Number,
             required: true,
         },
+        purchasedFrom: String,
         date: {
             type: Date,
             required: true,

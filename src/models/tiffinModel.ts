@@ -54,6 +54,10 @@ const TiffinSchema = new Schema<TiffinDocument>(
             type: Number,
             required: true,
         },
+        discount: {
+            type: Number,
+            required: true,
+        },
         fullyPaid: {
             type: Boolean,
             default: false,

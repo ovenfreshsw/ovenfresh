@@ -18,10 +18,11 @@ async function patchHandler(req: AuthenticatedRequest) {
             return error403();
         const body = await req.json();
         const orderId = body.orderId;
+        const statusId = body.statusId;
         const orderType = body.orderType;
         const collect = body.collect;
 
-        // If order is catering
+        // If order is tiffin
         const resource = {
             url: body.url,
             publicId: body.publicId,
@@ -42,21 +43,30 @@ async function patchHandler(req: AuthenticatedRequest) {
 
         if (orderType === "tiffin") {
             const orderStatus = await TiffinOrderStatus.findByIdAndUpdate(
-                orderId,
+                statusId,
                 {
                     status: "DELIVERED",
                 },
                 { new: true }
             );
+
             const queries: unknown = [
                 SortedOrders.findOneAndUpdate(
                     {
                         date: format(new Date(), "yyyy-MM-dd"),
                         store: storeId,
-                        [`${zone}.tiffin.order`]: orderId,
+                        [`${zone}.tiffin.order`]: statusId,
                     },
                     { $set: { [`${zone}.tiffin.$.status`]: "DELIVERED" } }
                 ),
+                DeliveryImage.create({
+                    order: orderId,
+                    store: storeId,
+                    user: session.user.id,
+                    deliveryDate: format(new Date(), "yyyy-MM-dd"),
+                    image: resource.url,
+                    publicId: resource.publicId,
+                }),
             ];
             if (collect && orderStatus) {
                 // @ts-expect-error: Type 'Promise<void>[]' is not assignable to type 'Promise<unknown>[]'.
@@ -81,18 +91,6 @@ async function patchHandler(req: AuthenticatedRequest) {
                     },
                     { $set: { [`${zone}.catering.$.status`]: "DELIVERED" } }
                 ),
-                DeliveryImage.findOneAndReplace(
-                    { order: orderId },
-                    {
-                        order: orderId,
-                        store: storeId,
-                        user: session.user.id,
-                        deliveryDate: format(new Date(), "yyyy-MM-dd"),
-                        image: resource.url,
-                        publicId: resource.publicId,
-                    },
-                    { upsert: true }
-                ),
             ];
 
             if (collect) {
@@ -109,6 +107,8 @@ async function patchHandler(req: AuthenticatedRequest) {
 
         return success200({});
     } catch (error) {
+        console.log(error);
+
         if (error instanceof Error) return error500({ error: error.message });
         return error500({ error: "An unknown error occurred." });
     }

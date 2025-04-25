@@ -46,6 +46,7 @@ export function TiffinConfirmDrawer({
     tiffinMenu?: TiffinMenuDocument | null;
 }) {
     const [advanceAmount, setAdvanceAmount] = React.useState("");
+    const [discountAmount, setDiscountAmount] = React.useState("");
     const [pendingAmount, setPendingAmount] = React.useState(0);
     const [note, setNote] = React.useState("");
     const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -72,6 +73,18 @@ export function TiffinConfirmDrawer({
         }
     };
 
+    const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (
+            value === "" ||
+            (Number.parseFloat(value) > 0 &&
+                Number.parseFloat(value) <=
+                    Number(form.getValues("totalAmount")))
+        ) {
+            setDiscountAmount(value);
+        }
+    };
+
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
@@ -92,9 +105,11 @@ export function TiffinConfirmDrawer({
                         <TiffinDialogContent
                             form={form}
                             advanceAmount={advanceAmount}
+                            discountAmount={discountAmount}
                             note={note}
                             setNote={setNote}
                             handleAdvanceChange={handleAdvanceChange}
+                            handleDiscountChange={handleDiscountChange}
                             pendingAmount={pendingAmount}
                             setPendingAmount={setPendingAmount}
                         />
@@ -128,6 +143,7 @@ export function TiffinConfirmDrawer({
                                 form="tiffin-form"
                                 onClick={() => {
                                     form.setValue("advancePaid", advanceAmount);
+                                    form.setValue("discount", discountAmount);
                                     form.setValue(
                                         "pendingAmount",
                                         pendingAmount.toString()
@@ -161,6 +177,8 @@ export function TiffinConfirmDrawer({
                         form={form}
                         advanceAmount={advanceAmount}
                         handleAdvanceChange={handleAdvanceChange}
+                        discountAmount={discountAmount}
+                        handleDiscountChange={handleDiscountChange}
                         note={note}
                         setNote={setNote}
                         pendingAmount={pendingAmount}

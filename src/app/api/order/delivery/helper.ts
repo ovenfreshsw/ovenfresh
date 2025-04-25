@@ -18,7 +18,7 @@ async function getSortedTiffinOrderDetails(storeId: string, zone: number) {
         populate: {
             path: "orderId",
             model: Tiffin,
-            select: "customerName customerPhone orderId fullyPaid _id pendingBalance totalAmount advancePaid",
+            select: "customerName customerPhone orderId fullyPaid _id pendingBalance totalAmount advancePaid _id",
             populate: {
                 path: "address",
                 model: Address,
@@ -31,7 +31,8 @@ async function getSortedTiffinOrderDetails(storeId: string, zone: number) {
 
     const formattedOrders = orders.map(
         (order: { order: TiffinOrderStatusDocumentPopulate }) => ({
-            _id: order.order._id.toString(),
+            _id: order.order.orderId._id.toString(),
+            statusId: order.order._id.toString(),
             orderId: order.order.orderId.orderId,
             customerName: order.order.orderId.customerName,
             customerPhone: order.order.orderId.customerPhone,

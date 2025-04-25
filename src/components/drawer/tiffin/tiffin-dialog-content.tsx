@@ -17,7 +17,9 @@ import { z } from "zod";
 type TiffinDialogContentProps = {
     form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>;
     advanceAmount: string;
+    discountAmount: string;
     handleAdvanceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleDiscountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     note: string;
     setNote: React.Dispatch<React.SetStateAction<string>>;
     pendingAmount: number;
@@ -27,9 +29,11 @@ type TiffinDialogContentProps = {
 const TiffinDialogContent = ({
     form,
     advanceAmount,
+    discountAmount,
     note,
     setNote,
     handleAdvanceChange,
+    handleDiscountChange,
     pendingAmount,
     setPendingAmount,
 }: TiffinDialogContentProps) => {
@@ -48,12 +52,23 @@ const TiffinDialogContent = ({
 
         if (noTax) {
             form.setValue("tax", 0, { shouldValidate: true });
-            setPendingAmount(total - Number(advanceAmount) - tax);
+            setPendingAmount(
+                total - Number(advanceAmount) - Number(discountAmount) - tax
+            );
         } else {
             form.setValue("tax", tax, { shouldValidate: true });
-            setPendingAmount(total - Number(advanceAmount));
+            setPendingAmount(
+                total - Number(advanceAmount) - Number(discountAmount)
+            );
         }
-    }, [form, setPendingAmount, noTax, advanceAmount, setSubtotal]);
+    }, [
+        form,
+        setPendingAmount,
+        noTax,
+        advanceAmount,
+        discountAmount,
+        setSubtotal,
+    ]);
 
     const orderDetails = {
         firstName: form.getValues("customerDetails.firstName"),
@@ -118,6 +133,16 @@ const TiffinDialogContent = ({
                         placeholder="Enter advance amount"
                         value={advanceAmount}
                         onChange={handleAdvanceChange}
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="discount">Discount</Label>
+                    <Input
+                        id="discount"
+                        type="number"
+                        placeholder="Enter discount amount"
+                        value={discountAmount}
+                        onChange={handleDiscountChange}
                     />
                 </div>
                 <div>

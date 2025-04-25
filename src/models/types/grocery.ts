@@ -9,5 +9,6 @@ export interface GroceryDocument {
     price: number;
     tax: number;
     total: number;
+    purchasedFrom: string;
     date: Date;
 }

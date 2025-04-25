@@ -63,6 +63,7 @@ export default function TiffinForm() {
             order_type: "pickup",
             advancePaid: "",
             pendingAmount: "",
+            discount: "",
             customerDetails: {
                 address: "",
                 firstName: "",

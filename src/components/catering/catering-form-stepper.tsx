@@ -95,6 +95,8 @@ export default function CateringFormStepper() {
         };
         const result = ZodCateringSchema.safeParse(data);
 
+        console.log(data);
+
         if (result.success) {
             mutation.mutate({
                 ...data,

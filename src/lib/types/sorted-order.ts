@@ -10,6 +10,7 @@ export type ClusteredOrderProps = {
 export type DeliveryRes = {
     _id: string;
     orderId: string;
+    statusId?: string;
     customerName: string;
     customerPhone: string;
     status: string;

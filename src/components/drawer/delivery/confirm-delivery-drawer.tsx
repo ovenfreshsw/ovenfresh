@@ -26,10 +26,12 @@ export function ConfirmDeliveryDrawer({
     pendingBalance,
     disabled = false,
     resource,
+    statusId,
 }: {
     orderType: "catering" | "tiffin";
     orderId: string;
     pendingBalance: number;
+    statusId?: string;
     disabled?: boolean;
     resource?: string | CloudinaryUploadWidgetInfo | undefined;
 }) {
@@ -88,6 +90,7 @@ export function ConfirmDeliveryDrawer({
                         onClick={() =>
                             mutation.mutate({
                                 orderId,
+                                statusId,
                                 orderType,
                                 resource,
                                 collect,

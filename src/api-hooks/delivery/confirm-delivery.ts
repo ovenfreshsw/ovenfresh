@@ -11,17 +11,20 @@ import { toast } from "sonner";
 export async function handleConfirm({
     orderType,
     orderId,
+    statusId,
     resource,
     collect,
 }: {
     orderType: "catering" | "tiffin";
     orderId: string;
+    statusId?: string;
     resource?: string | CloudinaryUploadWidgetInfo | undefined;
     collect: boolean;
 }) {
     const { data: result } = await axios.patch("/api/order/delivery/confirm", {
         orderId,
         orderType,
+        statusId,
         collect,
         url: (resource as CloudinaryUploadWidgetInfo)?.secure_url,
         publicId: (resource as CloudinaryUploadWidgetInfo)?.public_id,

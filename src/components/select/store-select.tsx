@@ -17,10 +17,8 @@ import { useDispatch } from "react-redux";
 import { setState } from "@/store/slices/selectStoreSlice";
 
 const StoreSelect = ({
-    active,
     stores,
 }: {
-    active?: string;
     stores: { id: string; location: string }[];
 }) => {
     const { update } = useSession();
@@ -36,13 +34,14 @@ const StoreSelect = ({
                 queryKey: ["order"],
             }),
             queryClient.invalidateQueries({
-                queryKey: ["menu", "tiffin"],
+                queryKey: ["groceries"],
             }),
         ]);
     };
+
     return (
         <Select
-            value={active ? active : value} // Watch the selected value
+            value={value} // Watch the selected value
             onValueChange={onValueChange} // Call the onValueChange function when the value changes
         >
             <SelectTrigger className="bg-primary-foreground text-primary w-fit md:w-auto">

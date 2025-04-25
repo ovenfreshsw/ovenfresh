@@ -23,6 +23,7 @@ export interface CateringDocument {
     pendingBalance: number;
     fullyPaid: boolean;
     paymentMethod: string;
+    discount: number;
     order_type: "pickup" | "delivery";
     totalPrice: number;
     tax: number;

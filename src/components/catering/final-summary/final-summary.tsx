@@ -14,6 +14,7 @@ import FinalItemCard from "./final-item-card";
 import {
     setAdvancePaid,
     setDeliveryCharge,
+    setDiscount,
     setFullyPaid,
     setNote,
     setPendingBalance,
@@ -51,6 +52,13 @@ export default function FinalSummary({
         }
     };
 
+    const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value === "" || Number.parseFloat(value) > 0) {
+            dispatch(setDiscount(Number(value)));
+        }
+    };
+
     const address = {
         ...form.getValues("customerDetails"),
         deliveryDate: form.getValues("deliveryDate"),
@@ -77,12 +85,26 @@ export default function FinalSummary({
 
     useEffect(() => {
         dispatch(
-            setPendingBalance(orderDetail.totalPrice - orderDetail.advancePaid)
+            setPendingBalance(
+                orderDetail.totalPrice -
+                    orderDetail.advancePaid -
+                    orderDetail.discount
+            )
         );
         dispatch(
-            setFullyPaid(orderDetail.totalPrice - orderDetail.advancePaid <= 0)
+            setFullyPaid(
+                orderDetail.totalPrice -
+                    orderDetail.advancePaid -
+                    orderDetail.discount <=
+                    0
+            )
         );
-    }, [orderDetail.totalPrice, orderDetail.advancePaid, dispatch]);
+    }, [
+        orderDetail.totalPrice,
+        orderDetail.advancePaid,
+        orderDetail.discount,
+        dispatch,
+    ]);
 
     useEffect(() => {
         form.setValue("totalPrice", orderDetail.totalPrice);
@@ -91,11 +113,14 @@ export default function FinalSummary({
     useEffect(() => {
         dispatch(
             setPendingBalance(
-                Number(form.getValues("totalPrice")) - orderDetail.advancePaid
+                Number(form.getValues("totalPrice")) -
+                    orderDetail.advancePaid -
+                    orderDetail.discount
             )
         );
     }, [
         orderDetail.advancePaid,
+        orderDetail.discount,
         form.formState.isDirty,
         orderItems,
         dispatch,
@@ -161,6 +186,10 @@ export default function FinalSummary({
                                 </div>
                             </div>
                             <div className="flex justify-between">
+                                <span>Delivery Charge</span>
+                                <span>${orderDetail.deliveryCharge}</span>
+                            </div>
+                            <div className="flex justify-between">
                                 <span>Advance Paid</span>
                                 <span>
                                     {orderDetail.advancePaid > 0 && "-"} $
@@ -168,8 +197,11 @@ export default function FinalSummary({
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span>Delivery Charge</span>
-                                <span>${orderDetail.deliveryCharge}</span>
+                                <span>Discount</span>
+                                <span>
+                                    {orderDetail.discount > 0 && "-"} $
+                                    {orderDetail.discount}
+                                </span>
                             </div>
                             <div className="flex justify-between">
                                 <span>Total</span>
@@ -255,6 +287,19 @@ export default function FinalSummary({
                                     placeholder="Enter advance amount"
                                     value={orderDetail.advancePaid}
                                     onChange={handleAdvanceChange}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="discount-amount">
+                                    Discount
+                                </Label>
+                                <Input
+                                    id="discount-amount"
+                                    type="number"
+                                    step=""
+                                    placeholder="Enter a discount amount"
+                                    value={orderDetail.discount}
+                                    onChange={handleDiscountChange}
                                 />
                             </div>
                             <div className="space-y-2">
