@@ -33,3 +33,9 @@ export interface CateringItemsState {
     priceAtOrder: number;
     variant?: string;
 }
+
+export interface CateringCustomItemState {
+    name: string;
+    size: string;
+    priceAtOrder: number;
+}

@@ -19,6 +19,11 @@ export interface CateringDocument {
         quantity: number;
         size: string;
     }[];
+    customItems: {
+        name: string;
+        size: string;
+        priceAtOrder: number;
+    }[];
     advancePaid: number;
     pendingBalance: number;
     fullyPaid: boolean;

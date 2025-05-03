@@ -5,8 +5,8 @@ import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import Grocery from "@/models/groceryModel";
 import Store from "@/models/storeModel";
-import Tiffin from "@/models/tiffinModel";
 import { format } from "date-fns";
+import { calculateTiffinTotal } from "./helper";
 
 async function getHandler(req: AuthenticatedRequest) {
     try {
@@ -23,7 +23,8 @@ async function getHandler(req: AuthenticatedRequest) {
 
         const queryPromise = stores.map(async (store) => {
             const [tiffinTotal, cateringTotal, expense] = await Promise.all([
-                await Tiffin.aggregate([
+                calculateTiffinTotal(Number(year), monthNumber, store),
+                Catering.aggregate([
                     {
                         $project: {
                             totalPrice: 1,
@@ -40,24 +41,7 @@ async function getHandler(req: AuthenticatedRequest) {
                         },
                     },
                 ]),
-                await Catering.aggregate([
-                    {
-                        $project: {
-                            totalPrice: 1,
-                            store: 1,
-                            month: { $month: "$createdAt" },
-                            year: { $year: "$createdAt" },
-                        },
-                    },
-                    {
-                        $match: {
-                            month: monthNumber,
-                            store: store._id,
-                            year: Number(year),
-                        },
-                    },
-                ]),
-                await Grocery.aggregate([
+                Grocery.aggregate([
                     {
                         $project: {
                             total: 1,
@@ -76,10 +60,6 @@ async function getHandler(req: AuthenticatedRequest) {
                 ]),
             ]);
 
-            const tiffinSum = tiffinTotal.reduce(
-                (sum, tiffin) => sum + tiffin.totalPrice,
-                0
-            );
             const cateringSum = cateringTotal.reduce(
                 (sum, catering) => sum + catering.totalPrice,
                 0
@@ -91,9 +71,9 @@ async function getHandler(req: AuthenticatedRequest) {
 
             return {
                 store: store.location,
-                totalRevenue: tiffinSum + cateringSum,
+                totalRevenue: tiffinTotal + cateringSum,
                 totalExpense: grocerySum,
-                totalProfit: tiffinSum + cateringSum - grocerySum,
+                totalProfit: tiffinTotal + cateringSum - grocerySum,
             };
         });
 

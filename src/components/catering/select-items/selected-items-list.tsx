@@ -10,7 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
+import { ImageIcon, Trash2 } from "lucide-react";
 import { Divider } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -19,20 +19,29 @@ import { removeItem } from "@/store/slices/cateringItemSlice";
 import { PaymentDetailsDrawer } from "@/components/drawer/catering/payment-details-drawer";
 import { OrderListDrawer } from "@/components/drawer/catering/order-list-drawer";
 import Image from "next/image";
+import { removeCustomItem } from "@/store/slices/cateringCustomItemSlice";
 
 export function SelectedItemsList() {
     const cateringOrder = useSelector((state: RootState) => state.cateringItem);
+    const cateringCustomItem = useSelector(
+        (state: RootState) => state.cateringCustomItem
+    );
     const dispatch = useDispatch();
 
-    const total = cateringOrder.reduce(
-        (acc, item) => acc + item.priceAtOrder * item.quantity,
-        0
-    );
+    const total =
+        cateringOrder.reduce(
+            (acc, item) => acc + item.priceAtOrder * item.quantity,
+            0
+        ) +
+        cateringCustomItem.reduce((acc, item) => acc + item.priceAtOrder, 0);
     const tax = (total * Number(process.env.NEXT_PUBLIC_TAX_AMOUNT || 0)) / 100;
     const totalPayment = total + tax;
 
     const handleRemoveItem = (id: string, size: string) => {
         dispatch(removeItem({ _id: id, size }));
+    };
+    const handleRemoveCustomItem = (name: string) => {
+        dispatch(removeCustomItem({ name }));
     };
 
     return (
@@ -45,7 +54,8 @@ export function SelectedItemsList() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="w-full px-4">
-                    {cateringOrder.length === 0 ? (
+                    {cateringOrder.length === 0 &&
+                    cateringCustomItem.length === 0 ? (
                         <div className="text-center py-8 text-muted-foreground">
                             No items selected yet. Please select items from the
                             menu.
@@ -97,6 +107,44 @@ export function SelectedItemsList() {
                                                 handleRemoveItem(
                                                     item._id,
                                                     item.size
+                                                )
+                                            }
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                            {cateringCustomItem.map((item, index) => (
+                                <div
+                                    className="flex flex-col p-3 pb-2 border rounded-md"
+                                    key={index + item.name}
+                                >
+                                    <div className="flex items-start mb-1 gap-2">
+                                        <div className="rounded-md size-14 bg-gray-200 flex justify-center items-center">
+                                            <ImageIcon size={15} />
+                                        </div>
+                                        <div>
+                                            <div className="font-medium flex items-center gap-1">
+                                                {item.name}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground capitalize">
+                                                {item.size} - ${" "}
+                                                {item.priceAtOrder.toFixed(2)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <div className="font-medium">
+                                            $ {item.priceAtOrder.toFixed(2)}
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8"
+                                            onClick={() =>
+                                                handleRemoveCustomItem(
+                                                    item.name
                                                 )
                                             }
                                         >

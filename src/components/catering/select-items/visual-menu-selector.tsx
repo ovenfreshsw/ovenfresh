@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MenuItemCard from "./menu-item-card";
 import React from "react";
 import { CateringMenuDocumentPopulate } from "@/models/types/catering-menu";
+import AddCustomItemDialog from "@/components/dialog/add-custom-item-dialog";
 
 type VisualMenuSelectorProps = {
     menuItems: CateringMenuDocumentPopulate[];
@@ -27,11 +28,14 @@ export function VisualMenuSelector({ menuItems }: VisualMenuSelectorProps) {
 
     return (
         <Card>
-            <CardHeader className="px-3.5 pt-3.5 md:px-6 md:pt-6">
-                <CardTitle className="text-lg">Menu Items</CardTitle>
-                <CardDescription>
-                    Select items from our menu to add to the order
-                </CardDescription>
+            <CardHeader className="px-3.5 pt-3.5 md:px-6 md:pt-6 flex-row justify-between items-center">
+                <div>
+                    <CardTitle className="text-lg">Menu Items</CardTitle>
+                    <CardDescription>
+                        Select items from our menu to add to the order
+                    </CardDescription>
+                </div>
+                <AddCustomItemDialog />
             </CardHeader>
             <CardContent className="px-3.5 pb-3.5 md:px-6 md:pb-6">
                 <Tabs defaultValue={categories[0]} className="w-full">

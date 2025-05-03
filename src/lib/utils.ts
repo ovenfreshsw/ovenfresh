@@ -279,6 +279,23 @@ function getMonthInNumber(month: string) {
     return monthMap[month];
 }
 
+function addWeekdays(startDate: string, numberOfWeeks: number) {
+    const start = new Date(startDate);
+    const totalWeekdays = numberOfWeeks * 5;
+    let addedDays = 1; // We count the start date as day 1
+    const current = new Date(start);
+
+    while (addedDays < totalWeekdays) {
+        current.setDate(current.getDate() + 1);
+        const day = current.getDay();
+        if (day !== 0 && day !== 6) {
+            addedDays++;
+        }
+    }
+
+    return current;
+}
+
 export {
     cn,
     isRestricted,
@@ -293,4 +310,5 @@ export {
     calculatePercentageChange,
     getMonthInNumber,
     getYearsUpToCurrent,
+    addWeekdays,
 };

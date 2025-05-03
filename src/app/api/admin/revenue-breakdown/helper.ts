@@ -1,6 +1,6 @@
 import Catering from "@/models/cateringModel";
-import Tiffin from "@/models/tiffinModel";
 import { StoreDocument } from "@/models/types/store";
+import { calculateTiffinTotal } from "../profit-details/helper";
 
 async function formatRevenueBreakdown(
     stores: StoreDocument[],
@@ -18,19 +18,9 @@ async function formatRevenueBreakdown(
         };
 
         // Single Promise.all for each store to fetch Tiffin and Catering data
-        const [tiffinDocs, cateringDocs] = await Promise.all([
+        const [tiffinTotal, cateringDocs] = await Promise.all([
             // Fetch Tiffin data for current and previous months
-            Tiffin.aggregate([
-                {
-                    $project: {
-                        totalPrice: 1,
-                        store: 1,
-                        month: { $month: "$createdAt" },
-                        year: { $year: "$createdAt" },
-                    },
-                },
-                { $match: { month: monthNumber, store: store._id, year } },
-            ]),
+            calculateTiffinTotal(year, monthNumber, store),
             // Fetch Catering data for current and previous months
             Catering.aggregate([
                 {
@@ -45,10 +35,7 @@ async function formatRevenueBreakdown(
             ]),
         ]);
 
-        storeRevenue.tiffin = tiffinDocs.reduce(
-            (total, doc) => total + doc.totalPrice,
-            0
-        );
+        storeRevenue.tiffin = tiffinTotal;
         storeRevenue.catering = cateringDocs.reduce(
             (total, doc) => total + doc.totalPrice,
             0

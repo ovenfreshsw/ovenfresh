@@ -1,5 +1,6 @@
 "use server";
 
+import { createOrderStatus } from "@/app/api/order/tiffin/helper";
 import { getPlaceDetails } from "@/lib/google";
 import connectDB from "@/lib/mongodb";
 import {
@@ -10,7 +11,9 @@ import {
 import Address from "@/models/addressModel";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
+import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import { format } from "date-fns";
+import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
 type ValidatedDataType = {
@@ -192,6 +195,21 @@ async function updateOrder(
     } else {
         updateData.startDate = format(new Date(data.start_date), "yyyy-MM-dd");
         updateData.endDate = format(new Date(data.end_date), "yyyy-MM-dd");
-        await Tiffin.updateOne({ _id: orderId }, { $set: updateData });
+        const updatedOrder = await Tiffin.findOneAndUpdate(
+            { _id: orderId },
+            { $set: updateData }
+        );
+        await TiffinOrderStatus.deleteMany({
+            orderId: mongoose.Types.ObjectId.createFromHexString(orderId),
+            status: "PENDING",
+        });
+
+        // 4️⃣ Create Order Status
+        await createOrderStatus(
+            mongoose.Types.ObjectId.createFromHexString(orderId),
+            format(new Date(data.start_date), "yyyy-MM-dd"),
+            format(new Date(data.end_date), "yyyy-MM-dd"),
+            updatedOrder.store
+        );
     }
 }

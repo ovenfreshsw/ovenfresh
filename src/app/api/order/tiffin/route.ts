@@ -15,36 +15,10 @@ import Address from "@/models/addressModel";
 import Customer from "@/models/customerModel";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
-import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import { formatDate } from "date-fns";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
-
-async function createOrderStatus(
-    orderId: mongoose.Types.ObjectId,
-    startDate: string,
-    endDate: string,
-    store: string
-) {
-    const statuses = [];
-    const currentDate = new Date(startDate);
-    while (currentDate <= new Date(endDate)) {
-        const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-            // Skip weekends
-            statuses.push({
-                orderId: orderId,
-                date: formatDate(new Date(currentDate), "yyyy-MM-dd"),
-                status: "PENDING",
-                store,
-            });
-        }
-
-        currentDate.setDate(currentDate.getDate() + 1); // Move to next day
-    }
-
-    await TiffinOrderStatus.insertMany(statuses); // Batch insert all statuses
-}
+import { createOrderStatus } from "./helper";
 
 async function postHandler(req: AuthenticatedRequest) {
     try {
@@ -157,7 +131,7 @@ async function postHandler(req: AuthenticatedRequest) {
                     address: customerAddress._id,
                 }),
                 // 4️⃣ Create Order Status
-                createOrderStatus(
+                await createOrderStatus(
                     tiffinId,
                     formatDate(new Date(start_date), "yyyy-MM-dd"),
                     formatDate(new Date(end_date), "yyyy-MM-dd"),

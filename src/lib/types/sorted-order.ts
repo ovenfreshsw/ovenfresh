@@ -28,6 +28,10 @@ export type DeliveryRes = {
         name: string;
         quantity: number;
     }[];
+    customItems?: {
+        name: string;
+        size: string;
+    }[];
     // };
     // status: string;
     // _id: string;

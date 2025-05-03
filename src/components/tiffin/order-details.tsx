@@ -305,6 +305,7 @@ export default function TiffinOrderDetails({
                     tax={orderData.tax}
                     deliveryCharge={0}
                     totalPrice={orderData.totalPrice}
+                    discount={orderData.discount}
                 />
 
                 <Card className="md:col-span-2">

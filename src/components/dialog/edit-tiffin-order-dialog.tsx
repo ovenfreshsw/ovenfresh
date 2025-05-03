@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@heroui/button";
 import { Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -44,6 +44,10 @@ const EditTiffinOrderDialog = ({
     const [orderType, setOrderType] = useState(type);
     const [nWeeks, setNWeeks] = useState(numberOfWeeks);
     const [updateEndDate, setUpdateEndDate] = useState(true);
+
+    useEffect(() => {
+        setNWeeks(numberOfWeeks);
+    }, [numberOfWeeks]);
 
     const handleSubmit = async (formData: FormData) => {
         formData.append("orderId", orderId);

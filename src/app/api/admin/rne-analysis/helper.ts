@@ -2,7 +2,13 @@ import { MonthlyRevenueData } from "@/lib/types/finance";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
 import { StoreDocument } from "@/models/types/store";
-import { endOfMonth, startOfMonth } from "date-fns";
+import {
+    eachDayOfInterval,
+    endOfMonth,
+    getDay,
+    isSameMonth,
+    startOfMonth,
+} from "date-fns";
 
 function formatStoreData(stores: StoreDocument[]) {
     const arr = stores.map((store, i) => ({
@@ -97,29 +103,57 @@ async function formatRevenueData(stores: StoreDocument[], year: number) {
             const startOfTheMonth = startOfMonth(new Date(year, monthIndex, 1));
             const endOfTheMonth = endOfMonth(new Date(year, monthIndex, 1));
 
-            // Find Tiffins for the store in the current month
-            const tiffins = await Tiffin.find(
-                {
+            const [tiffins, caterings] = await Promise.all([
+                // Find Tiffins for the store in the current month
+                Tiffin.find({
                     store: store._id,
-                    createdAt: { $gte: startOfTheMonth, $lt: endOfTheMonth },
-                },
-                "totalPrice"
-            );
-
-            // Find Caterings for the store in the current month
-            const caterings = await Catering.find(
-                {
-                    store: store._id,
-                    createdAt: { $gte: startOfTheMonth, $lt: endOfTheMonth },
-                },
-                "totalPrice"
-            );
+                    $or: [
+                        {
+                            startDate: { $lte: endOfTheMonth },
+                            endDate: { $gte: startOfTheMonth },
+                        },
+                    ],
+                }),
+                // Find Caterings for the store in the current month
+                Catering.find(
+                    {
+                        store: store._id,
+                        createdAt: {
+                            $gte: startOfTheMonth,
+                            $lt: endOfTheMonth,
+                        },
+                    },
+                    "totalPrice"
+                ),
+            ]);
 
             // Aggregate totals for Tiffins and Caterings
-            const tiffinTotal = tiffins.reduce(
-                (sum, tiffin) => sum + tiffin.totalPrice,
-                0
-            );
+            let tiffinTotal = 0;
+            tiffins.map((tiffin) => {
+                // 1. All days in the order range
+                const allDays = eachDayOfInterval({
+                    start: tiffin.startDate,
+                    end: tiffin.endDate,
+                });
+
+                // 2. Weekdays only (Mon–Fri)
+                const weekdays = allDays.filter((date) => {
+                    const day = getDay(date); // 0: Sunday, 6: Saturday
+                    return day !== 0 && day !== 6;
+                });
+
+                const perDayPrice = tiffin.totalPrice / weekdays.length;
+
+                // 3. Weekdays that fall in the selected month
+                const monthWeekdays = weekdays.filter(
+                    (date) =>
+                        date >= startOfTheMonth &&
+                        date <= endOfTheMonth &&
+                        isSameMonth(date, startOfTheMonth)
+                );
+
+                tiffinTotal += perDayPrice * monthWeekdays.length;
+            });
             const cateringTotal = caterings.reduce(
                 (sum, catering) => sum + catering.totalPrice,
                 0

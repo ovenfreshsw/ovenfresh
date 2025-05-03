@@ -103,7 +103,8 @@ async function patchHandler(
         const order = await Catering.findById({ _id: orderId });
         if (!order) return error404("Order not found in database.");
 
-        const { totalPrice, tax, advancePaid, deliveryCharge } = order;
+        const { totalPrice, tax, advancePaid, deliveryCharge, discount } =
+            order;
 
         const newSubtotal = items.reduce(
             (acc, item) => acc + item.priceAtOrder * item.quantity,
@@ -120,7 +121,7 @@ async function patchHandler(
             tax > 0
                 ? subtotal + newTax + deliveryCharge
                 : subtotal + deliveryCharge;
-        const pendingBalance = updatedTotal - advancePaid;
+        const pendingBalance = updatedTotal - advancePaid - discount;
         const fullyPaid = pendingBalance <= 0;
 
         await Catering.updateOne(

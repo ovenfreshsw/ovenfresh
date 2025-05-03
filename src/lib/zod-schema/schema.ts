@@ -47,7 +47,16 @@ export const ZodCateringSchema = z.object({
                 size: z.string(),
             })
         )
-        .min(1),
+        .optional(),
+    customItems: z
+        .array(
+            z.object({
+                name: z.string(),
+                size: z.string(),
+                priceAtOrder: z.number(),
+            })
+        )
+        .optional(),
     payment_method: z.enum(["cash", "card", "e-transfer"]),
     note: z.string().optional(),
     totalPrice: z.number(),

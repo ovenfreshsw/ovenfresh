@@ -11,6 +11,7 @@ const PaymentCard = ({
     paymentMethod,
     advancePaid,
     pendingBalance,
+    discount,
     fullyPaid,
     orderType,
 }: {
@@ -21,6 +22,7 @@ const PaymentCard = ({
     paymentMethod: string;
     advancePaid: number;
     pendingBalance: number;
+    discount: number;
     fullyPaid: boolean;
     orderType: "catering" | "tiffin";
 }) => {
@@ -35,9 +37,10 @@ const PaymentCard = ({
                         subtotal: totalPrice - tax - (deliveryCharge || 0),
                         tax,
                         deliveryCharge,
-                        paymentMethod: paymentMethod,
-                        advancePaid: advancePaid,
-                        pendingBalance: pendingBalance,
+                        paymentMethod,
+                        advancePaid,
+                        pendingBalance,
+                        discount,
                         fullyPaid: fullyPaid,
                     }}
                 />
@@ -81,6 +84,10 @@ const PaymentCard = ({
                         <div className="flex justify-between text-sm">
                             <span>Advance Paid</span>
                             <span>${advancePaid.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                            <span>Discount</span>
+                            <span>${discount.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span>Pending Balance</span>

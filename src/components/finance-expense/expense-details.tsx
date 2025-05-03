@@ -96,6 +96,7 @@ const ExpenseDetails = () => {
                             <TableHead>Item</TableHead>
                             <TableHead>Store</TableHead>
                             <TableHead>Quantity</TableHead>
+                            <TableHead>Purchased from</TableHead>
                             <TableHead className="whitespace-nowrap">
                                 Unit Price &#040;$&#041;
                             </TableHead>
@@ -123,6 +124,9 @@ const ExpenseDetails = () => {
                                     <TableCell>
                                         {item.quantity}{" "}
                                         {item.unit === "none" ? "" : item.unit}
+                                    </TableCell>
+                                    <TableCell className="font-medium">
+                                        {item.purchasedFrom}
                                     </TableCell>
                                     <TableCell>
                                         {item.price > 0

@@ -20,6 +20,7 @@ export async function editPaymentAction(formData: FormData) {
             pendingBalance,
             fullyPaid,
             deliveryCharge,
+            discount,
         } = Object.fromEntries(formData.entries());
 
         if (!orderId) return { error: "Invalid order ID." };
@@ -33,6 +34,7 @@ export async function editPaymentAction(formData: FormData) {
             pendingBalance: true,
             fullyPaid: true,
             deliveryCharge: true,
+            discount: true,
         }).safeParse({
             tax: Number(tax),
             deliveryCharge: Number(deliveryCharge),
@@ -41,6 +43,7 @@ export async function editPaymentAction(formData: FormData) {
             advancePaid: Number(advancePaid),
             pendingBalance: Number(pendingBalance),
             fullyPaid: fullyPaid === "true",
+            discount: Number(discount),
         });
 
         if (!result.success) {
@@ -59,6 +62,7 @@ export async function editPaymentAction(formData: FormData) {
                         advancePaid: result.data.advancePaid,
                         pendingBalance: result.data.pendingBalance,
                         fullyPaid: result.data.fullyPaid,
+                        discount: result.data.discount,
                     },
                 }
             );
@@ -73,6 +77,7 @@ export async function editPaymentAction(formData: FormData) {
                         advancePaid: result.data.advancePaid,
                         pendingBalance: result.data.pendingBalance,
                         fullyPaid: result.data.fullyPaid,
+                        discount: result.data.discount,
                     },
                 }
             );

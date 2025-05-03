@@ -23,6 +23,7 @@ import {
 } from "@/store/slices/cateringOrderSlice";
 import { useDispatch } from "react-redux";
 import { Checkbox } from "@heroui/checkbox";
+import FinalCustomItemCard from "./final-custom-item-card";
 
 export default function FinalSummary({
     form,
@@ -31,6 +32,9 @@ export default function FinalSummary({
 }) {
     const [noTax, setNoTax] = useState(false);
     const orderItems = useSelector((state: RootState) => state.cateringItem);
+    const customItems = useSelector(
+        (state: RootState) => state.cateringCustomItem
+    );
     const orderDetail = useSelector((state: RootState) => state.cateringOrder);
     const deliveryCharge = orderDetail.deliveryCharge;
 
@@ -65,10 +69,11 @@ export default function FinalSummary({
         paymentMethod: form.getValues("payment_method"),
     };
 
-    const subtotal = orderItems.reduce(
-        (acc, item) => acc + item.priceAtOrder * item.quantity,
-        0
-    );
+    const subtotal =
+        orderItems.reduce(
+            (acc, item) => acc + item.priceAtOrder * item.quantity,
+            0
+        ) + customItems.reduce((acc, item) => acc + item.priceAtOrder, 0);
     useEffect(() => {
         if (noTax) {
             dispatch(setTaxAmount(0));
@@ -123,6 +128,7 @@ export default function FinalSummary({
         orderDetail.discount,
         form.formState.isDirty,
         orderItems,
+        customItems,
         dispatch,
         form,
     ]);
@@ -138,7 +144,7 @@ export default function FinalSummary({
                             Order Items
                         </h2>
 
-                        {orderItems.length === 0 ? (
+                        {orderItems.length === 0 && customItems.length === 0 ? (
                             <div className="flex flex-col items-center justify-center">
                                 <span className="flex items-center gap-1 text-muted-foreground text-xs">
                                     <Info size={15} /> No items in your order.
@@ -148,6 +154,12 @@ export default function FinalSummary({
                             <div className="max-h-52 overflow-y-scroll scrollbar-thin">
                                 {orderItems.map((item, i) => (
                                     <FinalItemCard item={item} key={i} />
+                                ))}
+                                {customItems.map((item, i) => (
+                                    <FinalCustomItemCard
+                                        item={item}
+                                        key={i + item.name}
+                                    />
                                 ))}
                             </div>
                         )}

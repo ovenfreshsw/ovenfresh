@@ -25,6 +25,7 @@ import { clearState } from "@/store/slices/cateringItemSlice";
 import { clearState as clearOrderState } from "@/store/slices/cateringOrderSlice";
 import LoadingButton from "../ui/loading-button";
 import { useCateringMenu } from "@/api-hooks/catering/get-catering-menu";
+import { clearCustomItemState } from "@/store/slices/cateringCustomItemSlice";
 
 const steps = ["Select Items", "Enter address", "Order summery"];
 
@@ -50,6 +51,9 @@ export default function CateringFormStepper() {
     const [activeStep, setActiveStep] = React.useState(0);
     const order = useSelector((state: RootState) => state.cateringOrder);
     const orderItems = useSelector((state: RootState) => state.cateringItem);
+    const customItems = useSelector(
+        (state: RootState) => state.cateringCustomItem
+    );
 
     const dispatch = useDispatch();
 
@@ -77,6 +81,10 @@ export default function CateringFormStepper() {
     };
 
     const handleSubmit = () => {
+        if (orderItems.length === 0 && customItems.length === 0) {
+            toast.error("Please add items to the order.");
+            return;
+        }
         const data = {
             ...order,
             customerDetails: {
@@ -92,10 +100,13 @@ export default function CateringFormStepper() {
                 priceAtOrder: item.priceAtOrder,
                 size: item.size,
             })),
+            customItems: customItems.map((item) => ({
+                name: item.name,
+                size: item.size,
+                priceAtOrder: item.priceAtOrder,
+            })),
         };
         const result = ZodCateringSchema.safeParse(data);
-
-        console.log(data);
 
         if (result.success) {
             mutation.mutate({
@@ -111,6 +122,7 @@ export default function CateringFormStepper() {
     function resetForm() {
         form.reset();
         dispatch(clearState());
+        dispatch(clearCustomItemState());
         dispatch(clearOrderState());
     }
 

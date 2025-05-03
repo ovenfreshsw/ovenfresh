@@ -77,7 +77,7 @@ export function AddItemDrawer({
                 menu?.filter((item) => !existingItems.includes(item._id))
             );
         }
-    }, [menu, search]);
+    }, [menu, search, existingItems]);
 
     function handelClose(value: boolean) {
         dispatch(clearState());

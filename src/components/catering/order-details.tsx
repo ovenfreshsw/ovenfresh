@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import {
     BadgeCheck,
     Clock,
+    ImageIcon,
     Minus,
     Package2,
     Pencil,
@@ -32,7 +33,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@heroui/button";
-import { CateringDocumentPopulate } from "@/models/types/catering";
+import {
+    CateringDocument,
+    CateringDocumentPopulate,
+} from "@/models/types/catering";
 import { updateOrderStatusAction } from "@/actions/update-order-status-action";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
@@ -48,6 +52,8 @@ import Image from "next/image";
 import { ORDER_STATUSES, OrderStatus } from "@/lib/types/order-status";
 import { Show } from "../show";
 import SizeSelect from "../select/size-select";
+import { Input } from "../ui/input";
+import AddCustomItemDirectDialog from "../dialog/add-custom-item-direct";
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -87,7 +93,9 @@ export default function CateringOrderDetails({
     const [loading, setLoading] = useState(false);
     const [orderStatus, setOrderStatus] = useState(orderData?.status);
     const [editItems, setEditItems] = useState(false);
+    const [editCustomItems, setEditCustomItems] = useState(false);
     const [orderItems, setOrderItems] = useState(orderData?.items);
+    const [customItems, setCustomItems] = useState(orderData?.customItems);
     const [showSettlementDialog, setShowSettlementDialog] = useState(false);
 
     const updateOrderStatus = (newStatus: OrderStatus, settlement = false) => {
@@ -161,27 +169,59 @@ export default function CateringOrderDetails({
         setOrderItems(orderData?.items);
     }
 
+    function cancelCustomEdit() {
+        setEditCustomItems(false);
+        setCustomItems(orderData?.customItems);
+    }
+
     function removeItem(itemId: string, size: string) {
         setOrderItems((prev) =>
             prev.filter((i) => !(i.itemId._id === itemId && i.size === size))
         );
     }
 
-    function saveOrderItems() {
-        setEditItems(false);
+    function removeCustomItem(name: string) {
+        setCustomItems((prev) => prev.filter((i) => !(i.name === name)));
+    }
+
+    function saveOrderItems(itemType: "items" | "customItems") {
+        let updatedItem:
+            | CateringDocument["items"]
+            | CateringDocument["customItems"];
+        if (itemType === "items") {
+            setEditItems(false);
+            updatedItem = orderItems.map((item) => ({
+                itemId: item.itemId._id,
+                quantity: item.quantity,
+                priceAtOrder: item.priceAtOrder,
+                size: item.size,
+            }));
+        } else {
+            setEditCustomItems(false);
+            updatedItem = customItems.map((item) => ({
+                name: item.name,
+                size: item.size,
+                priceAtOrder: item.priceAtOrder,
+            }));
+        }
+
+        const subtotal =
+            orderItems.reduce(
+                (acc, item) => acc + item.priceAtOrder * item.quantity,
+                0
+            ) + customItems.reduce((acc, item) => acc + item.priceAtOrder, 0);
+
         const promise = () =>
             new Promise(async (resolve, reject) => {
                 const result = await updateOrderItemsAction(
                     orderData._id.toString(),
-                    orderItems.map((item) => ({
-                        itemId: item.itemId._id,
-                        quantity: item.quantity,
-                        priceAtOrder: item.priceAtOrder,
-                        size: item.size,
-                    })),
+                    itemType,
+                    updatedItem,
                     orderData.advancePaid,
                     orderData.tax,
-                    orderData.deliveryCharge
+                    orderData.deliveryCharge,
+                    subtotal,
+                    orderData.discount
                 );
                 if (result.success) resolve(result);
                 else reject(result);
@@ -193,11 +233,25 @@ export default function CateringOrderDetails({
                 setLoading(false);
                 return "Order items updated successfully.";
             },
-            error: () => {
+            error: (error) => {
                 setLoading(false);
+                console.log(error);
                 return "Failed to update order items.";
             },
         });
+    }
+
+    function handleCustomItemUpdate(
+        check: string,
+        key: string,
+        value: string | number
+    ) {
+        setCustomItems((prev) =>
+            prev.map((i) => {
+                // @ts-expect-error: item._id is a string
+                return i._id === check ? { ...i, [key]: value } : i;
+            })
+        );
     }
 
     const existingItems = useMemo(() => {
@@ -457,8 +511,229 @@ export default function CateringOrderDetails({
                                 Cancel
                             </ShadButton>
                             <ShadButton
-                                onClick={saveOrderItems}
+                                onClick={() => saveOrderItems("items")}
                                 disabled={!editItems || loading}
+                                size={"sm"}
+                            >
+                                Save
+                            </ShadButton>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="md:col-span-2">
+                    <CardHeader className="flex flex-row justify-between items-center">
+                        <CardTitle className="flex items-center gap-2">
+                            <Package2 className="h-5 w-5" />
+                            Custom Order Items
+                        </CardTitle>
+                        <div className="flex items-center gap-3">
+                            <AddCustomItemDirectDialog
+                                setCustomItems={setCustomItems}
+                                enableSaveButton={setEditCustomItems}
+                            >
+                                <Button
+                                    isIconOnly
+                                    variant="flat"
+                                    radius="full"
+                                    size="sm"
+                                >
+                                    <Plus size={15} />
+                                </Button>
+                            </AddCustomItemDirectDialog>
+                            <Button
+                                isIconOnly
+                                variant="flat"
+                                radius="full"
+                                size="sm"
+                                onPress={() => setEditCustomItems(true)}
+                            >
+                                <Pencil size={15} />
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="overflow-x-scroll scrollbar-thin">
+                        <Show>
+                            <Show.When isTrue={customItems?.length === 0}>
+                                <div className="flex flex-col items-center justify-center gap-2">
+                                    <span>No custom items added yet.</span>
+                                    <AddCustomItemDirectDialog
+                                        setCustomItems={setCustomItems}
+                                        enableSaveButton={setEditCustomItems}
+                                    >
+                                        <ShadButton
+                                            size={"sm"}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <Plus />
+                                            Add custom items
+                                        </ShadButton>
+                                    </AddCustomItemDirectDialog>
+                                </div>
+                            </Show.When>
+                            <Show.Else>
+                                <Table className="min-w-[550px]">
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Item</TableHead>
+                                            <TableHead className="text-center">
+                                                Size
+                                            </TableHead>
+                                            <TableHead className="text-right whitespace-nowrap">
+                                                Price at Order
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {customItems?.map((item) => (
+                                            // @ts-expect-error: item._id is a string
+                                            <TableRow key={item._id}>
+                                                <TableCell className="whitespace-nowrap min-w-64">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="rounded-lg size-12 bg-gray-200 flex justify-center items-center flex-shrink-0">
+                                                            <ImageIcon
+                                                                size={15}
+                                                            />
+                                                        </div>
+                                                        <Show>
+                                                            <Show.When
+                                                                isTrue={
+                                                                    editCustomItems
+                                                                }
+                                                            >
+                                                                <Input
+                                                                    value={
+                                                                        item.name
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) => {
+                                                                        handleCustomItemUpdate(
+                                                                            // @ts-expect-error: item._id is a string
+                                                                            item._id,
+                                                                            "name",
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        );
+                                                                    }}
+                                                                    placeholder="Item name"
+                                                                    className="w-36"
+                                                                />
+                                                            </Show.When>
+                                                            <Show.Else>
+                                                                <div className="font-medium">
+                                                                    {item.name}
+                                                                </div>
+                                                            </Show.Else>
+                                                        </Show>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-right capitalize whitespace-nowrap">
+                                                    <Show>
+                                                        <Show.When
+                                                            isTrue={
+                                                                editCustomItems
+                                                            }
+                                                        >
+                                                            <Input
+                                                                value={
+                                                                    item.size
+                                                                }
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    handleCustomItemUpdate(
+                                                                        // @ts-expect-error: item._id is a string
+                                                                        item._id,
+                                                                        "size",
+                                                                        e.target
+                                                                            .value
+                                                                    );
+                                                                }}
+                                                                placeholder="Size"
+                                                                className="w-20 ms-auto"
+                                                            />
+                                                        </Show.When>
+                                                        <Show.Else>
+                                                            {item?.size}
+                                                        </Show.Else>
+                                                    </Show>
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <Show>
+                                                        <Show.When
+                                                            isTrue={
+                                                                editCustomItems
+                                                            }
+                                                        >
+                                                            <Input
+                                                                value={
+                                                                    item.priceAtOrder
+                                                                }
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    handleCustomItemUpdate(
+                                                                        // @ts-expect-error: item._id is a string
+                                                                        item._id,
+                                                                        "priceAtOrder",
+                                                                        Number(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    );
+                                                                }}
+                                                                type="number"
+                                                                step="0.01"
+                                                                min="0"
+                                                                placeholder="Price"
+                                                                className="w-16 ms-auto"
+                                                            />
+                                                        </Show.When>
+                                                        <Show.Else>
+                                                            $
+                                                            {item?.priceAtOrder.toFixed(
+                                                                2
+                                                            )}
+                                                        </Show.Else>
+                                                    </Show>
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <ShadButton
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        disabled={
+                                                            !editCustomItems
+                                                        }
+                                                        onClick={() =>
+                                                            removeCustomItem(
+                                                                item.name
+                                                            )
+                                                        }
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </ShadButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Show.Else>
+                        </Show>
+                        <div className="flex justify-end items-center gap-2 mt-3">
+                            <ShadButton
+                                disabled={!editCustomItems}
+                                variant={"ghost"}
+                                size={"sm"}
+                                onClick={cancelCustomEdit}
+                            >
+                                Cancel
+                            </ShadButton>
+                            <ShadButton
+                                onClick={() => saveOrderItems("customItems")}
+                                disabled={!editCustomItems || loading}
                                 size={"sm"}
                             >
                                 Save
@@ -476,6 +751,7 @@ export default function CateringOrderDetails({
                     orderType="catering"
                     paymentMethod={orderData.paymentMethod}
                     pendingBalance={orderData.pendingBalance}
+                    discount={orderData.discount || 0}
                     tax={orderData.tax}
                     deliveryCharge={orderData.deliveryCharge}
                     totalPrice={orderData.totalPrice}

@@ -25,6 +25,7 @@ export const columns = [
     { name: "DATE", uid: "date" },
     { name: "ITEM", uid: "item" },
     { name: "QUANTITY", uid: "quantity" },
+    { name: "PURCHASED FROM", uid: "purchasedFrom" },
     { name: "PRICE", uid: "price" },
     { name: "TAX", uid: "tax" },
     { name: "TOTAL", uid: "total" },

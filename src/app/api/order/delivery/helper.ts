@@ -72,7 +72,7 @@ async function getSortedCateringOrderDetails(storeId: string, zone: number) {
                 select: "name",
             },
         ],
-        select: "orderId customerName customerPhone status fullyPaid _id pendingBalance totalPrice advancePaid deliveryDate items.quantity",
+        select: "orderId customerName customerPhone status fullyPaid _id pendingBalance totalPrice advancePaid deliveryDate items.quantity customItems",
     });
 
     const orders = caterings[zone].catering;
@@ -96,6 +96,10 @@ async function getSortedCateringOrderDetails(storeId: string, zone: number) {
             items: order.order.items.map((item) => ({
                 name: item.itemId.name,
                 quantity: item.quantity,
+            })),
+            customItems: order.order.customItems.map((item) => ({
+                name: item.name,
+                size: item.size,
             })),
         })
     );

@@ -14,14 +14,18 @@ import { useState } from "react";
 
 const OrderItemsDrawer = ({
     items,
+    customItems,
     orderId,
 }: {
     items: { name: string; quantity: number }[];
+    customItems: { name: string; size: string }[];
     orderId: string;
 }) => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+    const totalItems =
+        items.reduce((sum, item) => sum + item.quantity, 0) +
+        customItems.length;
     return (
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <DrawerTrigger asChild>
@@ -53,21 +57,34 @@ const OrderItemsDrawer = ({
                                             <p className="font-medium">
                                                 {item.name}
                                             </p>
-                                            {/* <p className="text-sm text-muted-foreground">
-                                                ${item.price.toFixed(2)}
-                                            </p> */}
                                         </div>
                                     </div>
-                                    {/* <p className="font-medium">
-                                        $
-                                        {(item.price * item.quantity).toFixed(
-                                            2
-                                        )}
-                                    </p> */}
+                                </div>
+                            ))}
+                            {customItems.map((item, i) => (
+                                <div
+                                    key={item.name + i}
+                                    className="flex items-center justify-between"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center">
+                                            <span className="font-medium text-sm">
+                                                x
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col gap-0">
+                                            <p className="font-medium">
+                                                {item.name}
+                                            </p>
+                                            <span className="text-xs">
+                                                {item.size}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
 
-                            {items.length === 0 && (
+                            {items.length === 0 && customItems.length === 0 && (
                                 <div className="text-center py-6 text-muted-foreground">
                                     No items in this order
                                 </div>

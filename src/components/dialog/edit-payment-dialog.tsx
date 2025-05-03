@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@heroui/button";
 import { Pencil, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -37,6 +37,7 @@ const EditPaymentDialog = ({
         paymentMethod: string;
         advancePaid: number;
         pendingBalance: number;
+        discount: number;
         fullyPaid: boolean;
     };
     orderType: "catering" | "tiffin";
@@ -47,6 +48,10 @@ const EditPaymentDialog = ({
         paymentDetails.fullyPaid.toString()
     );
     const [subtotal, setSubtotal] = useState(paymentDetails.subtotal);
+
+    useEffect(() => {
+        setSubtotal(paymentDetails.subtotal);
+    }, [paymentDetails.subtotal]);
 
     const handleSubmit = async (formData: FormData) => {
         formData.append("orderId", orderId);
@@ -208,6 +213,20 @@ const EditPaymentDialog = ({
                             min={0}
                             step={"any"}
                             defaultValue={paymentDetails.advancePaid}
+                            className="col-span-2"
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="discount" className="text-right">
+                            Discount
+                        </Label>
+                        <Input
+                            id="discount"
+                            name="discount"
+                            type="number"
+                            min={0}
+                            step={"any"}
+                            defaultValue={paymentDetails.discount}
                             className="col-span-2"
                         />
                     </div>

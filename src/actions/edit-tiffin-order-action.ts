@@ -1,9 +1,14 @@
 "use server";
 
+import { createOrderStatus } from "@/app/api/order/tiffin/helper";
 import connectDB from "@/lib/mongodb";
+import { addWeekdays } from "@/lib/utils";
 import { ZodTiffinSchema } from "@/lib/zod-schema/schema";
 import TiffinMenu from "@/models/tiffinMenuModel";
 import Tiffin from "@/models/tiffinModel";
+import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
+import { format } from "date-fns";
+import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
 // Helper function for form data parsing
@@ -51,16 +56,12 @@ export async function editTiffinOrderAction(formData: FormData) {
             return { error: "Tiffin menu not found." };
         }
 
-        // Validate weeks number
         const weeksNumber = parseFloat(numberOfWeeks);
         if (isNaN(weeksNumber)) {
             return { error: "Invalid number of weeks." };
         }
 
-        // Date calculation
-        const start = new Date(startDate);
-        const oneWeek = 7 * 24 * 60 * 60 * 1000;
-        const endDate = new Date(start.getTime() + weeksNumber * oneWeek);
+        const endDate = addWeekdays(startDate, weeksNumber);
 
         // Calculate total amount
         const calculateTotalAmount = () => {
@@ -93,7 +94,22 @@ export async function editTiffinOrderAction(formData: FormData) {
         }
 
         // Update order in database
-        await Tiffin.updateOne({ _id: orderId }, { $set: updateData });
+        const updatedOrder = await Tiffin.findOneAndUpdate(
+            { _id: orderId },
+            { $set: updateData }
+        );
+        await TiffinOrderStatus.deleteMany({
+            orderId: mongoose.Types.ObjectId.createFromHexString(orderId),
+            status: "PENDING",
+        });
+
+        // 4️⃣ Create Order Status
+        await createOrderStatus(
+            mongoose.Types.ObjectId.createFromHexString(orderId),
+            startDate,
+            format(endDate, "yyyy-MM-dd"),
+            updatedOrder.store
+        );
 
         // Revalidate the path
         revalidatePath("/dashboard/orders");

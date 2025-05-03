@@ -96,6 +96,9 @@ const SortedOrderList = ({
                                     >
                                         <OrderItemsDrawer
                                             items={order.items || []}
+                                            customItems={
+                                                order.customItems || []
+                                            }
                                             orderId={order.orderId}
                                         />
                                     </Show.When>

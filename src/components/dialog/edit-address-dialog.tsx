@@ -13,7 +13,7 @@ import { Button as ShadButton } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Button } from "@heroui/button";
 import { CalendarIcon, Pencil } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
@@ -50,7 +50,7 @@ function isGapInWeeks(
     const actualGapInDays = actualGapInMilliseconds / millisecondsInDay;
 
     // Check if the gap in days is exactly the expected number of weeks (numberOfWeeks * 7 days)
-    return actualGapInDays === numberOfWeeks * 7 - 1;
+    return actualGapInDays === numberOfWeeks * 7 - 3;
 }
 
 const EditAddressDialog = ({
@@ -85,6 +85,10 @@ const EditAddressDialog = ({
     const [eDate, setEDate] = useState<Date | undefined>(
         new Date(endDate || "")
     );
+
+    useEffect(() => {
+        setEDate(endDate);
+    }, [endDate]);
 
     const debouncedAddress = useDebounce(addressInput.address, 500);
 
@@ -213,6 +217,7 @@ const EditAddressDialog = ({
                                         id="deliveryDate"
                                         selected={dDate}
                                         disabled={{ before: new Date() }}
+                                        required
                                         onSelect={(e) => setDDate(e as Date)}
                                         initialFocus
                                     />
@@ -249,11 +254,43 @@ const EditAddressDialog = ({
                                         <Calendar
                                             mode="single"
                                             id="startDate"
-                                            selected={sDate}
+                                            selected={
+                                                new Date(
+                                                    new Date(
+                                                        sDate || ""
+                                                    )?.getFullYear() ||
+                                                        new Date().getFullYear(),
+                                                    new Date(
+                                                        sDate || ""
+                                                    )?.getMonth() ||
+                                                        new Date().getMonth(),
+                                                    new Date(
+                                                        sDate || ""
+                                                    )?.getDate() ||
+                                                        new Date().getDate()
+                                                )
+                                            }
+                                            defaultMonth={
+                                                new Date(
+                                                    new Date(
+                                                        sDate || ""
+                                                    )?.getFullYear() ||
+                                                        new Date().getFullYear(),
+                                                    new Date(
+                                                        sDate || ""
+                                                    )?.getMonth() ||
+                                                        new Date().getMonth(),
+                                                    new Date(
+                                                        sDate || ""
+                                                    )?.getDate() ||
+                                                        new Date().getDate()
+                                                )
+                                            }
                                             disabled={{ dayOfWeek: [0, 6] }}
                                             onSelect={(e) =>
                                                 setSDate(e as Date)
                                             }
+                                            required
                                             initialFocus
                                         />
                                     </PopoverContent>
@@ -330,6 +367,7 @@ const EditAddressDialog = ({
                                                     )}
                                                 </p>
                                             }
+                                            required
                                         />
                                     </PopoverContent>
                                 </Popover>

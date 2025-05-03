@@ -180,7 +180,8 @@ export default function CateringOrderTable({
                 case "items":
                     return (
                         <p className="text-center">
-                            {(cellValue as unknown as CellValue)?.length}
+                            {(cellValue as unknown as CellValue)?.length +
+                                order.customItems?.length}
                         </p>
                     );
                 case "paymentMethod":

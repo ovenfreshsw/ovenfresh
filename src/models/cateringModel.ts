@@ -61,6 +61,24 @@ const CateringSchema = new Schema<CateringDocument>(
             ],
             required: true,
         },
+        customItems: {
+            type: [
+                {
+                    name: {
+                        type: String,
+                        required: true,
+                    },
+                    size: {
+                        type: String,
+                        required: true,
+                    },
+                    priceAtOrder: {
+                        type: Number,
+                        required: true,
+                    },
+                },
+            ],
+        },
         advancePaid: {
             type: Number,
             required: true,

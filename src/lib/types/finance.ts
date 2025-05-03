@@ -47,6 +47,7 @@ export type ExpenseDetailsProps = {
     _id: string;
     store: string;
     item: string;
+    purchasedFrom: string;
     quantity: number;
     price: number;
     tax: number;

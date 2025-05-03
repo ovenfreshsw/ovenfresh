@@ -7,10 +7,13 @@ import { revalidatePath } from "next/cache";
 
 export async function updateOrderItemsAction(
     orderId: string,
-    items: CateringDocument["items"],
+    itemType: "items" | "customItems",
+    items: CateringDocument["items"] | CateringDocument["customItems"],
     advancePaid: number,
     prevTax: number,
-    deliveryCharge: number
+    deliveryCharge: number,
+    subtotal: number,
+    discount: number
 ) {
     try {
         await connectDB();
@@ -18,23 +21,19 @@ export async function updateOrderItemsAction(
         if (!orderId) return { error: "Invalid order ID." };
         if (!items) return { error: "Invalid items." };
 
-        const subtotal = items.reduce(
-            (acc, item) => acc + item.priceAtOrder * item.quantity,
-            0
-        );
         const tax =
             (subtotal * Number(process.env.NEXT_PUBLIC_TAX_AMOUNT || 0)) / 100;
         const total =
             prevTax > 0
                 ? subtotal + tax + deliveryCharge
                 : subtotal + deliveryCharge;
-        const pendingBalance = total - advancePaid;
+        const pendingBalance = total - advancePaid - discount;
 
         const result = await Catering.updateOne(
             { _id: orderId },
             {
                 $set: {
-                    items: items,
+                    [itemType]: items,
                     totalPrice: total.toFixed(2),
                     tax: prevTax > 0 ? tax : 0,
                     pendingBalance: pendingBalance.toFixed(2),
