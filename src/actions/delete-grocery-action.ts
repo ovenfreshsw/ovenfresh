@@ -1,12 +1,13 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import Grocery from "@/models/groceryModel";
 import { revalidatePath } from "next/cache";
 
 export async function deleteGroceryAction(id: string) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const deleted = await Grocery.deleteOne({ _id: id });
 

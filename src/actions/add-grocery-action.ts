@@ -1,15 +1,17 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
 import { ZodGrocerySchema } from "@/lib/zod-schema/schema";
 import { revalidatePath } from "next/cache";
 import Grocery from "@/models/groceryModel";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 
 export async function addGroceryAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
+
         const session = await getServerSession(authOptions);
         const storeId = session?.user?.storeId;
         if (!storeId) return { error: "Store not found." };

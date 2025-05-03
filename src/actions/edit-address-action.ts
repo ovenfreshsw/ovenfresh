@@ -2,7 +2,7 @@
 
 import { createOrderStatus } from "@/app/api/order/tiffin/helper";
 import { getPlaceDetails } from "@/lib/google";
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import {
     ZodCateringSchema,
     ZodCustomerSchema,
@@ -29,7 +29,9 @@ type ValidatedDataType = {
 
 export async function editAddressAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
+
         const {
             orderId,
             orderType,

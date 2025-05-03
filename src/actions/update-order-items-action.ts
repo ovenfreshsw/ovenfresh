@@ -1,6 +1,6 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import { CateringDocument } from "@/models/types/catering";
 import { revalidatePath } from "next/cache";
@@ -16,7 +16,8 @@ export async function updateOrderItemsAction(
     discount: number
 ) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         if (!orderId) return { error: "Invalid order ID." };
         if (!items) return { error: "Invalid items." };

@@ -1,15 +1,16 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
 import { encryptPassword } from "@/lib/password";
 import { ZodUserSchemaWithPassword } from "@/lib/zod-schema/schema";
 import User from "@/models/userModel";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 
 export async function addStaffAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const result = ZodUserSchemaWithPassword.safeParse(
             Object.fromEntries(formData.entries())

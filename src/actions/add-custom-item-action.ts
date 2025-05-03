@@ -1,12 +1,14 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import { revalidatePath } from "next/cache";
 
 export async function addCustomItemAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
+
         const { orderId, name, priceAtOrder, size } =
             Object.fromEntries(formData);
 

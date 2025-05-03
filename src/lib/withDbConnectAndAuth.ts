@@ -38,3 +38,12 @@ export function withDbConnectAndAuth(handler: unknown, isAuthRequired = true) {
         }
     };
 }
+
+export async function withDbConnectAndActionAuth() {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        throw new Error("Unauthorized");
+    }
+    return session;
+}

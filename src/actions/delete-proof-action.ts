@@ -1,12 +1,13 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import DeliveryImage from "@/models/deliveryImageModel";
 import { revalidatePath } from "next/cache";
 
 export async function deleteProofAction(id: string) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const deletedStore = await DeliveryImage.deleteOne({ _id: id });
 

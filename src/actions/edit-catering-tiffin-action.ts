@@ -1,6 +1,6 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import TiffinMenu from "@/models/tiffinMenuModel";
 import { revalidatePath } from "next/cache";
 
@@ -12,7 +12,8 @@ export async function editTiffinMenuAction({
     deliveryMenu: { [k: string]: number };
 }) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         await TiffinMenu.updateOne(
             {},

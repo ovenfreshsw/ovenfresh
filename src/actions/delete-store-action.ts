@@ -1,6 +1,6 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import Store from "@/models/storeModel";
 import TiffinMenu from "@/models/tiffinMenuModel";
@@ -10,7 +10,8 @@ import { revalidatePath } from "next/cache";
 
 export async function deleteStoreAction(id: string) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const userExistWithStore = await User.findOne({
             storeId: id,

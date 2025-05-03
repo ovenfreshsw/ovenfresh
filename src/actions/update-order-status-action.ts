@@ -1,6 +1,6 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import Tiffin from "@/models/tiffinModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
@@ -21,7 +21,8 @@ export async function updateOrderStatusAction(
     settlement: boolean
 ) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         if (!orderId) return { error: "Invalid order ID." };
         if (!status) return { error: "Invalid status." };

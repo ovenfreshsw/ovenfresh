@@ -1,13 +1,15 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import CateringCategory from "@/models/cateringCategoryModel";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
 export async function addCategoryAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
+
         const { id, name } = Object.fromEntries(formData.entries());
 
         if (!name) {

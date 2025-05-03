@@ -1,7 +1,7 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
 import { DayStatus } from "@/lib/types/order-status";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
@@ -11,7 +11,8 @@ export async function updateDayOrderStatusAction(
     data: DayStatus[]
 ) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         if (!orderId) return { error: "Invalid order ID." };
 

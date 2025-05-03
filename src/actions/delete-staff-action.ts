@@ -1,12 +1,13 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import User from "@/models/userModel";
 import { revalidatePath } from "next/cache";
 
 export async function deleteStaffAction(id: string) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const deletedUser = await User.deleteOne({ _id: id });
 

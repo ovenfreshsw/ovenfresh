@@ -1,7 +1,7 @@
 "use server";
 
 import { deleteFile } from "@/config/cloudinary.config";
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import CateringMenu from "@/models/cateringMenuModel";
 import Catering from "@/models/cateringModel";
 import mongoose from "mongoose";
@@ -9,7 +9,8 @@ import { revalidatePath } from "next/cache";
 
 export async function deleteCateringMenuAction(id: string) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const objectId = mongoose.Types.ObjectId.createFromHexString(id);
         const isMenuInUse = await Catering.findOne({

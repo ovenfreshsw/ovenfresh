@@ -1,13 +1,14 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import CateringCategory from "@/models/cateringCategoryModel";
 import CateringMenu from "@/models/cateringMenuModel";
 import { revalidatePath } from "next/cache";
 
 export async function deleteCategoryAction(id: string) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const isCategoryInUse = await CateringMenu.findOne({ category: id });
         if (!isCategoryInUse) {

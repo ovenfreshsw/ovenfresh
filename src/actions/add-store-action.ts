@@ -1,14 +1,15 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import { revalidatePath } from "next/cache";
 import Store from "@/models/storeModel";
 import { getPlaceDetails } from "@/lib/google";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 
 export async function addStoreAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const result = ZodStoreSchema.safeParse(
             Object.fromEntries(formData.entries())

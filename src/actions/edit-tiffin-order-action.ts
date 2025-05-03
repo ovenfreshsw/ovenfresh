@@ -1,8 +1,8 @@
 "use server";
 
 import { createOrderStatus } from "@/app/api/order/tiffin/helper";
-import connectDB from "@/lib/mongodb";
 import { addWeekdays } from "@/lib/utils";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodTiffinSchema } from "@/lib/zod-schema/schema";
 import TiffinMenu from "@/models/tiffinMenuModel";
 import Tiffin from "@/models/tiffinModel";
@@ -17,7 +17,8 @@ const getFormDataValue = (formData: FormData, key: string) =>
 
 export async function editTiffinOrderAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         // Get form data
         const orderId = getFormDataValue(formData, "orderId");

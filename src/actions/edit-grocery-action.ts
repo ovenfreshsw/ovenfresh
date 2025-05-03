@@ -1,13 +1,14 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
 import { ZodGrocerySchema } from "@/lib/zod-schema/schema";
 import { revalidatePath } from "next/cache";
 import Grocery from "@/models/groceryModel";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 
 export async function editGroceryAction(formData: FormData) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
 
         const result = ZodGrocerySchema.safeParse(
             Object.fromEntries(formData.entries())

@@ -1,6 +1,6 @@
 "use server";
 
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import CateringMenu from "@/models/cateringMenuModel";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
@@ -12,7 +12,9 @@ export async function addCateringMenuAction(
     resource?: string | CloudinaryUploadWidgetInfo
 ) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
+
         const result = ZodCateringMenuSchema.safeParse(values);
         const image = resource
             ? (resource as CloudinaryUploadWidgetInfo).secure_url

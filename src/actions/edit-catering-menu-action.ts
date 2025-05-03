@@ -1,7 +1,7 @@
 "use server";
 
 import { deleteFile } from "@/config/cloudinary.config";
-import connectDB from "@/lib/mongodb";
+import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringMenuSchema } from "@/lib/zod-schema/schema";
 import CateringMenu from "@/models/cateringMenuModel";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
@@ -16,7 +16,9 @@ export async function editCateringMenuAction(
     resource?: string | CloudinaryUploadWidgetInfo
 ) {
     try {
-        await connectDB();
+        // Authorize the user
+        await withDbConnectAndActionAuth();
+
         const result = ZodCateringMenuSchema.safeParse(values);
 
         let image = oldImage;
