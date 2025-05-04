@@ -7,4 +7,14 @@ export interface StoreDocument {
     lat: number;
     lng: number;
     phone?: string;
+    dividerLine: {
+        start: {
+            lat: number;
+            lng: number;
+        };
+        end: {
+            lat: number;
+            lng: number;
+        };
+    };
 }

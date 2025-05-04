@@ -3,7 +3,6 @@
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import { revalidatePath } from "next/cache";
 import Store from "@/models/storeModel";
-import { getPlaceDetails } from "@/lib/google";
 import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 
 export async function addStoreAction(formData: FormData) {
@@ -11,21 +10,19 @@ export async function addStoreAction(formData: FormData) {
         // Authorize the user
         await withDbConnectAndActionAuth();
 
-        const result = ZodStoreSchema.safeParse(
-            Object.fromEntries(formData.entries())
-        );
+        const result = ZodStoreSchema.safeParse({
+            ...Object.fromEntries(formData.entries()),
+            lat: Number(formData.get("lat") as string),
+            lng: Number(formData.get("lng") as string),
+            dividerLine: JSON.parse(formData.get("dividerLine") as string),
+        });
 
         if (!result.success) {
             return { error: "Invalid data format." };
         }
 
-        const location = await getPlaceDetails(result.data.placeId);
-        if (!location) return { error: "Unable to get coordinates." };
-
         await Store.create({
             ...result.data,
-            lat: location.lat,
-            lng: location.lng,
         });
 
         revalidatePath("/dashboard/stores");

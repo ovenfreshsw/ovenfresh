@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import EditNoteRoundedIcon from "@mui/icons-material/EditNoteRounded";
 import LocalMallRoundedIcon from "@mui/icons-material/LocalMallRounded";
+import TravelExploreRoundedIcon from "@mui/icons-material/TravelExploreRounded";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LockClockIcon from "@mui/icons-material/LockClock";
@@ -24,6 +25,11 @@ const mainListItems = [
         text: "Dashboard",
         icon: <HomeRoundedIcon />,
         href: "/dashboard",
+    },
+    {
+        text: "Can We Deliver?",
+        icon: <TravelExploreRoundedIcon />,
+        href: "/dashboard/can-we-deliver",
     },
     {
         text: "Booking",

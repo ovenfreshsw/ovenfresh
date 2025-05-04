@@ -1,29 +1,21 @@
 import Header from "@/components/dashboard/header";
+import CanWeDeliver from "@/components/store/can-we-deliver";
+import { getStoresServer } from "@/lib/api/stores/get-stores";
 import { Box, Stack, Typography } from "@mui/material";
-import React from "react";
 import {
     dehydrate,
     HydrationBoundary,
     QueryClient,
 } from "@tanstack/react-query";
-import { getStaffsServer } from "@/lib/api/staffs/get-staffs";
-import StaffsTable from "@/components/data-table/staffs-table";
-import { getStoresServer } from "@/lib/api/stores/get-stores";
 
-const Staffs = async () => {
+const CanWeDeliverPage = async () => {
     const queryClient = new QueryClient({
         defaultOptions: { queries: { staleTime: Infinity } },
     });
-    await Promise.all([
-        queryClient.prefetchQuery({
-            queryKey: ["staffs"],
-            queryFn: getStaffsServer,
-        }),
-        queryClient.prefetchQuery({
-            queryKey: ["stores"],
-            queryFn: getStoresServer,
-        }),
-    ]);
+    await queryClient.prefetchQuery({
+        queryKey: ["stores"],
+        queryFn: getStoresServer,
+    });
 
     return (
         <Box component="main" className="flex-grow overflow-auto">
@@ -32,7 +24,7 @@ const Staffs = async () => {
                 spacing={2}
                 sx={{
                     alignItems: "center",
-                    mx: { xs: 1, md: 3 },
+                    mx: { xs: 1.5, md: 3 },
                     pb: 5,
                     pt: { xs: 2, md: 0 },
                     mt: { xs: 8, md: 2 },
@@ -46,10 +38,10 @@ const Staffs = async () => {
                     }}
                 >
                     <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-                        Staffs
+                        Can We Deliver?
                     </Typography>
                     <HydrationBoundary state={dehydrate(queryClient)}>
-                        <StaffsTable />
+                        <CanWeDeliver />
                     </HydrationBoundary>
                 </Box>
             </Stack>
@@ -57,4 +49,4 @@ const Staffs = async () => {
     );
 };
 
-export default Staffs;
+export default CanWeDeliverPage;

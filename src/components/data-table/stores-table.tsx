@@ -10,13 +10,13 @@ import {
     TableCell,
 } from "@heroui/table";
 import { Input } from "@heroui/input";
-import { ListFilter, Loader2 } from "lucide-react";
+import { ListFilter, Loader2, Pencil, Plus } from "lucide-react";
 import { useStores } from "@/api-hooks/stores/get-stores";
 import { StoreDocument } from "@/models/types/store";
-import AddStoreDialog from "../dialog/add-store-dialog";
-import EditStoreDialog from "../dialog/edit-store-dialog";
 import { deleteStoreAction } from "@/actions/delete-store-action";
 import DeleteDialog from "../dialog/delete-dialog";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 export const columns = [
     // { name: "ID", uid: "_id" },
@@ -54,7 +54,16 @@ export default function StoresTable() {
                 case "actions":
                     return (
                         <div className="flex gap-2.5 items-center justify-center">
-                            <EditStoreDialog store={store} />
+                            <Link
+                                href={"/dashboard/stores/edit?id=" + store._id}
+                            >
+                                <button>
+                                    <Pencil
+                                        size={18}
+                                        className="stroke-2 text-muted-foreground"
+                                    />
+                                </button>
+                            </Link>
                             <DeleteDialog
                                 id={store._id}
                                 action={deleteStoreAction}
@@ -109,7 +118,15 @@ export default function StoresTable() {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex-1 flex justify-end gap-2">
-                        <AddStoreDialog />
+                        <Link href={"/dashboard/stores/add"}>
+                            <Button
+                                size={"sm"}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus />
+                                Add store
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -156,6 +173,7 @@ export default function StoresTable() {
                 {(item: StoreDocument) => (
                     <TableRow key={item._id}>
                         {(columnKey) => (
+                            // @ts-expect-error: item contain lat, lng, divideLine
                             <TableCell>{renderCell(item, columnKey)}</TableCell>
                         )}
                     </TableRow>

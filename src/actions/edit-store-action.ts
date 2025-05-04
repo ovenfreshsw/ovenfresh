@@ -1,6 +1,5 @@
 "use server";
 
-import { getPlaceDetails } from "@/lib/google";
 import { withDbConnectAndActionAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodStoreSchema } from "@/lib/zod-schema/schema";
 import Store from "@/models/storeModel";
@@ -12,9 +11,12 @@ export async function editStoreAction(formData: FormData) {
         // Authorize the user
         await withDbConnectAndActionAuth();
 
-        const result = ZodStoreSchema.safeParse(
-            Object.fromEntries(formData.entries())
-        );
+        const result = ZodStoreSchema.safeParse({
+            ...Object.fromEntries(formData.entries()),
+            lat: Number(formData.get("lat") as string),
+            lng: Number(formData.get("lng") as string),
+            dividerLine: JSON.parse(formData.get("dividerLine") as string),
+        });
 
         if (!result.success) {
             return { error: "Invalid data format." };
@@ -27,17 +29,6 @@ export async function editStoreAction(formData: FormData) {
 
         let updateData: Partial<StoreDocument> = result.data;
 
-        if (existingStore.placeId !== result.data.placeId) {
-            const location = await getPlaceDetails(result.data.placeId);
-            console.log(location, "NOW");
-
-            if (!location) return { error: "Unable to get coordinates." };
-            updateData = {
-                ...updateData,
-                lat: location.lat,
-                lng: location.lng,
-            };
-        }
         await Store.findByIdAndUpdate(storeId, {
             $set: updateData,
         });

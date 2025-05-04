@@ -18,6 +18,18 @@ export const ZodStoreSchema = z.object({
     phone: z.string().optional(),
     location: z.string().min(2).max(20),
     placeId: z.string().min(2).max(30),
+    lat: z.number(),
+    lng: z.number(),
+    dividerLine: z.object({
+        start: z.object({
+            lat: z.number(),
+            lng: z.number(),
+        }),
+        end: z.object({
+            lat: z.number(),
+            lng: z.number(),
+        }),
+    }),
 });
 
 export const ZodCustomerSchema = z.object({

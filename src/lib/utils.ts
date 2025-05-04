@@ -311,4 +311,5 @@ export {
     getMonthInNumber,
     getYearsUpToCurrent,
     addWeekdays,
+    haversine,
 };

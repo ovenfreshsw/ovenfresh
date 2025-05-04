@@ -36,6 +36,9 @@ const StoreSelect = ({
             queryClient.invalidateQueries({
                 queryKey: ["groceries"],
             }),
+            queryClient.invalidateQueries({
+                queryKey: ["stores"],
+            }),
         ]);
     };
 

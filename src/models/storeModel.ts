@@ -27,6 +27,19 @@ const StoreSchema = new Schema<StoreDocument>(
             type: Number,
             required: true,
         },
+        dividerLine: {
+            type: {
+                start: {
+                    lat: Number,
+                    lng: Number,
+                },
+                end: {
+                    lat: Number,
+                    lng: Number,
+                },
+            },
+            required: true,
+        },
         phone: String,
     },
     { versionKey: false }
