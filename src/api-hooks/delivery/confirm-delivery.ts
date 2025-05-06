@@ -15,7 +15,7 @@ export async function handleConfirm({
     resource,
     collect,
 }: {
-    orderType: "catering" | "tiffin";
+    orderType: "caterings" | "tiffins";
     orderId: string;
     statusId?: string;
     resource?: string | CloudinaryUploadWidgetInfo | undefined;

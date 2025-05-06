@@ -7,8 +7,7 @@ import { z } from "zod";
 import { customAlphabet } from "nanoid";
 import { TiffinMenuDocument } from "@/models/types/tiffin-menu";
 import { RolesSet } from "./type";
-import { kmeans } from "ml-kmeans";
-import { ClusteredOrderProps } from "./types/sorted-order";
+import { CateringInputProps, TiffinInputProps } from "./types/delivery";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -143,32 +142,9 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
     return R * c;
 }
 
-// K-Means Clustering (Divides Orders into Two Zones)
-function clusterOrders(orders: ClusteredOrderProps[]) {
-    const orderLocations = orders.map((o) => [o.lat, o.lng]);
-    if (orderLocations.length <= 1) return [orders, []];
-
-    // Perform K-Means clustering with k=2
-    const result = kmeans(orderLocations, 2, {
-        initialization: "kmeans++",
-        seed: 42,
-    });
-
-    // Assign clusters to orders
-    orders.forEach((order, index) => {
-        order.zone = result.clusters[index]; // Cluster label (0 or 1)
-    });
-
-    // Separate into two lists
-    const zone1Orders = orders.filter((o) => o.zone === 0);
-    const zone2Orders = orders.filter((o) => o.zone === 1);
-
-    return [zone1Orders, zone2Orders];
-}
-
 function findOptimalRoute(
     store: { lat: number; lng: number },
-    orders: ClusteredOrderProps[]
+    orders: TiffinInputProps[] | CateringInputProps[]
 ) {
     const unvisited = [...orders];
     const route = [];
@@ -188,7 +164,7 @@ function findOptimalRoute(
         current = next!;
     }
 
-    return route as ClusteredOrderProps[];
+    return route as (TiffinInputProps | CateringInputProps)[];
 }
 
 const getMonthsUpToCurrent = (
@@ -303,7 +279,6 @@ export {
     calculateEndDate,
     calculateTotalAmount,
     generateOrderId,
-    clusterOrders,
     findOptimalRoute,
     getMonthsUpToCurrent,
     appendBracket,

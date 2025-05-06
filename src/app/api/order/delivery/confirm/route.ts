@@ -5,7 +5,6 @@ import { isRestricted } from "@/lib/utils";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import Catering from "@/models/cateringModel";
 import DeliveryImage from "@/models/deliveryImageModel";
-import SortedOrders from "@/models/sortedOrdersModel";
 import Tiffin from "@/models/tiffinModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
 import User from "@/models/userModel";
@@ -41,7 +40,7 @@ async function patchHandler(req: AuthenticatedRequest) {
         const zone = user.zone;
         if (!zone) return error403();
 
-        if (orderType === "tiffin") {
+        if (orderType === "tiffins") {
             const orderStatus = await TiffinOrderStatus.findByIdAndUpdate(
                 statusId,
                 {
@@ -51,14 +50,6 @@ async function patchHandler(req: AuthenticatedRequest) {
             );
 
             const queries: unknown = [
-                SortedOrders.findOneAndUpdate(
-                    {
-                        date: format(new Date(), "yyyy-MM-dd"),
-                        store: storeId,
-                        [`${zone}.tiffin.order`]: statusId,
-                    },
-                    { $set: { [`${zone}.tiffin.$.status`]: "DELIVERED" } }
-                ),
                 DeliveryImage.create({
                     order: orderId,
                     store: storeId,
@@ -83,14 +74,6 @@ async function patchHandler(req: AuthenticatedRequest) {
                 Catering.findByIdAndUpdate(orderId, {
                     status: "DELIVERED",
                 }),
-                SortedOrders.findOneAndUpdate(
-                    {
-                        date: format(new Date(), "yyyy-MM-dd"),
-                        store: storeId,
-                        [`${zone}.catering.order`]: orderId,
-                    },
-                    { $set: { [`${zone}.catering.$.status`]: "DELIVERED" } }
-                ),
             ];
 
             if (collect) {

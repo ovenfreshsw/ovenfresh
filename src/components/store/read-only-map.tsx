@@ -14,7 +14,8 @@ const storeIcon = new L.Icon({
 });
 
 // Fix default icon paths for Leaflet when using Next.js
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+// @ts-expect-error: Type 'IconOptions' is not assignable to type 'IconOptions'.
+delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "/leaflet/marker-icon-2x.png",

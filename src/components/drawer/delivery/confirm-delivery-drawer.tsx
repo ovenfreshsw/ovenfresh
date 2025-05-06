@@ -14,11 +14,11 @@ import {
 import LoadingButton from "@/components/ui/loading-button";
 import { CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { QueryClient } from "@tanstack/react-query";
 import { useConfirmDelivery } from "@/api-hooks/delivery/confirm-delivery";
 import { CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { Checkbox } from "@heroui/checkbox";
 import { Show } from "@/components/show";
+import { QueryClient } from "@tanstack/react-query";
 
 export function ConfirmDeliveryDrawer({
     orderType,
@@ -28,7 +28,7 @@ export function ConfirmDeliveryDrawer({
     resource,
     statusId,
 }: {
-    orderType: "catering" | "tiffin";
+    orderType: "caterings" | "tiffins";
     orderId: string;
     pendingBalance: number;
     statusId?: string;
@@ -40,7 +40,7 @@ export function ConfirmDeliveryDrawer({
 
     function onSuccess(queryClient: QueryClient) {
         queryClient.invalidateQueries({
-            queryKey: ["delivery", "sortedOrders", orderType],
+            queryKey: ["order", "delivery", orderType],
         });
         toast.success("Order delivered successfully!");
         setOpen(false);

@@ -23,13 +23,17 @@ import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import OrderItemsDrawer from "../drawer/delivery/order-items-drawer";
+import {
+    ScheduledCateringDelivery,
+    ScheduledTiffinDelivery,
+} from "@/lib/types/scheduled-order";
 
 const SortedOrderList = ({
     status,
     orderType,
 }: {
     status: string;
-    orderType: "tiffin" | "catering";
+    orderType: "tiffins" | "caterings";
 }) => {
     const { data, isPending } = useDeliveryOrders(orderType);
     const [resource, setResource] = useState<
@@ -92,12 +96,18 @@ const SortedOrderList = ({
                                 </div>
                                 <Show>
                                     <Show.When
-                                        isTrue={orderType === "catering"}
+                                        isTrue={orderType === "caterings"}
                                     >
                                         <OrderItemsDrawer
-                                            items={order.items || []}
+                                            items={
+                                                (
+                                                    order as unknown as ScheduledCateringDelivery["orders"][0]
+                                                ).items || []
+                                            }
                                             customItems={
-                                                order.customItems || []
+                                                (
+                                                    order as unknown as ScheduledCateringDelivery["orders"][0]
+                                                ).customItems || []
                                             }
                                             orderId={order.orderId}
                                         />
@@ -129,7 +139,7 @@ const SortedOrderList = ({
                                     <Show.When
                                         isTrue={
                                             order.status !== "DELIVERED" &&
-                                            orderType === "tiffin"
+                                            orderType === "tiffins"
                                         }
                                     >
                                         <div className="flex gap-2">
@@ -192,11 +202,15 @@ const SortedOrderList = ({
                                         orderType={orderType}
                                         pendingBalance={order.pendingBalance}
                                         disabled={
-                                            orderType === "tiffin"
+                                            orderType === "tiffins"
                                                 ? !resource
                                                 : false
                                         }
-                                        statusId={order.statusId}
+                                        statusId={
+                                            (
+                                                order as unknown as ScheduledTiffinDelivery["orders"][0]
+                                            ).statusId
+                                        }
                                         resource={resource}
                                     />
                                 </Show.Else>

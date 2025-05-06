@@ -7,7 +7,7 @@ import { useDeliveryOrders } from "@/api-hooks/delivery/get-delivery-order";
 const WelcomeSection = ({
     orderType,
 }: {
-    orderType: "tiffin" | "catering";
+    orderType: "tiffins" | "caterings";
 }) => {
     const { data: orders, isPending } = useDeliveryOrders(orderType);
     if (isPending) return <DeliveryStatSkeleton />;
@@ -23,7 +23,7 @@ const WelcomeSection = ({
                     <Card className="bg-primary-foreground text-primary">
                         <CardContent className="p-4 text-center">
                             <p className="text-2xl font-bold">
-                                {orders?.result?.total}
+                                {orders?.stats?.total}
                             </p>
                             <p className="text-xs">Total Orders</p>
                         </CardContent>
@@ -31,7 +31,7 @@ const WelcomeSection = ({
                     <Card className="bg-primary-foreground text-primary">
                         <CardContent className="p-4 text-center">
                             <p className="text-2xl font-bold">
-                                {orders?.result?.pending}
+                                {orders?.stats?.pending}
                             </p>
                             <p className="text-xs">Pending</p>
                         </CardContent>
@@ -39,7 +39,7 @@ const WelcomeSection = ({
                     <Card className="bg-primary-foreground text-primary">
                         <CardContent className="p-4 text-center">
                             <p className="text-2xl font-bold">
-                                {orders?.result?.completed}
+                                {orders?.stats?.delivered}
                             </p>
                             <p className="text-xs">Completed</p>
                         </CardContent>

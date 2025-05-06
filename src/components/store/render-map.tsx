@@ -19,7 +19,8 @@ type MapProps = {
 };
 
 // Fix default icon paths for Leaflet when using Next.js
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+// @ts-expect-error: Type 'IconOptions' is not assignable to type 'IconOptions'.
+delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: "/leaflet/marker-icon-2x.png",
@@ -28,7 +29,8 @@ L.Icon.Default.mergeOptions({
 });
 
 const Map = ({ position, points, setPoints, onLineSet }: MapProps) => {
-    const handleMapClick = (e: any) => {
+    // @ts-expect-error: Type 'MapContainer' is not assignable to type 'ComponentType<MapContainerProps<any, any>>'.
+    const handleMapClick = (e) => {
         if (position === null) {
             return;
         }
@@ -114,7 +116,11 @@ export default dynamic(() => Promise.resolve(RenderMap), {
     ssr: false,
 });
 
-function MapClickHandler({ onClick }: { onClick: (e: any) => void }) {
+function MapClickHandler({
+    onClick,
+}: {
+    onClick: (e: L.LeafletMouseEvent) => void;
+}) {
     useMapEvents({
         click(e) {
             onClick(e);

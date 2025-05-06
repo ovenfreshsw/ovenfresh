@@ -1,28 +1,25 @@
 import axios from "@/config/axios.config";
-import { DeliveryOrderStats } from "@/lib/types/order-stats";
-import { DeliveryRes } from "@/lib/types/sorted-order";
+import {
+    ScheduledCateringDelivery,
+    ScheduledTiffinDelivery,
+} from "@/lib/types/scheduled-order";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 
-export async function handleOrders(orderType: "tiffin" | "catering") {
-    const { data } = await axios.get("/api/order/delivery", {
-        params: { orderType },
-    });
-
-    if (!data.data.haveZone)
-        toast.error("You don't have a zone assigned for delivery!");
-    return data.data as {
-        orders: DeliveryRes[];
-        result: DeliveryOrderStats;
-        haveZone: boolean;
-    } | null;
+export async function getDeliveryOrders(orderType: "tiffins" | "caterings") {
+    const { data } = await axios.get(
+        `/api/order/scheduled/delivery/${orderType}`
+    );
+    if (orderType === "tiffins") {
+        return data.data as ScheduledTiffinDelivery | null;
+    } else {
+        return data.data as ScheduledCateringDelivery | null;
+    }
 }
 
-export function useDeliveryOrders(orderType: "tiffin" | "catering") {
+export function useDeliveryOrders(orderType: "tiffins" | "caterings") {
     return useQuery({
-        queryKey: ["delivery", "sortedOrders", orderType],
-        queryFn: () => handleOrders(orderType),
-        staleTime: 5 * 60 * 1000,
-        retry: 4,
+        queryKey: ["order", "delivery", orderType],
+        queryFn: () => getDeliveryOrders(orderType),
+        staleTime: 1 * 60 * 1000, // Cache remains fresh for 5 minutes
     });
 }

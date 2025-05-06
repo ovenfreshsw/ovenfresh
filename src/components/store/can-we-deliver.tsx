@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { Label } from "../ui/label";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react";
 
 const ReadOnlyMap = dynamic(() => import("./read-only-map"), {
     ssr: false,
@@ -37,9 +38,6 @@ const CanWeDeliver = () => {
     const { data: stores, isPending } = useStores();
     const currentStore = useSelector((state: RootState) => state.selectStore);
     const selectedStore = stores?.find((store) => store._id === currentStore);
-
-    if (!selectedStore) return null;
-
     const debouncedAddress = useDebounce(addressInput.address, 500);
 
     const { data: addressPredictions } = useSearchAddress({
@@ -70,6 +68,14 @@ const CanWeDeliver = () => {
         });
     }
 
+    if (!selectedStore) return null;
+
+    if (isPending) {
+        <div className="flex justify-center items-center h-32 flex-col">
+            <Loader2 className="animate-spin" />
+            <span>Loading...</span>
+        </div>;
+    }
     return (
         <Card>
             <CardHeader className="px-3 md:px-6">

@@ -1,27 +1,30 @@
 "use client";
 
-import { useScheduledOrders } from "@/api-hooks/scheduled-orders/get-tiffin-orders";
+import { useScheduledOrders } from "@/api-hooks/scheduled/get-orders";
 import ScheduledOrderTable from "../data-table/scheduled-order-table";
 import { useMemo, useState } from "react";
 import { format, isToday, isTomorrow } from "date-fns";
 import { Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const ScheduledOrders = ({ storeId }: { storeId: string }) => {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const store = useSelector((state: RootState) => state.selectStore);
 
     const queryKey = useMemo(
         () => [
-            "orders",
+            "order",
             "scheduled",
-            storeId,
+            store === "" ? storeId : store,
             format(selectedDate || new Date(), "yyyy-MM-dd"),
         ],
-        [selectedDate, storeId]
+        [selectedDate, store, storeId]
     );
 
     const { data: scheduledOrders, isPending } = useScheduledOrders(
         selectedDate,
-        storeId,
+        store === "" ? storeId : store,
         queryKey
     );
 

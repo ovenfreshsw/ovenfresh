@@ -27,7 +27,7 @@ export async function editStoreAction(formData: FormData) {
         const existingStore = await Store.findById(storeId);
         if (!existingStore) return { error: "Store not found." };
 
-        let updateData: Partial<StoreDocument> = result.data;
+        const updateData: Partial<StoreDocument> = result.data;
 
         await Store.findByIdAndUpdate(storeId, {
             $set: updateData,

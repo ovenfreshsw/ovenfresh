@@ -47,7 +47,10 @@ const StoreSelect = ({
             value={value} // Watch the selected value
             onValueChange={onValueChange} // Call the onValueChange function when the value changes
         >
-            <SelectTrigger className="bg-primary-foreground text-primary w-fit md:w-auto">
+            <SelectTrigger
+                className="bg-primary-foreground !text-primary w-fit md:w-auto"
+                data-placeholder="Store"
+            >
                 <>
                     <MapPin className="size-4" />
                     <SelectValue placeholder="Store" />

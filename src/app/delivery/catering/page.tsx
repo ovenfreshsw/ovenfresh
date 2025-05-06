@@ -4,9 +4,9 @@ import WelcomeSection from "@/components/delivery/welcome-section";
 import { Suspense } from "react";
 import DeliveryStatSkeleton from "@/components/skeleton/delivery-stat-skeleton";
 import SortedOrderList from "@/components/delivery/sorted-order-list";
-import { getDeliveryOrdersServer } from "@/lib/api/order/get-delivery-orders";
 import BottomNav from "@/components/delivery/bottom-nav";
 import ServerWrapper from "@/components/server-wrapper";
+import { getDeliveryOrdersServer } from "@/lib/api/delivery/get-delivery-orders-server";
 
 export default function DeliveryDashboard() {
     return (
@@ -14,10 +14,10 @@ export default function DeliveryDashboard() {
             {/* Welcome Section */}
             <Suspense fallback={<DeliveryStatSkeleton />}>
                 <ServerWrapper
-                    queryFn={() => getDeliveryOrdersServer("catering")}
-                    queryKey={["delivery", "sortedOrders", "catering"]}
+                    queryFn={() => getDeliveryOrdersServer("caterings")}
+                    queryKey={["order", "delivery", "caterings"]}
                 >
-                    <WelcomeSection orderType="catering" />
+                    <WelcomeSection orderType="caterings" />
                 </ServerWrapper>
             </Suspense>
 
@@ -37,8 +37,8 @@ export default function DeliveryDashboard() {
                         }
                     >
                         <ServerWrapper
-                            queryFn={() => getDeliveryOrdersServer("catering")}
-                            queryKey={["delivery", "sortedOrders", "catering"]}
+                            queryFn={() => getDeliveryOrdersServer("caterings")}
+                            queryKey={["order", "delivery", "caterings"]}
                         >
                             <TabsContent
                                 value="active"
@@ -46,7 +46,7 @@ export default function DeliveryDashboard() {
                             >
                                 <SortedOrderList
                                     status="PENDING"
-                                    orderType="catering"
+                                    orderType="caterings"
                                 />
                             </TabsContent>
                             <TabsContent
@@ -55,7 +55,7 @@ export default function DeliveryDashboard() {
                             >
                                 <SortedOrderList
                                     status="DELIVERED"
-                                    orderType="catering"
+                                    orderType="caterings"
                                 />
                             </TabsContent>
                         </ServerWrapper>
