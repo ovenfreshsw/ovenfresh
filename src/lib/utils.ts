@@ -272,6 +272,11 @@ function addWeekdays(startDate: string, numberOfWeeks: number) {
     return current;
 }
 
+/** Capitalize username for display */
+function capitalizeName(name: string = ""): string {
+    return name ? name[0].toUpperCase() + name.slice(1) : "N/A";
+}
+
 export {
     cn,
     isRestricted,
@@ -287,4 +292,5 @@ export {
     getYearsUpToCurrent,
     addWeekdays,
     haversine,
+    capitalizeName,
 };

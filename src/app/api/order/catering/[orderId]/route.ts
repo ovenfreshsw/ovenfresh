@@ -8,6 +8,7 @@ import Catering from "@/models/cateringModel";
 import Customer from "@/models/customerModel";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
+import { revalidatePath } from "next/cache";
 
 async function deleteHandler(
     req: AuthenticatedRequest,
@@ -40,6 +41,8 @@ async function deleteHandler(
                 Address.deleteMany({ customerId: order.customer }),
             ]);
         }
+
+        revalidatePath("/confirm-order/catering/" + orderId);
 
         return success200({ message: "Order deleted successfully." });
     } catch (error) {
@@ -136,6 +139,8 @@ async function patchHandler(
                 },
             }
         );
+
+        revalidatePath("/confirm-order/catering/" + orderId);
 
         return success200({ message: "Order updated successfully." });
     } catch (error) {

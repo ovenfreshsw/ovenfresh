@@ -4,6 +4,7 @@ import ErrorComponent from "@/components/error";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
+import { Provider } from "@/providers/auth-provider";
 import { getServerSession } from "next-auth";
 
 export default async function DashboardLayout({
@@ -34,7 +35,7 @@ export default async function DashboardLayout({
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 max-w-md mx-auto">
             {/* Header */}
             <Navbar store={store.location || "Not Found"} />
-            {children}
+            <Provider session={session}>{children}</Provider>
             <BottomNav />
         </div>
     );

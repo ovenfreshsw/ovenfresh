@@ -15,15 +15,18 @@ type CreateTiffinOrderProps = {
         address: string;
         placeId: string;
     };
+    sentToWhatsapp?: boolean;
 };
 
 export async function handleCreate({
     values,
     googleAddress,
+    sentToWhatsapp = false,
 }: CreateTiffinOrderProps) {
     const { data: result } = await axios.post("/api/order/tiffin", {
         ...values,
         googleAddress,
+        sentToWhatsapp,
     });
     return result;
 }
@@ -34,7 +37,12 @@ export function useCreateTiffinOrder(
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: handleCreate,
-        onSuccess: () => onSuccess(queryClient),
+        onSuccess: (result) => {
+            onSuccess(queryClient);
+            result.messageSent === false
+                ? toast.error("Error sending whatsapp message.")
+                : toast.success("Order details sent to customer.");
+        },
         onError: (error: OnErrorType) => {
             if (error.response.status === 403)
                 toast.error(

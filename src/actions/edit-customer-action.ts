@@ -44,6 +44,7 @@ export async function editCustomerAction(formData: FormData) {
                     },
                 }
             );
+            revalidatePath("/confirm-order/catering/" + orderId);
         } else {
             await Tiffin.updateOne(
                 { _id: orderId },
@@ -56,6 +57,7 @@ export async function editCustomerAction(formData: FormData) {
                     },
                 }
             );
+            revalidatePath("/confirm-order/tiffin/" + orderId);
         }
 
         revalidatePath("/dashboard/orders");

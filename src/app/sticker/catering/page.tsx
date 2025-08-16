@@ -40,11 +40,21 @@ const CateringStickerPage = async ({
                 customerName: order.customerName,
                 phone: order.customerPhone,
                 note: order.note,
-                items: order.items.map((item) => ({
-                    name: item.itemId.name,
-                    quantity: item.quantity,
-                    priceAtOrder: item.priceAtOrder,
-                })),
+                items: order.items
+                    .map((item) => ({
+                        name: item.itemId.name,
+                        quantity: item.quantity,
+                        priceAtOrder: item.priceAtOrder,
+                        size: item.size,
+                    }))
+                    .concat(
+                        order.customItems.map((item) => ({
+                            name: item.name,
+                            quantity: 1,
+                            priceAtOrder: item.priceAtOrder,
+                            size: item.size,
+                        }))
+                    ),
             }))}
         />
     );

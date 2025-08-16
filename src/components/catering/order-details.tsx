@@ -39,7 +39,7 @@ import {
 } from "@/models/types/catering";
 import { updateOrderStatusAction } from "@/actions/update-order-status-action";
 import { toast } from "sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import OrderSettlementDialog from "../dialog/order-settlement-dialog";
 import { appendBracket, cn } from "@/lib/utils";
 import CustomerCard from "../order/customer-card";
@@ -54,6 +54,9 @@ import { Show } from "../show";
 import SizeSelect from "../select/size-select";
 import { Input } from "../ui/input";
 import AddCustomItemDirectDialog from "../dialog/add-custom-item-direct";
+import { sentOrderToWhatsappAction } from "@/actions/sent-order-to-whatsapp-action";
+import LoadingButton from "../ui/loading-button";
+import Whatsapp from "../icons/whatsapp";
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -254,6 +257,21 @@ export default function CateringOrderDetails({
         );
     }
 
+    const handleSentToWhatsapp = useCallback(async () => {
+        try {
+            setLoading(true);
+            await sentOrderToWhatsappAction(
+                orderData._id.toString(),
+                "catering"
+            );
+            toast.success("Order sent to Whatsapp.");
+        } catch (error) {
+            toast.error("Failed to send order to Whatsapp.");
+        } finally {
+            setLoading(false);
+        }
+    }, [orderData?._id.toString()]);
+
     const existingItems = useMemo(() => {
         return orderItems.map((item) => item.itemId._id as string);
     }, [orderItems]);
@@ -266,6 +284,10 @@ export default function CateringOrderDetails({
         setLoading(false);
         setOrderStatus(orderData?.status);
     }, [showSettlementDialog, orderData?.status]);
+
+    useEffect(() => {
+        if (customItems.length === 0) setEditCustomItems(false);
+    }, [customItems]);
 
     return (
         <div className="py-10 px-2.5">
@@ -284,6 +306,15 @@ export default function CateringOrderDetails({
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    <LoadingButton
+                        isLoading={loading}
+                        size={"sm"}
+                        onClick={handleSentToWhatsapp}
+                        variant="outline"
+                        className="border-green-200 mr-2 text-green-500 hover:bg-green-100 hover:text-green-500 flex items-center gap-2"
+                    >
+                        <Whatsapp /> Sent to Whatsapp
+                    </LoadingButton>
                     <Badge
                         className={`flex w-fit items-center gap-1 ${getStatusColor(
                             orderData?.status

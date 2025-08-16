@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { updateOrderStatusAction } from "@/actions/update-order-status-action";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import OrderSettlementDialog from "../dialog/order-settlement-dialog";
 import CustomerCard from "../order/customer-card";
 import AddressCard from "../order/address-card";
@@ -46,6 +46,9 @@ import {
     ORDER_STATUSES,
     OrderStatus,
 } from "@/lib/types/order-status";
+import LoadingButton from "../ui/loading-button";
+import Whatsapp from "../icons/whatsapp";
+import { sentOrderToWhatsappAction } from "@/actions/sent-order-to-whatsapp-action";
 
 const getStatusIcon = (status: string) => {
     switch (status) {
@@ -167,6 +170,18 @@ export default function TiffinOrderDetails({
         });
     }
 
+    const handleSentToWhatsapp = useCallback(async () => {
+        try {
+            setLoading(true);
+            await sentOrderToWhatsappAction(orderData._id.toString(), "tiffin");
+            toast.success("Order sent to Whatsapp.");
+        } catch (error) {
+            toast.error("Failed to send order to Whatsapp.");
+        } finally {
+            setLoading(false);
+        }
+    }, [orderData?._id.toString()]);
+
     useEffect(() => {
         setLoading(false);
         setOrderStatus(orderData?.status);
@@ -189,6 +204,15 @@ export default function TiffinOrderDetails({
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    <LoadingButton
+                        isLoading={loading}
+                        size={"sm"}
+                        onClick={handleSentToWhatsapp}
+                        variant="outline"
+                        className="border-green-200 mr-2 text-green-500 hover:bg-green-100 hover:text-green-500 flex items-center gap-2"
+                    >
+                        <Whatsapp /> Sent to Whatsapp
+                    </LoadingButton>
                     <Badge
                         className={`flex w-fit items-center gap-1 ${getStatusColor(
                             orderData?.status

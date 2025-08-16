@@ -194,6 +194,13 @@ const TiffinDialogContent = ({
                         {advanceAmount === "" ? 0 : advanceAmount}
                     </span>
                 </p>
+                <p className="text-sm flex justify-between">
+                    Discount:{" "}
+                    <span>
+                        {Number(discountAmount) !== 0 && "- "}$
+                        {discountAmount === "" ? 0 : discountAmount}
+                    </span>
+                </p>
                 <p className="text-sm font-semibold flex justify-between">
                     Pending Amount: <span>${pendingAmount.toFixed(2)}</span>
                 </p>

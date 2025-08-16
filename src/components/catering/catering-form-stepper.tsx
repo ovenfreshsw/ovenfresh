@@ -26,6 +26,7 @@ import { clearState as clearOrderState } from "@/store/slices/cateringOrderSlice
 import LoadingButton from "../ui/loading-button";
 import { useCateringMenu } from "@/api-hooks/catering/get-catering-menu";
 import { clearCustomItemState } from "@/store/slices/cateringCustomItemSlice";
+import Whatsapp from "../icons/whatsapp";
 
 const steps = ["Select Items", "Enter address", "Order summery"];
 
@@ -80,7 +81,7 @@ export default function CateringFormStepper() {
         setActiveStep(0);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (sentToWhatsapp?: boolean) => {
         if (orderItems.length === 0 && customItems.length === 0) {
             toast.error("Please add items to the order.");
             return;
@@ -110,8 +111,11 @@ export default function CateringFormStepper() {
 
         if (result.success) {
             mutation.mutate({
-                ...data,
-                deliveryDate: new Date(data.deliveryDate),
+                values: {
+                    ...data,
+                    deliveryDate: new Date(data.deliveryDate),
+                },
+                sentToWhatsapp,
             });
         }
         if (result.error) {
@@ -161,14 +165,27 @@ export default function CateringFormStepper() {
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
                 {activeStep >= steps.length - 1 ? (
-                    <LoadingButton
-                        disabled={isPending || menu?.length === 0}
-                        isLoading={mutation.isPending}
-                        onClick={handleSubmit}
-                        size={"sm"}
-                    >
-                        Confirm order
-                    </LoadingButton>
+                    <>
+                        <LoadingButton
+                            disabled={isPending || menu?.length === 0}
+                            isLoading={mutation.isPending}
+                            onClick={() => handleSubmit(true)}
+                            size={"sm"}
+                            variant="outline"
+                            className="border-green-200 mr-2 text-green-500 hover:bg-green-100 hover:text-green-500 flex items-center gap-2"
+                        >
+                            <Whatsapp />
+                            Confirm order
+                        </LoadingButton>
+                        <LoadingButton
+                            disabled={isPending || menu?.length === 0}
+                            isLoading={mutation.isPending}
+                            onClick={() => handleSubmit(false)}
+                            size={"sm"}
+                        >
+                            Confirm order
+                        </LoadingButton>
+                    </>
                 ) : (
                     <Button
                         onClick={handleNext}

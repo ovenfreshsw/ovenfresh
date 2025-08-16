@@ -1,18 +1,19 @@
 import { notFound } from "next/navigation";
 import connectDB from "@/lib/mongodb";
 import Address from "@/models/addressModel";
-import Customer from "@/models/customerModel";
 import Store from "@/models/storeModel";
 import OrderConfirmation from "@/components/tiffin/confirm-order";
 import Tiffin from "@/models/tiffinModel";
 import { TiffinDocumentPopulate } from "@/models/types/tiffin";
 
+export const dynamic = "force-static";
+
 async function TiffinOrderConfirmPage({
-    searchParams,
+    params,
 }: {
-    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+    params: Promise<{ orderId: string }>;
 }) {
-    const orderId = (await searchParams)?.orderId as string;
+    const orderId = (await params)?.orderId as string;
 
     if (!orderId) return notFound();
 
@@ -21,9 +22,17 @@ async function TiffinOrderConfirmPage({
         const order = await Tiffin.findOne<TiffinDocumentPopulate | null>({
             _id: orderId,
         })
-            .populate({ path: "address", model: Address })
-            .populate({ path: "customer", model: Customer })
-            .populate({ path: "store", model: Store });
+            .populate({
+                path: "address",
+                model: Address,
+                select: "address lat lng",
+            })
+            .populate({
+                path: "store",
+                model: Store,
+                select: "name address phone",
+            })
+            .lean<TiffinDocumentPopulate>();
 
         if (!order) return notFound();
 

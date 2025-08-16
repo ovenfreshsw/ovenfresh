@@ -194,6 +194,7 @@ async function updateOrder(
         );
         updateData.order_type = data.order_type;
         await Catering.updateOne({ _id: orderId }, { $set: updateData });
+        revalidatePath("/confirm-order/catering/" + orderId);
     } else {
         updateData.startDate = format(new Date(data.start_date), "yyyy-MM-dd");
         updateData.endDate = format(new Date(data.end_date), "yyyy-MM-dd");
@@ -213,5 +214,6 @@ async function updateOrder(
             format(new Date(data.end_date), "yyyy-MM-dd"),
             updatedOrder.store
         );
+        revalidatePath("/confirm-order/tiffin/" + orderId);
     }
 }

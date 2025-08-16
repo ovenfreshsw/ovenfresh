@@ -1,8 +1,9 @@
 import Header from "@/components/dashboard/header";
 import DeliveryProof from "@/components/delivery-proof/delivery-proof";
+import DisableSendingCard from "@/components/delivery-proof/disable-sending-card";
 import ServerWrapper from "@/components/server-wrapper";
 import { getDeliveryProofServer } from "@/lib/api/delivery-proof/get-delivery-proof-server";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Switch } from "@mui/material";
 import { Suspense } from "react";
 
 const DeliveryProofPage = () => {
@@ -29,11 +30,13 @@ const DeliveryProofPage = () => {
                     <Suspense fallback={<div>Loading...</div>}>
                         <ServerWrapper
                             queryFn={getDeliveryProofServer}
-                            queryKey={["delivery-proof"]}
+                            queryKey={["delivery-proof", 1, ""]}
                         >
                             <DeliveryProof />
                         </ServerWrapper>
                     </Suspense>
+
+                    <DisableSendingCard />
                 </Box>
             </Stack>
         </Box>

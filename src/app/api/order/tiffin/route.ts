@@ -19,6 +19,7 @@ import { formatDate } from "date-fns";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { createOrderStatus } from "./helper";
+import { sendWhatsappMessage } from "@/lib/whatsapp";
 
 async function postHandler(req: AuthenticatedRequest) {
     try {
@@ -139,7 +140,24 @@ async function postHandler(req: AuthenticatedRequest) {
                 ),
             ]);
 
-            return success201({ order });
+            if (data.sentToWhatsapp) {
+                try {
+                    await sendWhatsappMessage(
+                        customer.phone,
+                        {
+                            1: customer.firstName + " " + customer.lastName,
+                            2: "tiffin/" + order._id.toString(),
+                        },
+                        process.env.TWILIO_ORDER_CONFIRM_ID!
+                    );
+                } catch (error) {
+                    return success201({
+                        messageSent: false,
+                    });
+                }
+            }
+
+            return success201({ messageSent: true });
         }
 
         if (result.error) {

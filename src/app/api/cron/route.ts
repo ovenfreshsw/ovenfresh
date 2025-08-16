@@ -1,4 +1,5 @@
 import connectDB from "@/lib/mongodb";
+import { sendWhatsappMessage } from "@/lib/whatsapp";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
 import { addDays, format } from "date-fns";
@@ -25,15 +26,38 @@ export async function GET(request: NextRequest) {
         ).populate({
             path: "store",
             model: Store,
-            select: "location name phone address",
+            select: "name phone",
         });
-
-        console.log(expiringTiffins);
 
         if (expiringTiffins.length === 0) {
             return Response.json({ success: true });
         }
         // TODO: Implement cron logic: Sent whatsapp message from here.
+        const messages = expiringTiffins.map((order) =>
+            sendWhatsappMessage(
+                order.customerPhone,
+                {
+                    1: order.customerName,
+                    2: order.orderId,
+                    3: format(new Date(order.endDate), "PPPP"),
+                    4: order.store.phone,
+                    5: order.store.name,
+                },
+                process.env.TWILIO_TIFFIN_EXPIRY_ID!
+            )
+        );
+
+        try {
+            await Promise.all(messages);
+        } catch (error) {
+            return Response.json({
+                success: false,
+                error:
+                    error instanceof Error
+                        ? error.message
+                        : "Unable to sent reminder message!",
+            });
+        }
 
         return Response.json({ success: true });
     } catch (error) {

@@ -53,6 +53,7 @@ export default function TiffinForm() {
     const [address, setAddress] = useState({ address: "", placeId: "" });
     const [showPhoneAutocomplete, setShowPhoneAutocomplete] = useState(false);
     const [endDateText, setEndDateText] = useState("");
+    const [sentToWhatsapp, setSentToWhatsapp] = useState(false);
 
     const form = useForm<z.infer<typeof ZodTiffinSchema>>({
         resolver: zodResolver(ZodTiffinSchema),
@@ -114,6 +115,7 @@ export default function TiffinForm() {
                     values.tax === 0 ? subtotal.toString() : values.totalAmount,
             },
             googleAddress: address,
+            sentToWhatsapp,
         });
     }
 
@@ -488,6 +490,7 @@ export default function TiffinForm() {
                         open={confirmOrderOpen}
                         setOpen={setConfirmOrderOpen}
                         tiffinMenu={tiffinMenu}
+                        setSentToWhatsapp={setSentToWhatsapp}
                     />
                 </form>
             </Form>

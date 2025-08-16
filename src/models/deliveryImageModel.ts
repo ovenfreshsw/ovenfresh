@@ -22,6 +22,10 @@ const DeliveryImageSchema = new Schema<DeliveryImageDocument>(
             type: Date,
             required: true,
         },
+        messageStatus: {
+            type: String,
+            required: true,
+        },
         image: {
             type: String,
             required: true,
@@ -31,7 +35,7 @@ const DeliveryImageSchema = new Schema<DeliveryImageDocument>(
             required: true,
         },
     },
-    { versionKey: false }
+    { versionKey: false, timestamps: true }
 );
 
 const DeliveryImage =

@@ -9,6 +9,7 @@ import {
 } from "@/lib/response";
 import { AuthenticatedRequest } from "@/lib/types/auth-request";
 import { generateOrderId, isRestricted } from "@/lib/utils";
+import { sendWhatsappMessage } from "@/lib/whatsapp";
 import { withDbConnectAndAuth } from "@/lib/withDbConnectAndAuth";
 import { ZodCateringSchema } from "@/lib/zod-schema/schema";
 import Address from "@/models/addressModel";
@@ -107,6 +108,23 @@ async function postHandler(req: AuthenticatedRequest) {
             address: customerAddress._id,
             paymentMethod: orderData.payment_method,
         });
+
+        if (data.sentToWhatsapp) {
+            try {
+                await sendWhatsappMessage(
+                    customer.phone,
+                    {
+                        1: customer.firstName + " " + customer.lastName,
+                        2: "catering/" + order._id.toString(),
+                    },
+                    process.env.TWILIO_ORDER_CONFIRM_ID!
+                );
+            } catch (error) {
+                return success201({
+                    messageSent: false,
+                });
+            }
+        }
 
         return success201({ order });
     } catch (error) {

@@ -26,6 +26,16 @@ import Link from "next/link";
 import { useState } from "react";
 import DeleteDialog from "../dialog/delete-dialog";
 import { deleteProofAction } from "@/actions/delete-proof-action";
+import { Status, StatusIndicator, StatusLabel } from "../ui/kibo-ui/status";
+
+const statusColors: Record<
+    string,
+    "online" | "offline" | "degraded" | "maintenance"
+> = {
+    sent: "online",
+    failed: "offline",
+    stopped: "degraded",
+};
 
 const ProofCard = ({ order }: { order: DeliveryProof }) => {
     const [imageSrc, setImageSrc] = useState<string | undefined>(order.image);
@@ -129,6 +139,15 @@ const ProofCard = ({ order }: { order: DeliveryProof }) => {
                 <div className="text-xs flex gap-1 items-center">
                     <p className="text-muted-foreground">Delivered by:</p>
                     <p className="capitalize">{order.user}</p>
+                </div>
+                <div className="text-xs flex gap-1 items-center">
+                    <p className="text-muted-foreground">Message Status:</p>
+                    <Status status={statusColors[order.messageStatus]}>
+                        <StatusIndicator />
+                        <StatusLabel className="capitalize">
+                            {order.messageStatus}
+                        </StatusLabel>
+                    </Status>
                 </div>
             </CardContent>
         </Card>

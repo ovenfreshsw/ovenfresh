@@ -1,0 +1,22 @@
+import { Schema, model, models } from "mongoose";
+import { SettingsDocument } from "./types/setting";
+
+const SettingsSchema = new Schema<SettingsDocument>(
+    {
+        store: {
+            type: Schema.Types.ObjectId,
+            ref: "Store",
+            required: true,
+            unique: true,
+        },
+        disable_sending_proof: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    { versionKey: false }
+);
+
+const Setting =
+    models?.Setting || model<SettingsDocument>("Setting", SettingsSchema);
+export default Setting;

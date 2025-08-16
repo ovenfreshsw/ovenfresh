@@ -41,6 +41,7 @@ const DeleteDialog = ({
     children?: ReactNode;
 }) => {
     const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
 
     function handleSubmit() {
         setLoading(true);
@@ -49,6 +50,7 @@ const DeleteDialog = ({
             new Promise(async (resolve, reject) => {
                 const result = await action(id);
                 setLoading(false);
+                setOpen(false);
                 if (result.success) resolve(result);
                 else reject(result);
             });
@@ -60,7 +62,7 @@ const DeleteDialog = ({
         });
     }
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {children ? (
                     children

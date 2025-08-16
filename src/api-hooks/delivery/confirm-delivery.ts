@@ -38,7 +38,14 @@ export function useConfirmDelivery(
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: handleConfirm,
-        onSuccess: () => onSuccess(queryClient),
+        onSuccess: (result) => {
+            onSuccess(queryClient);
+            if (result.messageSent === false) {
+                toast.error(
+                    "Failed to send proof to customer. Please inform Admin!"
+                );
+            }
+        },
         onError: (error: OnErrorType) => {
             toast.error(
                 error.response.data.message || "Error in delivering order!"

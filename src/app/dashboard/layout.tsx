@@ -9,6 +9,7 @@ import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import Store from "@/models/storeModel";
 import ErrorComponent from "@/components/error";
+import { Provider } from "@/providers/auth-provider";
 
 export default async function DashboardLayout(
     { children }: { children: React.ReactNode },
@@ -37,24 +38,26 @@ export default async function DashboardLayout(
 
     return (
         <MuiThemeProvider props={props}>
-            <CssBaseline enableColorScheme />
-            <Box sx={{ display: "flex" }}>
-                <SideMenu />
-                <AppNavbar
-                    role={session.user.role}
-                    username={session.user.username}
-                    active={{
-                        id: store._id.toString(),
-                        location: store.location,
-                    }}
-                    stores={allStores.map((store) => ({
-                        id: store._id.toString(),
-                        location: store.location,
-                    }))}
-                />
-                {/* Main content */}
-                {children}
-            </Box>
+            <Provider session={session}>
+                <CssBaseline enableColorScheme />
+                <Box sx={{ display: "flex" }}>
+                    <SideMenu />
+                    <AppNavbar
+                        role={session.user.role}
+                        username={session.user.username}
+                        active={{
+                            id: store._id.toString(),
+                            location: store.location,
+                        }}
+                        stores={allStores.map((store) => ({
+                            id: store._id.toString(),
+                            location: store.location,
+                        }))}
+                    />
+                    {/* Main content */}
+                    {children}
+                </Box>
+            </Provider>
         </MuiThemeProvider>
     );
 }

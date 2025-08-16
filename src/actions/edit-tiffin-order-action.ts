@@ -114,6 +114,7 @@ export async function editTiffinOrderAction(formData: FormData) {
 
         // Revalidate the path
         revalidatePath("/dashboard/orders");
+        revalidatePath("/confirm-order/tiffin/" + orderId);
 
         return { success: true };
     } catch (error) {

@@ -8,6 +8,7 @@ export type DeliveryProof = {
     user: string;
     image: string;
     deliveryDate: Date;
+    messageStatus: string;
     store: string;
 };
 

@@ -38,12 +38,14 @@ export function TiffinConfirmDrawer({
     open,
     setOpen,
     tiffinMenu,
+    setSentToWhatsapp,
 }: {
     mutation: UseMutationResult<unknown, unknown, unknown, unknown>;
     form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>;
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     tiffinMenu?: TiffinMenuDocument | null;
+    setSentToWhatsapp: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const [advanceAmount, setAdvanceAmount] = React.useState("");
     const [discountAmount, setDiscountAmount] = React.useState("");
@@ -115,14 +117,15 @@ export function TiffinConfirmDrawer({
                         />
                     </div>
                     <DialogFooter className="flex sm:justify-between items-center w-full">
-                        <Button
-                            variant="outline"
-                            className="border-green-200 text-green-500 hover:bg-green-100 hover:text-green-500 flex items-center gap-2"
-                            disabled
-                        >
-                            <Whatsapp />
-                            Send to customer for confirmation
-                        </Button>
+                        <WhatsappButton
+                            form={form}
+                            mutation={mutation}
+                            advanceAmount={advanceAmount}
+                            pendingAmount={pendingAmount}
+                            note={note}
+                            discountAmount={discountAmount}
+                            setSentToWhatsapp={setSentToWhatsapp}
+                        />
                         <div className="flex items-center gap-2">
                             <DialogClose asChild>
                                 <Button
@@ -132,27 +135,15 @@ export function TiffinConfirmDrawer({
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <LoadingButton
-                                // disabled={
-                                //     advanceAmount === "" ||
-                                //     !form.formState.isValid ||
-                                //     mutation.isPending
-                                // }
-                                isLoading={mutation.isPending}
-                                type="submit"
-                                form="tiffin-form"
-                                onClick={() => {
-                                    form.setValue("advancePaid", advanceAmount);
-                                    form.setValue("discount", discountAmount);
-                                    form.setValue(
-                                        "pendingAmount",
-                                        pendingAmount.toString()
-                                    );
-                                    form.setValue("note", note);
-                                }}
-                            >
-                                Confirm order
-                            </LoadingButton>
+                            <ConfirmOrderButton
+                                form={form}
+                                mutation={mutation}
+                                advanceAmount={advanceAmount}
+                                pendingAmount={pendingAmount}
+                                note={note}
+                                discountAmount={discountAmount}
+                                setSentToWhatsapp={setSentToWhatsapp}
+                            />
                         </div>
                     </DialogFooter>
                 </DialogContent>
@@ -186,6 +177,15 @@ export function TiffinConfirmDrawer({
                     />
                 </div>
                 <DrawerFooter className="pt-2">
+                    <WhatsappButton
+                        form={form}
+                        mutation={mutation}
+                        advanceAmount={advanceAmount}
+                        pendingAmount={pendingAmount}
+                        note={note}
+                        discountAmount={discountAmount}
+                        setSentToWhatsapp={setSentToWhatsapp}
+                    />
                     <DrawerClose asChild>
                         <Button
                             variant="ghost"
@@ -194,27 +194,100 @@ export function TiffinConfirmDrawer({
                             Cancel
                         </Button>
                     </DrawerClose>
-                    <LoadingButton
-                        disabled={
-                            advanceAmount === "" ||
-                            !form.formState.isValid ||
-                            mutation.isPending
-                        }
-                        isLoading={mutation.isPending}
-                        type="submit"
-                        form="tiffin-form"
-                        onClick={() => {
-                            form.setValue("advancePaid", advanceAmount);
-                            form.setValue(
-                                "pendingAmount",
-                                pendingAmount.toString()
-                            );
-                        }}
-                    >
-                        Confirm order
-                    </LoadingButton>
+                    <ConfirmOrderButton
+                        form={form}
+                        mutation={mutation}
+                        advanceAmount={advanceAmount}
+                        pendingAmount={pendingAmount}
+                        note={note}
+                        discountAmount={discountAmount}
+                        setSentToWhatsapp={setSentToWhatsapp}
+                    />
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
+    );
+}
+
+function WhatsappButton({
+    form,
+    mutation,
+    advanceAmount,
+    pendingAmount,
+    note,
+    discountAmount,
+    setSentToWhatsapp,
+}: {
+    form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>;
+    mutation: UseMutationResult<unknown, unknown, unknown, unknown>;
+    advanceAmount: string;
+    pendingAmount: number;
+    note: string;
+    discountAmount: string;
+    setSentToWhatsapp: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+    return (
+        <LoadingButton
+            variant="outline"
+            className="border-green-200 text-green-500 hover:bg-green-100 hover:text-green-500 flex items-center gap-2"
+            disabled={
+                advanceAmount === "" ||
+                !form.formState.isValid ||
+                mutation.isPending
+            }
+            isLoading={mutation.isPending}
+            type="submit"
+            form="tiffin-form"
+            onClick={() => {
+                form.setValue("advancePaid", advanceAmount);
+                form.setValue("pendingAmount", pendingAmount.toString());
+                form.setValue("note", note);
+                form.setValue("discount", discountAmount);
+                setSentToWhatsapp(true);
+            }}
+        >
+            <Whatsapp />
+            Confirm order
+        </LoadingButton>
+    );
+}
+
+function ConfirmOrderButton({
+    form,
+    mutation,
+    advanceAmount,
+    pendingAmount,
+    note,
+    discountAmount,
+    setSentToWhatsapp,
+}: {
+    form: UseFormReturn<z.infer<typeof ZodTiffinSchema>>;
+    mutation: UseMutationResult<unknown, unknown, unknown, unknown>;
+    advanceAmount: string;
+    pendingAmount: number;
+    discountAmount: string;
+    note: string;
+    setSentToWhatsapp: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+    return (
+        <LoadingButton
+            disabled={
+                advanceAmount === "" ||
+                !form.formState.isValid ||
+                mutation.isPending
+            }
+            isLoading={mutation.isPending}
+            type="submit"
+            form="tiffin-form"
+            onClick={() => {
+                form.setValue("advancePaid", advanceAmount);
+                form.setValue("pendingAmount", pendingAmount.toString());
+                form.setValue("discount", discountAmount);
+                form.setValue("note", note);
+                setSentToWhatsapp(false);
+            }}
+        >
+            Confirm order
+        </LoadingButton>
     );
 }

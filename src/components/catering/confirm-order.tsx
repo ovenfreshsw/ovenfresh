@@ -23,7 +23,7 @@ export default function OrderConfirmation({
 }) {
     return (
         <div className="container mx-auto p-4 max-w-4xl">
-            <div className="flex justify-center md:justify-between items-center mb-8 flex-wrap">
+            <div className="flex justify-center flex-col md:flex-row md:justify-between items-center mb-8">
                 <div className="flex flex-col md:flex-row items-center gap-4">
                     <Image
                         src={COMPANY_LOGO || "/placeholder.svg"}
@@ -209,6 +209,7 @@ export default function OrderConfirmation({
             <div className="text-center text-sm text-muted-foreground">
                 <p>Thank you for your order!</p>
                 <p>{order.store.name}</p>
+                <p>{order.store.phone}</p>
                 <p>{order.store.address}</p>
             </div>
         </div>

@@ -8,6 +8,7 @@ import Customer from "@/models/customerModel";
 import Store from "@/models/storeModel";
 import Tiffin from "@/models/tiffinModel";
 import TiffinOrderStatus from "@/models/tiffinOrderStatusModel";
+import { revalidatePath } from "next/cache";
 
 async function deleteHandler(
     req: AuthenticatedRequest,
@@ -44,6 +45,8 @@ async function deleteHandler(
                 Address.deleteMany({ customerId: order.customer }),
             ]);
         }
+
+        revalidatePath("/confirm-order/tiffin/" + orderId);
 
         return success200({ message: "Order deleted successfully." });
     } catch (error) {

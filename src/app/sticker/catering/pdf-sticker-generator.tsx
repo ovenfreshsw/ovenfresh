@@ -18,6 +18,7 @@ type CateringOrder = Order & {
         name: string;
         quantity: number;
         priceAtOrder: number;
+        size: string;
     }>;
 };
 
@@ -225,7 +226,7 @@ export default function CateringSheet({ orders }: { orders: CateringOrder[] }) {
                                         >
                                             {order.items?.map((item, index) => (
                                                 <Text key={index}>
-                                                    {item.name} (x
+                                                    {item.name} [{item.size}] (x
                                                     {item.quantity}) - $
                                                     {item.priceAtOrder}
                                                 </Text>

@@ -6,10 +6,13 @@ export async function getDeliveryProofServer() {
     const headerSequence = await headers();
     const cookie = headerSequence.get("cookie");
     const { data } = await axios.get("/api/admin/delivery-proof", {
+        params: {
+            page: 1,
+        },
         headers: {
             Cookie: `${cookie}`,
         },
     });
 
-    return data.result as DeliveryProof[] | null;
+    if (data && data.proofs) return data.proofs as DeliveryProof[] | null;
 }

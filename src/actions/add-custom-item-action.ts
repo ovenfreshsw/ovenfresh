@@ -27,6 +27,7 @@ export async function addCustomItemAction(formData: FormData) {
         });
 
         revalidatePath("/dashboard/orders");
+        revalidatePath("/confirm-order/catering/" + orderId);
 
         return { success: true };
     } catch (error) {

@@ -1,40 +1,29 @@
 import axios from "@/config/axios.config";
 import { OnErrorType } from "@/lib/types/react-query";
-import { ZodCateringSchema } from "@/lib/zod-schema/schema";
+import { SettingsDocument } from "@/models/types/setting";
 import {
     QueryClient,
     useMutation,
     useQueryClient,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { z } from "zod";
 
 export async function handleCreate({
-    values,
-    sentToWhatsapp = false,
-}: {
-    values: z.infer<typeof ZodCateringSchema>;
-    sentToWhatsapp?: boolean;
-}) {
-    const { data: result } = await axios.post("/api/order/catering", {
-        ...values,
-        sentToWhatsapp,
+    disable_sending_proof,
+}: Partial<SettingsDocument>) {
+    const { data: result } = await axios.patch("/api/settings", {
+        disable_sending_proof,
     });
     return result;
 }
 
-export function useCreateCateringOrder(
+export function useSettingsMutation(
     onSuccess: (queryClient: QueryClient) => void
 ) {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: handleCreate,
-        onSuccess: (result) => {
-            onSuccess(queryClient);
-            result.messageSent === false
-                ? toast.error("Error sending whatsapp message.")
-                : toast.success("Order details sent to customer.");
-        },
+        onSuccess: () => onSuccess(queryClient),
         onError: (error: OnErrorType) => {
             if (error.response.status === 403)
                 toast.error(
